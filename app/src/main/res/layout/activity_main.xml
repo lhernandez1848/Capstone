@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:foreground="@drawable/ic_window_dim"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/frame_layout_main">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f0f2f0">
+
+        <include
+            android:id="@+id/homeToolbar"
+            layout="@layout/custom_toolbar"/>
+
+        <LinearLayout
+            android:layout_below="@+id/homeToolbar"
+            android:id="@+id/row1Buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="50dp">
+
+            <ImageButton
+                android:id="@+id/btnInventory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/solid_border_transparent"
+                android:src="@drawable/inventory"
+                android:adjustViewBounds="true"
+                android:padding="50dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/str_inventory" />
+            <ImageButton
+                android:id="@+id/btnOrders"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/solid_border_transparent"
+                android:src="@drawable/orders"
+                android:adjustViewBounds="true"
+                android:padding="50dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/str_orders" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_below="@+id/row1Buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnUsage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/solid_border_transparent"
+                android:src="@drawable/usage_analytics"
+                android:adjustViewBounds="true"
+                android:padding="50dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/str_analysis" />
+            <ImageButton
+                android:id="@+id/btnProfile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/solid_border_transparent"
+                android:src="@drawable/profile"
+                android:adjustViewBounds="true"
+                android:padding="50dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/str_profile" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</FrameLayout>

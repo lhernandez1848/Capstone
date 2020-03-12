@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorBlueLagoon">#b2e6ea</color>
+    <color name="colorPrimary">#6DCFD6</color>
+    <color name="colorBlueGreen">#2fb5bf</color>
+    <color name="colorPrimaryDark">#099BA5</color>
+    <color name="colorTeal">#008088</color>
+    <color name="colorAccent">#FFFFFF</color>
+    <color name="lineGray">#f0f2f0</color>
+</resources>

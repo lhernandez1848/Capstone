@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/profileToolbar"
+        layout="@layout/custom_toolbar"/>
+
+    <TextView
+        android:id="@+id/tvUserFirstLast"
+        android:layout_below="@+id/profileToolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/tvUserStore"
+        android:layout_below="@+id/tvUserFirstLast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="25sp"/>
+
+    <TextView
+        android:id="@+id/tvChangePassword"
+        android:text="@string/str_password"
+        android:layout_below="@+id/tvUserStore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:textStyle="bold"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/tvChangePasswordLink"
+        android:text="@string/str_change_password"
+        android:layout_below="@+id/tvChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="25sp"
+        android:textColor="@color/colorTeal"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/layoutChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/tvChangePasswordLink">
+
+    <LinearLayout
+        android:id="@+id/layoutOldPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/str_old_password"
+            android:layout_marginStart="20dp"
+            android:textSize="25sp"/>
+        <EditText
+            android:id="@+id/txtOldPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:inputType="textPassword"
+            android:background="@drawable/solid_border_transparent"
+            android:textSize="25sp"
+            android:layout_marginEnd="50dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutNewPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/str_new_password"
+            android:layout_marginStart="20dp"
+            android:textSize="25sp"/>
+        <EditText
+            android:id="@+id/txtNewPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@drawable/solid_border_transparent"
+            android:textSize="25sp"
+            android:inputType="textPassword"
+            android:layout_marginEnd="50dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/str_confirm_password"
+            android:layout_marginStart="20dp"
+            android:textSize="25sp"/>
+        <EditText
+            android:id="@+id/txtConfirmPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@drawable/solid_border_transparent"
+            android:textSize="25sp"
+            android:inputType="textPassword"
+            android:layout_marginEnd="50dp"/>
+    </LinearLayout>
+
+        <Button
+            android:id="@+id/btnChangePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:paddingStart="100dp"
+            android:paddingEnd="100dp"
+            android:textSize="15sp"
+            android:background="@drawable/solid_border_blue_back"
+            android:text="@string/str_change_password"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

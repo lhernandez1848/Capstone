@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">I.VY</string>
+    <string name="str_inventory">Inventory</string>
+    <string name="str_set_inventory">Set Inventory</string>
+    <string name="str_check_inventory">Check Inventory</string>
+    <string name="str_analysis">Usage Analysis</string>
+    <string name="str_orders">Orders</string>
+    <string name="str_create_order">New Order</string>
+    <string name="str_track_order">Track Order</string>
+    <string name="str_order_recommendations">Recommendations</string>
+    <string name="str_profile">Profile</string>
+    <string name="str_logout">Log Out</string>
+    <string name="str_sign_in">Sign In</string>
+    <string name="str_username">Username</string>
+    <string name="str_password">Password</string>
+    <string name="str_change_password">Change Password</string>
+    <string name="str_old_password">Old Password</string>
+    <string name="str_new_password">New Password</string>
+    <string name="str_confirm_password">Confirm Password</string>
+</resources>

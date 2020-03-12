@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvShowProductSelected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"
+        android:textSize="30sp"/>
+
+    <LinearLayout
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:id="@+id/layoutSetQuantity"
+        android:layout_below="@+id/tvShowProductSelected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_weight="1"
+            android:text="-"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:id="@+id/btnSubtractQuantity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/etProductQuantity"
+            android:layout_width="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textSize="30sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/solid_border_transparent"/>
+
+        <Button
+            android:id="@+id/btnAddQuantity"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:text="+"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/layoutSetQuantity"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/btnCancelSetQuantity"
+            android:text="CANCEL"
+            android:background="@drawable/solid_border_blue_back"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:textSize="30sp"/>
+        <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnSaveSetQuantity"
+            android:text="SAVE"
+            android:background="@drawable/solid_border_blue_back"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:textSize="30sp"/>
+    </LinearLayout>
+
+</RelativeLayout>

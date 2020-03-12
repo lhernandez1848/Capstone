@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_menu"
+        android:title=""
+        app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/btnMenuInventory"
+                android:title="@string/str_inventory"
+                android:icon="@drawable/ic_check"
+                app:showAsAction="never">
+                <menu>
+                    <item
+                        android:id="@+id/btnMenuCheckInventory"
+                        android:title="@string/str_check_inventory" />
+                    <item android:id="@+id/btnMenuRecommendations"
+                        android:title="@string/str_order_recommendations"/>
+                    <item android:id="@+id/btnMenuSetInventory"
+                        android:title="@string/str_set_inventory"/>
+                </menu>
+            </item>
+
+            <item android:id="@+id/btnMenuOrders"
+                android:title="@string/str_orders"
+                android:icon="@drawable/ic_cart"
+                app:showAsAction="never">
+                <menu>
+                    <item android:id="@+id/btnMenuNewOrder"
+                        android:title="@string/str_create_order"/>
+                    <item android:id="@+id/btnMenuTrackOrder"
+                        android:title="@string/str_track_order"/>
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/btnMenuUsage"
+                android:title="@string/str_analysis"
+                android:icon="@drawable/ic_usage"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/btnMenuProfile"
+                android:title="@string/str_profile"
+                android:icon="@drawable/ic_portrait"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/btnLogout"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/str_logout"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+</menu>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/productProportionToolbar"
+        layout="@layout/custom_toolbar"/>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/inventoryBarChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:layout_margin="20dp">
+    </com.github.mikephil.charting.charts.BarChart>
+
+    <TextView
+        android:id="@+id/barchartSelection"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:hint="Select bar value to view product"
+        android:textSize="30sp"/>
+
+</LinearLayout>

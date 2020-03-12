@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/checkInventoryToolbar"
+            layout="@layout/custom_toolbar"/>
+
+        <TextView
+            android:id="@+id/txtCheckInventoryDateDisplay"
+            android:layout_below="@+id/checkInventoryToolbar"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="36sp" />
+
+
+        <TextView
+            android:id="@+id/radioCaption"
+            android:layout_below="@+id/txtCheckInventoryDateDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sort By:"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:textSize="30sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sortingOptionsLayout"
+            android:layout_below="@+id/radioCaption"
+            android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/radioButtonsLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/radio_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:buttonTint="@color/colorTeal"
+                android:text="Value"/>
+            <RadioButton android:id="@+id/radio_proportion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:buttonTint="@color/colorTeal"
+                android:text="Proportion"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtSortDatePicker"
+            android:gravity="end"
+            android:layout_gravity="center"
+            android:layout_marginEnd="40dp"
+            android:hint="Select a Date"
+            android:background="@drawable/solid_border_transparent"
+            android:focusableInTouchMode="false"
+            android:textSize="30sp"
+            android:paddingEnd="30dp"
+            android:paddingStart="10dp"
+            android:visibility="gone"
+            android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <!-- Form Layout -->
+        <LinearLayout
+            android:id="@+id/inventoryValuesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sortingOptionsLayout"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/solid_border_transparent"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <ExpandableListView
+                android:id="@+id/checkInventoryExpandableListView"
+                android:layout_width="match_parent"
+                android:layout_height="550dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp" />
+            <TextView
+                android:id="@+id/totalCheckInvTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Chart Layout -->
+        <Spinner
+            android:id="@+id/checkInvCategorySpinner"
+            android:layout_below="@+id/sortingOptionsLayout"
+            android:background="@drawable/spinner_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:paddingEnd="50dp"
+            android:paddingStart="10dp"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/inventoryPieChart"
+            android:layout_below="@+id/checkInvCategorySpinner"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="600dp">
+        </com.github.mikephil.charting.charts.PieChart>
+
+    </RelativeLayout>
+</ScrollView>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/loginToolbar"
+        layout="@layout/custom_toolbar"/>
+
+
+    <Button
+        android:id="@+id/btnSkipLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip login"
+        android:textSize="30sp"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:layout_below="@+id/loginToolbar"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtLoginTextView"
+        android:gravity="center"
+        android:text="LOGIN"
+        android:layout_marginTop="100dp"
+        android:textSize="80sp"
+        android:layout_below="@+id/loginToolbar"/>
+
+    <EditText
+        android:id="@+id/txtUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtLoginTextView"
+        android:layout_marginStart="200dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginTop="80dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
+        android:textSize="40sp"
+        android:hint="@string/str_username"
+        android:background="@drawable/solid_border_transparent"/>
+
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtUsername"
+        android:layout_marginStart="200dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginTop="40dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
+        android:textSize="40sp"
+        android:inputType="textPassword"
+        android:hint="@string/str_password"
+        android:background="@drawable/solid_border_transparent" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtPassword"
+        android:layout_marginStart="200dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginTop="80dp"
+        android:padding="20dp"
+        android:background="@drawable/solid_border_blue_back"
+        android:text="@string/str_sign_in"
+        android:textSize="40sp"/>
+
+</RelativeLayout>
