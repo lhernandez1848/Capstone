@@ -68,6 +68,12 @@
                 android:value="io.github.technocrats.capstone.MainActivity">
             </meta-data>
         </activity>
+        <activity android:name=".CalendarRecommendation">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.technocrats.capstone.MainActivity">
+            </meta-data>
+        </activity>
     </application>
 
 </manifest>

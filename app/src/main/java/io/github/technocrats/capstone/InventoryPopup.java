@@ -13,6 +13,7 @@ public class InventoryPopup extends AppCompatActivity
 
     ImageButton btnSetInventory;
     ImageButton btnCheckInventory;
+    ImageButton btnRecommendation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,26 +26,23 @@ public class InventoryPopup extends AppCompatActivity
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
 
-        getWindow().setLayout((int)(width*.9), (int)(height*.35));
+        getWindow().setLayout((int)(width*.9), (int)(height*.25));
 
         btnSetInventory = (ImageButton) findViewById(R.id.btnSetInventory);
         btnCheckInventory = (ImageButton) findViewById(R.id.btnCheckInventory);
+        btnRecommendation = (ImageButton) findViewById(R.id.btnRecommendation);
 
         btnSetInventory.setOnClickListener(this);
         btnCheckInventory.setOnClickListener(this);
+        btnRecommendation.setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btnSetInventory){
-            /*startActivity(new Intent(
-                    getApplicationContext(), CreateOrderActivity.class));
-            finish();*/
-        } else if (view.getId() == R.id.btnCheckInventory){
-            startActivity(new Intent(
-                    getApplicationContext(), CheckInventoryActivity.class));
-            finish();
-        }
+    public void onClick(View v) {
+        if (v.getId() == R.id.btnRecommendation) {
 
+            Intent i = new Intent(InventoryPopup.this, CalendarRecommendation.class);
+            startActivity(i);
+        }
     }
 }

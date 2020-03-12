@@ -94,6 +94,12 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
         globalMethods.checkIfLoggedIn();
 
         setTitle("Create Order");
+        dateDisplay = findViewById(R.id.txtDateDisplay);
+        toolbar = findViewById(R.id.createOrderToolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        globalMethods.DisplayDate(dateDisplay);
 
         formatter = new DecimalFormat("#,###.##");
 
@@ -117,27 +123,9 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
         listDataSubcategories.add(sUniforms);
         listDataSubcategories.add(sInventory);
 
-        orderedItems = new ArrayList<>();
-
-        setTitle("Create Order");
-        dateDisplay = findViewById(R.id.txtDateDisplay);
-        toolbar = findViewById(R.id.createOrderToolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        globalMethods.DisplayDate(dateDisplay);
-
-        totalTextView = (TextView) findViewById(R.id.totalTextView);
-        totalTextView.setText("Order Total: $0.00");
-
-        productTextView = (TextView) findViewById(R.id.productTextView);
-
         storeNumber = (TextView) findViewById(R.id.txtStoreNumber);
-
-        storeID = sharedPlace.getString("storeID", "");
-
-        String displayStore = "Create New Order for Store Number: " + storeID;
-        storeNumber.setText(displayStore);
+        totalTextView = (TextView) findViewById(R.id.totalTextView);
+        productTextView = (TextView) findViewById(R.id.productTextView);
 
         btnSubmit = (Button) findViewById(R.id.btnGoToOrderSummary);
         btnCancel = (Button) findViewById(R.id.btnCancelOrder);
@@ -148,7 +136,34 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
         btnRemoveProductFromOrder.setOnClickListener(this);
         btnAddProductToOrder.setOnClickListener(this);
 
+        orderedItems = new ArrayList<>();
+
+        Intent mIntent = getIntent();
+        String previousActivity = mIntent.getStringExtra("FROM_ACTIVITY");
+        if (previousActivity != null && previousActivity.equals("ORDER_SUMMARY")) {
+            orderedItems = OrderSummaryActivity.getOrderSummaryItems();
+            setupItems();
+        } else {
+            totalTextView.setText("Order Total: $0.00");
+        }
+
+        storeID = sharedPlace.getString("storeID", "");
+        String displayStore = "Create New Order for Store Number: " + storeID;
+        storeNumber.setText(displayStore);
+
         getProducts();
+    }
+
+    public void setupItems(){
+        float temp_total = 0f;
+        for(int x = 0; x<orderedItems.size(); x++){
+            String[] temp = orderedItems.get(x).split("@");
+            String tempTotal = temp[4];
+            float fTotal = Float.parseFloat(tempTotal);
+
+            temp_total += fTotal;
+        }
+        totalTextView.setText("Order Total: $" + formatter.format(temp_total));
     }
 
     public void getProducts(){
@@ -202,7 +217,7 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
                                         quantity = Float.parseFloat(tempQuantity);
                                     }
                                 }
-                                String listString = product_id + " - " + product + "    ordered " + quantity + "    $" + price;
+                                String listString = product_id + " - " + product + " : " + quantity + "  *  $" + price;
 
                                 switch(subcategory_id) {
                                     case 1:
@@ -383,19 +398,18 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
         String itemName = "";
         String itemPrice = "";
         String itemQuantity = "";
-        String[] tempArray = tlItem.split("\\$");
+        String[] tempArray = tlItem.split(" {2}\\* {2}\\$");
         String tempFirstHalf = tempArray[0];
-        String[] tempArray2 = tempFirstHalf.split("ordered");
+        String[] tempArray2 = tempFirstHalf.split(" : ");
         itemName = tempArray2[0];
         itemName = globalMethods.trimEnd(itemName);
         itemQuantity = tempArray2[1];
         itemQuantity = globalMethods.trimEnd(itemQuantity);
         itemPrice = tempArray[1];
 
-        String productSelected = itemName + "  ordered " + itemQuantity + "  $" + itemPrice;
+        String productSelected = itemName + " : " + itemQuantity + "  *  $" + itemPrice;
         productTextView.setText(productSelected);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -488,12 +502,11 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
         String temp = "Order Total: $" + formatter.format(total);
         totalTextView.setText(temp);
 
-        String productSelected = product_id + " - " + product + "  ordered " + quantity + "  $" + price;
+        String productSelected = product_id + " - " + product + " : " + quantity + "  *  $" + price;
         productTextView.setText(productSelected);
 
         getProducts();
     }
-
 
     @Override
     public void onClick(View view) {
@@ -501,13 +514,43 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
             if (orderedItems.size()>0) {
                 startActivity(new Intent(
                         getApplicationContext(), OrderSummaryActivity.class));
+                finish();
             } else {
                 Toast.makeText(getApplicationContext(), "ERROR: Empty Order", Toast.LENGTH_LONG).show();
             }
         } else if(view.getId() == R.id.btnCancelOrder){
             finish();
         } else if(view.getId() == R.id.btnRemoveProductFromOrder){
+            String productTV = productTextView.getText().toString();
 
+            if(!productTV.isEmpty()){
+                String[] tempID = productTV.split(" - ");
+                String id = tempID[0];
+
+                for (int i = 0; i < orderedItems.size(); i++){
+                    String[] temp = orderedItems.get(i).split("@");
+                    String order_p_id = temp[0];
+                    String order_p_name = temp[1];
+                    float order_line_total = Float.parseFloat(temp[4]);
+
+                    if(id.equals(order_p_id)){
+                        orderedItems.remove(i);
+                        Toast.makeText(getApplicationContext(),
+                                order_p_name + " removed from this order", Toast.LENGTH_LONG).show();
+                        productTextView.setText("");
+                        setupItems();
+                        getProducts();
+                        break;
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "Nothing to remove", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "Please select a product to remove it from the order", Toast.LENGTH_LONG).show();
+            }
         } else if(view.getId() == R.id.btnAddProductToOrder){
             String productTV = productTextView.getText().toString();
 
@@ -515,10 +558,10 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
                 String[] tempID = productTV.split(" - ");
                 String id = tempID[0];
                 String nameQuantityPrice = tempID[1];
-                String[] tempNameQuantityPrice = nameQuantityPrice.split("\\$");
+                String[] tempNameQuantityPrice = nameQuantityPrice.split(" {2}\\* {2}\\$");
                 String nameQuantity = tempNameQuantityPrice[0];
                 String price = tempNameQuantityPrice[1];
-                String[] tempQuantity = nameQuantity.split(" {2}ordered ");
+                String[] tempQuantity = nameQuantity.split(" : ");
                 String name = tempQuantity[0];
                 String quantity = tempQuantity[1];
 

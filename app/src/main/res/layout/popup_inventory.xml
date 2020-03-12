@@ -25,5 +25,14 @@
         android:adjustViewBounds="true"
         android:padding="50dp"
         android:scaleType="fitCenter"/>
-
+    <ImageButton
+        android:id="@+id/btnRecommendation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/solid_border_white_back"
+        android:src="@drawable/recommendation"
+        android:adjustViewBounds="true"
+        android:padding="50dp"
+        android:scaleType="fitCenter"/>
 </LinearLayout>

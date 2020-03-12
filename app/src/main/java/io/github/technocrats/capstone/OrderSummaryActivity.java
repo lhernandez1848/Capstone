@@ -42,13 +42,14 @@ import io.github.technocrats.capstone.adapters.OrderSummaryAdapter;
 import io.github.technocrats.capstone.models.OrderSummary;
 
 public class OrderSummaryActivity extends AppCompatActivity implements View.OnClickListener {
-    List<String> itemsOrdered, orderItemsFinal;
+    List<String> itemsOrdered;
+    public static List<String> orderItemsFinal;
     OrderSummaryAdapter orderSummaryAdapter;
     ArrayList<OrderSummary> orderItemsArray;
     OrderSummary item;
 
     TextView totalTextView, dateDisplay, storeNumberDisplay;
-    Button btnSubmitOrder;
+    Button btnSubmitOrder, btnEditOrder;
     Toolbar toolbar;
 
     RecyclerView recyclerView;
@@ -56,7 +57,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
     Calendar calendar;
 
     String storeID, product_name, product_id, sProductPrice, new_order_id;
-    float product_quantity, product_price, total;
+    float product_quantity, product_price, total, line_total;
     int currentYear, currentMonth, currentDay;
 
     private SharedPreferences sharedPlace;
@@ -84,7 +85,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         orderSummaryAdapter = new OrderSummaryAdapter(this, orderItemsArray);
 
         btnSubmitOrder = (Button) findViewById(R.id.btnSubmitOrder);
+        btnEditOrder = (Button) findViewById(R.id.btnEditOrder);
         btnSubmitOrder.setOnClickListener(this);
+        btnEditOrder.setOnClickListener(this);
 
         dateDisplay = (TextView) findViewById(R.id.txtOrderSummaryDateDisplay);
         storeNumberDisplay = (TextView) findViewById(R.id.txtOrderSummaryStoreNumber);
@@ -136,18 +139,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
             product_name = tempSplit[1];
             product_quantity = Float.parseFloat(tempSplit[2]);
             product_price = Float.parseFloat(tempSplit[3]);
+            line_total = Float.parseFloat(tempSplit[4]);
 
-            for(int i=0; i < orders.size(); i++){
-                String[] tempSplit2 = orders.get(i).split("@");
-                String yProductName = tempSplit2[1];
-                float yProductQuantity = Float.parseFloat(tempSplit2[2]);
-                if (product_name.equals(yProductName) && y!=i){
-                    product_quantity += yProductQuantity;
-                    orders.remove(i);
-                }
-            }
-
-            newOrderLine = product_price + "@" + product_id + "@" + product_quantity;
+            newOrderLine = product_id + "@" + product_name + "@" + product_quantity + "@" + product_price + "@" + line_total;
             orderItemsFinal.add(newOrderLine);
 
             sProductPrice = "$" + product_price;
@@ -217,21 +211,34 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
              String[] tempSplit;
              float p_quantity, p_price;
              String p_id;
-
              for(String x : orderItemsFinal){
                  tempSplit = x.split("@");
-                 p_price = Float.parseFloat(tempSplit[0]);
-                 p_id = tempSplit[1];
+                 p_price = Float.parseFloat(tempSplit[3]);
+                 p_id = tempSplit[0];
                  p_quantity = Float.parseFloat(tempSplit[2]);
 
                  insertOrderItems(p_quantity, p_price, p_id);
              }
-        }
+
+             Toast.makeText(getApplicationContext(), "Order number: " + new_order_id
+                     + " added successfully", Toast.LENGTH_LONG).show();
+
+             Intent setIntent = new Intent(getApplicationContext(), MainActivity.class);
+             setIntent.putExtra("FROM_ACTIVITY", "ORDER_SUBMITTED");
+             startActivity(setIntent);
+             finish();
+
+        } else if(view.getId() == R.id.btnEditOrder){
+             Intent setIntent = new Intent(getApplicationContext(), CreateOrderActivity.class);
+             setIntent.putExtra("FROM_ACTIVITY", "ORDER_SUMMARY");
+             startActivity(setIntent);
+             finish();
+         }
     }
 
     //insert a new order into the server
     private void insertOrder() {
-        String url = "https://f8a6792c.ngrok.io/?a=insert%20into%20orders(order_id,day,month,year,total_cost,status_id,store_id)%20values(%27"+currentDay+"%27,"+currentMonth+","+currentYear+","+total+",2,"+storeID+")";
+        String url = "https://f8a6792c.ngrok.io/?a=insert%20into%20orders(order_id,day,month,year,total_cost,status_id,store_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+total+",2,"+storeID+")";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -267,5 +274,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    public static List<String> getOrderSummaryItems(){
+        return orderItemsFinal;
     }
 }

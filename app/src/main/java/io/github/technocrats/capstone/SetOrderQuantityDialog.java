@@ -52,7 +52,7 @@ public class SetOrderQuantityDialog extends AppCompatDialogFragment implements V
         productPrice = Float.parseFloat(getArguments().getString("productPrice"));
         productQuantityFromCreate = Float.parseFloat(getArguments().getString("productQuantity"));
         quantity = productQuantityFromCreate;
-        total = 0f;
+        total = (productPrice * quantity);
 
         builder.setView(view).setTitle(productName);
 

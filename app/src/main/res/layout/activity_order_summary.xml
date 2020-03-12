@@ -83,19 +83,37 @@
         android:textSize="30sp"
         android:layout_marginEnd="40dp"/>
 
-   <Button
-        android:id="@+id/btnSubmitOrder"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:background="@drawable/solid_border_blue_back"
-        android:text="Submit"
-        android:layout_gravity="end"
-        android:layout_marginEnd="20dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingStart="60dp"
-        android:paddingEnd="60dp"
-        android:textSize="30sp"/>
-
+        android:layout_marginEnd="40dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnEditOrder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/solid_border_blue_back"
+            android:text="Edit"
+            android:layout_marginEnd="40dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="60dp"
+            android:textSize="30sp"/>
+       <Button
+            android:id="@+id/btnSubmitOrder"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+           android:layout_marginStart="40dp"
+            android:background="@drawable/solid_border_blue_back"
+            android:text="Submit"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="60dp"
+            android:textSize="30sp"/>
+    </LinearLayout>
 </LinearLayout>
