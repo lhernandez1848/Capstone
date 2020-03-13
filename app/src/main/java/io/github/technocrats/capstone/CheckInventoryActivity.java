@@ -1,10 +1,5 @@
 package io.github.technocrats.capstone;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,6 +18,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
 
 public class CheckInventoryActivity extends AppCompatActivity implements
         ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener,
@@ -1120,14 +1121,10 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFinalChildClick(int plpos, int slpos, int tlpos) {
-
-    }
+    public void onFinalChildClick(int plpos, int slpos, int tlpos) {}
 
     @Override
-    public void onFinalItemClick(int plItem, String slItem, String tlItem) {
-
-    }
+    public void onFinalItemClick(int plItem, String slItem, String tlItem) {}
 
     // on pie chart value selected
     @Override
