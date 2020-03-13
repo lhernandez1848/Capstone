@@ -115,7 +115,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
-
+                startActivity(new Intent(
+                        getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
 
@@ -145,7 +146,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.tvChangePasswordLink){
-            layoutChangePassword.setVisibility(View.VISIBLE);
+            if (layoutChangePassword.getVisibility() == View.VISIBLE){
+                layoutChangePassword.setVisibility(View.GONE);
+            } else {
+                layoutChangePassword.setVisibility(View.VISIBLE);
+            }
+
         } else if(view.getId() == R.id.btnChangePassword){
             if((eOldPassword.getText().length()<1) || (eNewPassword.getText().length()<1)
                     || (eConfirmPassword.getText().length()<1)){

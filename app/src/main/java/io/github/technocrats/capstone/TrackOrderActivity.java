@@ -1,17 +1,6 @@
 package io.github.technocrats.capstone;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import io.github.technocrats.capstone.adapters.OrderAdapter;
-import io.github.technocrats.capstone.models.Order;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +12,14 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -36,6 +33,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import io.github.technocrats.capstone.adapters.OrderAdapter;
+import io.github.technocrats.capstone.models.Order;
 
 public class TrackOrderActivity extends AppCompatActivity
         implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -98,7 +98,6 @@ public class TrackOrderActivity extends AppCompatActivity
         // Set error message to null
         tvOrderNumberError.setText(orderNumberError);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -250,7 +249,8 @@ public class TrackOrderActivity extends AppCompatActivity
                         getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
-
+                startActivity(new Intent(
+                        getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
 

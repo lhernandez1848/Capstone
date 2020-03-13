@@ -1,12 +1,12 @@
 package io.github.technocrats.capstone;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageButton;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class InventoryPopup extends AppCompatActivity
         implements View.OnClickListener{
@@ -38,11 +38,19 @@ public class InventoryPopup extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btnRecommendation) {
-
-            Intent i = new Intent(InventoryPopup.this, CalendarRecommendation.class);
-            startActivity(i);
+    public void onClick(View view) {
+        if (view.getId() == R.id.btnSetInventory){
+            /*startActivity(new Intent(
+                    getApplicationContext(), CreateOrderActivity.class));
+            finish();*/
+        } else if (view.getId() == R.id.btnCheckInventory){
+            startActivity(new Intent(
+                    getApplicationContext(), CheckInventoryActivity.class));
+            finish();
+        } else if (view.getId() == R.id.btnRecommendation) {
+            startActivity(new Intent(
+                    getApplicationContext(), CalendarRecommendation.class));
+            finish();
         }
     }
 }

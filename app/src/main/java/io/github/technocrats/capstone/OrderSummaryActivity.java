@@ -25,17 +25,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.github.technocrats.capstone.adapters.OrderSummaryAdapter;
@@ -175,7 +168,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
                         getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
-
+                startActivity(new Intent(
+                        getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
 
@@ -201,7 +195,6 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     @Override
     public void onClick(View view) {

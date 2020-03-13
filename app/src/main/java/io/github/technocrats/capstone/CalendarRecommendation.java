@@ -1,21 +1,19 @@
 package io.github.technocrats.capstone;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.icu.text.DateFormat;
-import android.icu.text.SimpleDateFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import androidx.appcompat.widget.Toolbar;
+
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,19 +23,15 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.timessquare.CalendarPickerView;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import androidx.appcompat.app.AppCompatActivity;
-import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
 
 public class CalendarRecommendation extends AppCompatActivity implements ExpandableListAdapter.ThreeLevelListViewListener {
     TextView dateTextView;
@@ -48,18 +42,15 @@ public class CalendarRecommendation extends AppCompatActivity implements Expanda
     int day, month, year;
     String selectedDate;
     JSONArray jsonarray;
-
-    private SharedPreferences sharedPlace;
-    SharedPreferences.Editor sharedEditor;
+    GlobalMethods globalMethods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar_recommendation);
 
-        this.sharedPlace = getSharedPreferences("SharedPlace", MODE_PRIVATE);
-        sharedEditor = this.sharedPlace.edit();
-        checkIfLoggedIn();
+        globalMethods = new GlobalMethods(this);
+        globalMethods.checkIfLoggedIn();
 
         toolbar = findViewById(R.id.recommendationToolbar);
         setSupportActionBar(toolbar);
@@ -88,7 +79,9 @@ public class CalendarRecommendation extends AppCompatActivity implements Expanda
         calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
             @Override
             public void onDateSelected(Date date) {
-                selectedDate = DateFormat.getDateInstance(DateFormat.FULL).format(date);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    selectedDate = DateFormat.getDateInstance(DateFormat.FULL).format(date);
+                }
 
                 Calendar calSelected = Calendar.getInstance();
                 calSelected.setTime(date);
@@ -161,15 +154,6 @@ public class CalendarRecommendation extends AppCompatActivity implements Expanda
         ListView.setAdapter(adapter);
     }
 
-    private void checkIfLoggedIn() {
-        if (this.sharedPlace.getString("username", "").equals("")){
-            Toast.makeText(this, "You are not logged in", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(
-                    getApplicationContext(), LoginActivity.class));
-            finish();
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -181,23 +165,32 @@ public class CalendarRecommendation extends AppCompatActivity implements Expanda
     public  boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMenuCheckInventory:
+                startActivity(new Intent(
+                        getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
+                startActivity(new Intent(
+                        getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
+
                 return true;
             case R.id.btnMenuNewOrder:
-                startActivity(new Intent(getApplicationContext(), CreateOrderActivity.class));
+                startActivity(new Intent(
+                        getApplicationContext(), CreateOrderActivity.class));
                 return true;
             case R.id.btnMenuTrackOrder:
-                startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
+                startActivity(new Intent(
+                        getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
+
                 return true;
             case R.id.btnMenuProfile:
+
                 return true;
             case R.id.btnLogout:
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                globalMethods.logoutUser();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

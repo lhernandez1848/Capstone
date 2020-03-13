@@ -70,11 +70,11 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     GlobalMethods globalMethods;
 
-    String[] listDataCategories, categoriesForSpinner;
-    List<String[]> listDataSubcategories;
-    List<LinkedHashMap<String, List<String>>> listDataProducts;
+    String[] listDataCategories, categoriesForSpinner, listDataCategoriesProportion;
+    List<String[]> listDataSubcategories, listDataSubcategoriesProportion;
+    List<LinkedHashMap<String, List<String>>> listDataProducts, listDataProductsProportion;
 
-    // declare and initialize lists of subcategories per categories
+    // declare and initialize lists of subcategories per categories for Values
     String[] sFood = new String[]{"Sugar and Shortening", "Fillings", "Drinks",
             "Cans and Home Brew", "Soup and Sandwiches", "Food Ingredients", "Produce",
             "Bread", "Emulsions and Paste", "danis", "mustard spread", "Toppings"};
@@ -86,6 +86,19 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     String[] sMiscellaneous = new String[]{"Store Supplies"};
     String[] sUniforms = new String[]{"Staff Uniform"};
     String[] sInventory = new String[]{"Dairy"};
+
+    // declare and initialize lists of subcategories per categories for Proportions
+    String[] yFood = new String[]{"Sugar and Shortening", "Fillings", "Drinks",
+            "Cans and Home Brew", "Soup and Sandwiches", "Food Ingredients", "Produce",
+            "Bread", "Emulsions and Paste", "danis", "mustard spread", "Toppings"};
+    String[] yNA = new String[]{"N/A"};
+    String[] yPaper = new String[]{"Paper - Other Packaging", "Hot Drink Cups",
+            "Iced Beverage Cups/Lids"};
+    String[] yAdvertising = new String[]{"Advertising"};
+    String[] yCleaning = new String[]{"coffee bowl cleaner"};
+    String[] yMiscellaneous = new String[]{"Store Supplies"};
+    String[] yUniforms = new String[]{"Staff Uniform"};
+    String[] yInventory = new String[]{"Dairy"};
 
     JSONArray jsonarrayProducts;
 
@@ -135,6 +148,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
         // initialize subcategories list
         listDataSubcategories = new ArrayList<>();
+        listDataSubcategoriesProportion = new ArrayList<>();
 
         // initialize products list
         listDataProducts = new ArrayList<>();
@@ -148,6 +162,15 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         listDataSubcategories.add(sMiscellaneous);
         listDataSubcategories.add(sUniforms);
         listDataSubcategories.add(sInventory);
+
+        listDataSubcategoriesProportion.add(yFood);
+        listDataSubcategoriesProportion.add(yNA);
+        listDataSubcategoriesProportion.add(yPaper);
+        listDataSubcategoriesProportion.add(yAdvertising);
+        listDataSubcategoriesProportion.add(yCleaning);
+        listDataSubcategoriesProportion.add(yMiscellaneous);
+        listDataSubcategoriesProportion.add(yUniforms);
+        listDataSubcategoriesProportion.add(yInventory);
 
         formatter = new DecimalFormat("#,###.##");
 
@@ -213,7 +236,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                         getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
-
+                startActivity(new Intent(
+                        getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
 
@@ -247,10 +271,14 @@ public class CheckInventoryActivity extends AppCompatActivity implements
             pieChart.setVisibility(View.GONE);
             categoriesSpinner.setVisibility(View.GONE);
             radioSelected = "value";
+            selectedDay = 0;
+            selectDate.setText(null);
         } else if (view.getId() == R.id.radio_proportion){
             inventoryValuesLayout.setVisibility(View.GONE);
             selectDate.setVisibility(View.GONE);
             radioSelected = "proportion";
+            selectedDay = 0;
+            selectDate.setText(null);
             categoriesSpinner.setVisibility(View.VISIBLE);
             loadSpinner();
         } else if (view.getId() == R.id.txtSortDatePicker){
@@ -821,16 +849,6 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                             float uniformQuantity = 0;
                             float dairyQuantity = 0;
 
-                            // declare and initialize variables used for storing category quantity
-                            float food = 0;
-                            float na = 0;
-                            float paper = 0;
-                            float advertising = 0;
-                            float cleaning = 0;
-                            float miscellaneous = 0;
-                            float uniforms = 0;
-                            float inventory = 0;
-
                             String category_name = "";
 
                             jsonarrayProducts = new JSONArray(response);
@@ -851,87 +869,66 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                                 switch(subcategory_id) {
                                     case 1:
                                         sugarQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 2:
                                         fillingsQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 3:
                                         drinksQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 4:
                                         cansQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 5:
                                         soupQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 6:
                                         foodIngQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 7:
                                         produceQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 8:
                                         naQuantity += fQuantity;
-                                        na += fQuantity;
                                         break;
                                     case 9:
                                         breadQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 10:
                                         emulsionsQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 11:
                                         danisQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 12:
                                         mustardQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 13:
                                         toppingsQuantity += fQuantity;
-                                        food += fQuantity;
                                         break;
                                     case 14:
                                         paperQuantity += fQuantity;
-                                        paper += fQuantity;
                                         break;
                                     case 15:
                                         hotDrinksQuantity += fQuantity;
-                                        paper += fQuantity;
                                         break;
                                     case 16:
                                         icedQuantity += fQuantity;
-                                        paper += fQuantity;
                                         break;
                                     case 17:
                                         advertisingQuantity += fQuantity;
-                                        advertising += fQuantity;
                                         break;
                                     case 18:
                                         coffeeCleanerQuantity += fQuantity;
-                                        cleaning += fQuantity;
                                         break;
                                     case 19:
                                         storeSuppliesQuantity += fQuantity;
-                                        miscellaneous += fQuantity;
                                         break;
                                     case 20:
                                         uniformQuantity += fQuantity;
-                                        uniforms += fQuantity;
                                         break;
                                     case 21:
                                         dairyQuantity += fQuantity;
-                                        inventory += fQuantity;
                                         break;
                                     default:
                                 }
@@ -954,14 +951,14 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                                     categoryFoodQuantity[9] = danisQuantity;
                                     categoryFoodQuantity[10] = mustardQuantity;
                                     categoryFoodQuantity[11] = toppingsQuantity;
-                                    xData = sFood;
+                                    xData = yFood;
                                     yData = categoryFoodQuantity;
                                     addDataSet();
                                     break;
                                 case 2:
                                     float[] categoryNAQuantity = new float[1];
                                     categoryNAQuantity[0] = naQuantity;
-                                    xData = sNA;
+                                    xData = yNA;
                                     yData = categoryNAQuantity;
                                     addDataSet();
                                     break;
@@ -970,42 +967,42 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                                     categoryPaperQuantity[0] = paperQuantity;
                                     categoryPaperQuantity[1] = hotDrinksQuantity;
                                     categoryPaperQuantity[2] = icedQuantity;
-                                    xData = sPaper;
+                                    xData = yPaper;
                                     yData = categoryPaperQuantity;
                                     addDataSet();
                                     break;
                                 case 4:
                                     float[] categoryAdvertisingQuantity = new float[1];
                                     categoryAdvertisingQuantity[0] = advertisingQuantity;
-                                    xData = sAdvertising;
+                                    xData = yAdvertising;
                                     yData = categoryAdvertisingQuantity;
                                     addDataSet();
                                     break;
                                 case 5:
                                     float[] categoryCleaningQuantity = new float[1];
                                     categoryCleaningQuantity[0] = coffeeCleanerQuantity;
-                                    xData = sCleaning;
+                                    xData = yCleaning;
                                     yData = categoryCleaningQuantity;
                                     addDataSet();
                                     break;
                                 case 6:
                                     float[] categoryMiscellaneousQuantity = new float[1];
                                     categoryMiscellaneousQuantity[0] = storeSuppliesQuantity;
-                                    xData = sMiscellaneous;
+                                    xData = yMiscellaneous;
                                     yData = categoryMiscellaneousQuantity;
                                     addDataSet();
                                     break;
                                 case 7:
                                     float[] categoryUniformsQuantity = new float[1];
                                     categoryUniformsQuantity[0] = uniformQuantity;
-                                    xData = sUniforms;
+                                    xData = yUniforms;
                                     yData = categoryUniformsQuantity;
                                     addDataSet();
                                     break;
                                 case 8:
                                     float[] categoryInventoryQuantity = new float[1];
                                     categoryInventoryQuantity[0] = dairyQuantity;
-                                    xData = sInventory;
+                                    xData = yInventory;
                                     yData = categoryInventoryQuantity;
                                     addDataSet();
                                     break;

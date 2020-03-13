@@ -1,10 +1,5 @@
 package io.github.technocrats.capstone;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +11,10 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,11 +29,11 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
 
 public class CreateOrderActivity extends AppCompatActivity implements SetOrderQuantityDialog.SetOrderQuantityDialogListener,
         ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener {
@@ -427,7 +426,8 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
                         getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
-
+                startActivity(new Intent(
+                        getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
 
