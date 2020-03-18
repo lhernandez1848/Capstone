@@ -100,7 +100,7 @@ public class CalendarRecommendation extends AppCompatActivity implements Expanda
 
     public void getProducts()
     {
-        String url = "https://f8a6792c.ngrok.io/?a=SELECT inventories.day, inventories.month, inventories.year, inventories.quantity, inventories.par, products.product, products.category_id, products.subcategory_id FROM inventories INNER JOIN products ON inventories.product_id = products.product_id WHERE inventories.day = " + day + " AND inventories.month = " + month + " AND inventories.year = " + year;
+        String url = "https://huexinventory.ngrok.io/?a=SELECT inventories.day, inventories.month, inventories.year, inventories.quantity, inventories.par, products.product, products.category_id, products.subcategory_id FROM inventories INNER JOIN products ON inventories.product_id = products.product_id WHERE inventories.day = " + day + " AND inventories.month = " + month + " AND inventories.year = " + year;
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {

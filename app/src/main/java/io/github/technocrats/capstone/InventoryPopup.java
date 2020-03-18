@@ -40,9 +40,9 @@ public class InventoryPopup extends AppCompatActivity
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btnSetInventory){
-            /*startActivity(new Intent(
-                    getApplicationContext(), CreateOrderActivity.class));
-            finish();*/
+            startActivity(new Intent(
+                    getApplicationContext(), SetInventoryActivity.class));
+            finish();
         } else if (view.getId() == R.id.btnCheckInventory){
             startActivity(new Intent(
                     getApplicationContext(), CheckInventoryActivity.class));

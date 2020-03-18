@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity
                         getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-
+                startActivity(new Intent(
+                        getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
                 startActivity(new Intent(

@@ -139,7 +139,7 @@ public class TrackOrderActivity extends AppCompatActivity
 
     private void searchOrder(String orderNumber) {
 
-        String url ="https://f8a6792c.ngrok.io/?a=select%20*%20from%20orders%20where%20order_id=" + orderNumber;
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20orders%20where%20order_id%20like%20%27"+orderNumber+"%25%27";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -253,7 +253,8 @@ public class TrackOrderActivity extends AppCompatActivity
                         getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-
+                startActivity(new Intent(
+                        getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
                 startActivity(new Intent(

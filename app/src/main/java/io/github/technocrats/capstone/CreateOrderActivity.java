@@ -139,7 +139,8 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
 
         Intent mIntent = getIntent();
         String previousActivity = mIntent.getStringExtra("FROM_ACTIVITY");
-        if (previousActivity != null && previousActivity.equals("ORDER_SUMMARY")) {
+        if (previousActivity != null && previousActivity.equals("ORDER_SUMMARY")
+                && OrderSummaryActivity.getOrderSummaryItems().size()>0) {
             orderedItems = OrderSummaryActivity.getOrderSummaryItems();
             setupItems();
         } else {
@@ -166,7 +167,7 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
     }
 
     public void getProducts(){
-        String url ="https://f8a6792c.ngrok.io/?a=select%20*%20from%20products";
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -430,7 +431,8 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
                         getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-
+                startActivity(new Intent(
+                        getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
                 startActivity(new Intent(

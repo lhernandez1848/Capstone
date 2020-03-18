@@ -70,9 +70,9 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     GlobalMethods globalMethods;
 
-    String[] listDataCategories, categoriesForSpinner, listDataCategoriesProportion;
+    String[] listDataCategories, categoriesForSpinner;
     List<String[]> listDataSubcategories, listDataSubcategoriesProportion;
-    List<LinkedHashMap<String, List<String>>> listDataProducts, listDataProductsProportion;
+    List<LinkedHashMap<String, List<String>>> listDataProducts;
 
     // declare and initialize lists of subcategories per categories for Values
     String[] sFood = new String[]{"Sugar and Shortening", "Fillings", "Drinks",
@@ -240,7 +240,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                         getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-
+                startActivity(new Intent(
+                        getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
                 startActivity(new Intent(
@@ -324,7 +325,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // get products and set up list views for sorting by values
     public void getProductValues(int day, int month, int year){
-        String url ="https://f8a6792c.ngrok.io/?a=select%20day,month,year,quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year;
+        String url ="https://huexinventory.ngrok.io/?a=select%20day,month,year,quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year;
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -817,7 +818,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // get products and set up list views for sorting by proportions
     public void getProductProportions(final int cat_id, int day, int month, int year){
-        String url ="https://f8a6792c.ngrok.io/?a=select%20quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year+"and%20products.category_id="+cat_id;
+        String url ="https://huexinventory.ngrok.io/?a=select%20quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year+"and%20products.category_id="+cat_id+"%20and%20quantity%3C%3E0%20order%20by%20quantity%20desc";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

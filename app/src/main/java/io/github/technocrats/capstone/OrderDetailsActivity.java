@@ -95,7 +95,7 @@ public class OrderDetailsActivity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
 
         displayOrderInformation();
-        displayOrderItems(orderNumber);
+        displayOrderItems();
     }
 
     private void displayOrderInformation() {
@@ -107,23 +107,13 @@ public class OrderDetailsActivity extends AppCompatActivity
         tvTotal.setText(orderTotal);
     }
 
-    private void displayOrderItems(final String orderNumber) {
-
-
-        String url = "https://f8a6792c.ngrok.io/?a=select%20op.quantity,%20op.unit_cost,%20p.product%20from%20ordered_products%20op%20join%20products%20p%20on%20op.product_id=p.product_id%20where%20order_id=" + orderNumber;
-
-        // String url = "https://f8a6792c.ngrok.io/?a=select%20order_id,quantity,unit_cost,product_id%20from%20ordered_products%20where%20order_id=" + orderNumber;
-
-        //RequestQueue queue = Volley.newRequestQueue(this);
+    private void displayOrderItems() {
+        String url = "https://huexinventory.ngrok.io/?a=select%20op.quantity,op.unit_cost,p.product%20from%20ordered_products%20op%20join%20products%20p%20on%20op.product_id=p.product_id%20where%20order_id=%27"+orderNumber+"%27";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
-                        // test - delete later
-                        // tvResult.setText(response);
-
                         try
                         {
                             JSONArray objArray = new JSONArray(response);
@@ -214,7 +204,8 @@ public class OrderDetailsActivity extends AppCompatActivity
                         getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-
+                startActivity(new Intent(
+                        getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
                 startActivity(new Intent(

@@ -172,7 +172,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
                         getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-
+                startActivity(new Intent(
+                        getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
                 startActivity(new Intent(
@@ -216,6 +217,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
              Toast.makeText(getApplicationContext(), "Order number: " + new_order_id
                      + " added successfully", Toast.LENGTH_LONG).show();
 
+             orderItemsFinal.clear();
+
              Intent setIntent = new Intent(getApplicationContext(), MainActivity.class);
              setIntent.putExtra("FROM_ACTIVITY", "ORDER_SUBMITTED");
              startActivity(setIntent);
@@ -231,7 +234,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
 
     //insert a new order into the server
     private void insertOrder() {
-        String url = "https://f8a6792c.ngrok.io/?a=insert%20into%20orders(order_id,day,month,year,total_cost,status_id,store_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+total+",2,"+storeID+")";
+        String url = "https://huexinventory.ngrok.io/?a=insert%20into%20orders(order_id,day,month,year,total_cost,status_id,store_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+total+",2,"+storeID+")";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -251,7 +254,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void insertOrderItems(float quantity, float price, String p_id){
-        String url ="https://f8a6792c.ngrok.io/?a=insert%20into%20ordered_products(order_id,day,month,year,quantity,unit_cost,product_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+quantity+","+price+",%27"+p_id+"%27)";
+        String url ="https://huexinventory.ngrok.io/?a=insert%20into%20ordered_products(order_id,day,month,year,quantity,unit_cost,product_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+quantity+","+price+",%27"+p_id+"%27)";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

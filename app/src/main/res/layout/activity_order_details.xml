@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:gravity="center_vertical"
-            android:textSize="24sp"
+            android:textSize="25sp"
             android:theme="@style/SwitchCompatTheme"
             android:thumb="@drawable/ic_voice"
             android:track="@drawable/track" />
@@ -61,7 +61,7 @@
                 android:padding="10dip"
                 android:text="Order Details"
                 android:textAlignment="center"
-                android:textSize="23sp"
+                android:textSize="25sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -78,7 +78,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
                 android:text="Order Number: " />
 
@@ -91,7 +91,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp" />
+                android:textSize="25sp" />
 
         </LinearLayout>
 
@@ -108,7 +108,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
                 android:text="Date: " />
 
@@ -121,7 +121,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp" />
+                android:textSize="25sp" />
 
         </LinearLayout>
 
@@ -138,7 +138,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
                 android:text="Status: " />
 
@@ -151,7 +151,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp" />
+                android:textSize="25sp" />
 
         </LinearLayout>
 
@@ -168,7 +168,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
                 android:text="Total: " />
 
@@ -181,7 +181,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textSize="17sp" />
+                android:textSize="25sp" />
 
         </LinearLayout>
 
@@ -202,16 +202,13 @@
             android:paddingBottom="10dp"
             android:textAlignment="center"
             android:textStyle="bold"
-            android:textSize="17sp"/>
+            android:textSize="30sp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="30dp"/>
-
-
-
     </LinearLayout>
 
 </RelativeLayout>
