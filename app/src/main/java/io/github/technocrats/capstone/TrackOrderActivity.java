@@ -139,7 +139,7 @@ public class TrackOrderActivity extends AppCompatActivity
 
     private void searchOrder(String orderNumber) {
 
-        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20orders%20where%20order_id%20like%20%27"+orderNumber+"%25%27";
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20orders%20where%20order_id%20like%20%27"+orderNumber+"%25%27&b=Capstone";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

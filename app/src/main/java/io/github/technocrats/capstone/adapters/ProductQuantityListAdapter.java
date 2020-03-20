@@ -6,11 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.github.technocrats.capstone.models.ProductQuantity;
+
+import java.util.ArrayList;
+
 import io.github.technocrats.capstone.R;
+import io.github.technocrats.capstone.models.ProductQuantity;
 
 public class ProductQuantityListAdapter extends ArrayAdapter<ProductQuantity>
 {

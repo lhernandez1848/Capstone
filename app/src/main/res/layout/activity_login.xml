@@ -1,73 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/loginToolbar"
-        layout="@layout/custom_toolbar"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingTop="56dp"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="100dp"
+            android:paddingBottom="140dp">
 
-    <Button
-        android:id="@+id/btnSkipLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Skip login"
-        android:textSize="30sp"
-        android:layout_marginTop="100dp"
-        android:gravity="center"
-        android:layout_below="@+id/loginToolbar"/>
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:shadowColor="@android:color/darker_gray"
+                android:shadowDx="10"
+                android:shadowDy="10"
+                android:shadowRadius="10"
+                android:text="@string/app_name"
+                android:textColor="#26858c"
+                android:textSize="100sp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtLoginTextView"
-        android:gravity="center"
-        android:text="LOGIN"
-        android:layout_marginTop="100dp"
-        android:textSize="80sp"
-        android:layout_below="@+id/loginToolbar"/>
+            <TextView
+                android:id="@+id/txtSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:shadowColor="@android:color/darker_gray"
+                android:shadowDx="10"
+                android:shadowDy="10"
+                android:shadowRadius="10"
+                android:text="@string/app_subtitle"
+                android:textColor="#26858c"
+                android:textSize="45sp" />
 
-    <EditText
-        android:id="@+id/txtUsername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtLoginTextView"
-        android:layout_marginStart="200dp"
-        android:layout_marginEnd="200dp"
-        android:layout_marginTop="80dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="10dp"
-        android:textSize="40sp"
-        android:hint="@string/str_username"
-        android:background="@drawable/solid_border_transparent"/>
+        </LinearLayout>
 
-    <EditText
-        android:id="@+id/txtPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtUsername"
-        android:layout_marginStart="200dp"
-        android:layout_marginEnd="200dp"
-        android:layout_marginTop="40dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="10dp"
-        android:textSize="40sp"
-        android:inputType="textPassword"
-        android:hint="@string/str_password"
-        android:background="@drawable/solid_border_transparent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="60dp"
+            android:padding="75dp">
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtPassword"
-        android:layout_marginStart="200dp"
-        android:layout_marginEnd="200dp"
-        android:layout_marginTop="80dp"
-        android:padding="20dp"
-        android:background="@drawable/solid_border_blue_back"
-        android:text="@string/str_sign_in"
-        android:textSize="40sp"/>
+            <!-- Username -->
+            <EditText android:id="@+id/txtUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:drawableLeft="@drawable/ic_person"
+                android:drawablePadding="@dimen/calendar_text_small"
+                android:backgroundTint="#26858c"
+                android:textSize="25sp"
+                android:hint="@string/str_username" />
 
-</RelativeLayout>
+            <EditText android:id="@+id/txtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:drawableLeft="@drawable/ic_lock"
+                android:drawablePadding="@dimen/calendar_text_small"
+                android:backgroundTint="#26858c"
+                android:inputType="textPassword"
+                android:textSize="25sp"
+                android:hint="Password"/>
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:padding="12dp"
+                android:gravity="center"
+                android:background="@drawable/button_shape"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:text="@string/str_sign_in"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSkipLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="Skip Login"
+            android:layout_marginTop="100dp"
+            android:gravity="center"/>
+
+    </LinearLayout>
+</LinearLayout>

@@ -111,7 +111,7 @@ public class SetInventoryActivity extends AppCompatActivity
     }
 
     public void getProducts(){
-        String url ="https://huexinventory.ngrok.io/?a=select%20product_id,product,unit_cost,subcategory_id%20from%20products";
+        String url ="https://huexinventory.ngrok.io/?a=select%20product_id,product,unit_cost,subcategory_id%20from%20products&b=Capstone";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -329,7 +329,7 @@ public class SetInventoryActivity extends AppCompatActivity
         String productId = tlItem.getProductId();
         String server ="https://huexinventory.ngrok.io/?a=";
         String query = "SELECT top(1) * FROM inventories WHERE product_id " +
-                "LIKE '" + productId + "' ORDER BY year DESC, month DESC, day DESC";
+                "LIKE '" + productId + "' ORDER BY year DESC, month DESC, day DESC&b=Capstone";
         String url = server + query;
 
         final StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

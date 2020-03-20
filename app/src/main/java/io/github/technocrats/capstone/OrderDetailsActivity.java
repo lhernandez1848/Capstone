@@ -108,7 +108,7 @@ public class OrderDetailsActivity extends AppCompatActivity
     }
 
     private void displayOrderItems() {
-        String url = "https://huexinventory.ngrok.io/?a=select%20op.quantity,op.unit_cost,p.product%20from%20ordered_products%20op%20join%20products%20p%20on%20op.product_id=p.product_id%20where%20order_id=%27"+orderNumber+"%27";
+        String url = "https://huexinventory.ngrok.io/?a=select%20op.quantity,op.unit_cost,p.product%20from%20ordered_products%20op%20join%20products%20p%20on%20op.product_id=p.product_id%20where%20order_id=%27"+orderNumber+"%27&b=Capstone";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {

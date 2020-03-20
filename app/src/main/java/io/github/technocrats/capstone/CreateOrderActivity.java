@@ -167,7 +167,7 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
     }
 
     public void getProducts(){
-        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products";
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products&b=Capstone";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

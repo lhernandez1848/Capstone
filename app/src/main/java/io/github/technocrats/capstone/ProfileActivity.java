@@ -195,7 +195,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setDataInServerDB(String sPassword, String sUsername){
-        String url ="https://huexinventory.ngrok.io/?a=Update%20users%20Set%20password_hash=%27"+sPassword+"%27%20Where%20user_name%20=%20%27"+sUsername+"%27";
+        String url ="https://huexinventory.ngrok.io/?a=Update%20users%20Set%20password_hash=%27"+sPassword+"%27%20Where%20user_name%20=%20%27"+sUsername+"%27&b=Capstone";
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

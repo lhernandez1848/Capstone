@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getDataFromServerDB(String usernameInput){
-        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20users%20where%20user_name=%27"+usernameInput+"%27";
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20users%20where%20user_name=%27"+usernameInput+"%27&b=Capstone";
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

@@ -130,7 +130,7 @@ public class ProductProportionActivity extends AppCompatActivity implements OnCh
 
     // get products and set up list views for sorting by values
     public void getProductProportions(){
-        String url = "https://huexinventory.ngrok.io/?a=select%20top%2012%20day,month,year,quantity,inventories.unit_cost,product,subcategory%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20where%20day="+selectedDay+"%20and%20month="+selectedMonth+"%20and%20year="+selectedYear+"%20and%20subcategory=%27"+selectedSubcategory+"%27%20and%20quantity%3C%3E0%20order%20by%20quantity%20desc";
+        String url = "https://huexinventory.ngrok.io/?a=select%20top%2012%20day,month,year,quantity,inventories.unit_cost,product,subcategory%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20where%20day="+selectedDay+"%20and%20month="+selectedMonth+"%20and%20year="+selectedYear+"%20and%20subcategory=%27"+selectedSubcategory+"%27%20and%20quantity%3C%3E0%20order%20by%20quantity%20desc&b=Capstone";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
