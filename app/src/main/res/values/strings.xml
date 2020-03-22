@@ -18,4 +18,14 @@
     <string name="str_old_password">Old Password</string>
     <string name="str_new_password">New Password</string>
     <string name="str_confirm_password">Confirm Password</string>
+
+    <string-array name="quantities">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>50</item>
+        <item>100</item>
+        <item>500</item>
+        <item>1000</item>
+    </string-array>
 </resources>

@@ -14,10 +14,29 @@
         android:textSize="30sp"/>
 
     <LinearLayout
+        android:id="@+id/SpinnerLayout"
+        android:layout_below="@+id/tvShowProductSelected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Spinner
+            android:id="@+id/QuantitiesSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/quantities"
+            android:gravity="center"
+            android:textSize="30sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:id="@+id/layoutSetQuantity"
-        android:layout_below="@+id/tvShowProductSelected"
+        android:layout_below="@+id/SpinnerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -39,6 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:textSize="30sp"
+            android:inputType="number"
             android:layout_gravity="center"
             android:gravity="center"
             android:background="@drawable/solid_border_transparent"/>
@@ -61,22 +81,14 @@
         android:layout_below="@+id/layoutSetQuantity"
         android:orientation="horizontal">
         <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/btnCancelSetQuantity"
-            android:text="CANCEL"
-            android:background="@drawable/solid_border_blue_back"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:textSize="30sp"/>
-        <Button
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/btnSaveSetQuantity"
-            android:text="SAVE"
-            android:background="@drawable/solid_border_blue_back"
+            android:id="@+id/btnDone"
+            android:text="DONE"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@android:color/darker_gray"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
             android:textSize="30sp"/>

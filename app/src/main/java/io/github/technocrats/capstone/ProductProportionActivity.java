@@ -95,30 +95,25 @@ public class ProductProportionActivity extends AppCompatActivity implements OnCh
     public  boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMenuCheckInventory:
-                startActivity(new Intent(
-                        getApplicationContext(), CheckInventoryActivity.class));
+                startActivity(new Intent(getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
-                startActivity(new Intent(
-                        getApplicationContext(), CalendarRecommendation.class));
+                startActivity(new Intent(getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-                startActivity(new Intent(
-                        getApplicationContext(), SetInventoryActivity.class));
+                startActivity(new Intent(getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
-                startActivity(new Intent(
-                        getApplicationContext(), CreateOrderActivity.class));
+                startActivity(new Intent(getApplicationContext(), CreateOrderActivity.class));
                 return true;
             case R.id.btnMenuTrackOrder:
-                startActivity(new Intent(
-                        getApplicationContext(), TrackOrderActivity.class));
+                startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
 
                 return true;
             case R.id.btnMenuProfile:
-
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 return true;
             case R.id.btnLogout:
                 globalMethods.logoutUser();

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/searchProductToolbar"
+        layout="@layout/custom_toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/voiceLayout"
+        android:layout_below="@+id/searchProductToolbar"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/voiceSwitchSearchProduct"
+            android:theme="@style/SwitchCompatTheme"
+            style="@style/SwitchCompatStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:gravity="center_vertical"
+            android:textSize="24sp"
+            android:thumb="@drawable/ic_voice"
+            android:track="@drawable/track"/>
+        <TextView
+            android:id="@+id/txtVoiceActiveSearchProduct"
+            android:textSize="30sp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Listening..."/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/grpProductName"
+        android:orientation="vertical"
+        android:layout_below="@+id/voiceLayout"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <TextView
+            android:id="@+id/tvProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:padding="10dip"
+            android:text="Enter Product Name:"
+            android:textAlignment="center"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/solid_border_transparent"
+            android:textAlignment="center"
+            android:maxLength="12"/>
+
+        <TextView
+            android:id="@+id/tvProductNameError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textAlignment="center"
+            android:textSize="17sp"
+            android:textStyle="italic"
+            android:textColor="@android:color/holo_red_dark"/>
+
+        <TextView
+            android:id="@+id/tvProductSelected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textAlignment="center"
+            android:textSize="17sp"
+            android:textStyle="italic"
+            android:textColor="@android:color/holo_red_dark"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/grpProductName"
+        android:id="@+id/grpProductSearchButtons"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnSearchProduct"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Search Product"
+            android:background="@drawable/solid_border_blue_back"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btnTrackProductOrder"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/solid_border_blue_back"
+            android:enabled="false"
+            android:padding="10dp"
+            android:text="Track Order"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btnAddProductFromSearch"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/solid_border_blue_back"
+            android:enabled="false"
+            android:padding="10dp"
+            android:text="Add Product"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/grpProductSearchButtons"
+        android:layout_margin="30dp"
+        android:orientation="vertical">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewProductSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tvResultProductSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textAlignment="center"
+            android:textSize="17sp"
+            android:textStyle="italic"
+            android:textColor="@android:color/holo_red_dark"/>
+    </LinearLayout>
+
+</RelativeLayout>

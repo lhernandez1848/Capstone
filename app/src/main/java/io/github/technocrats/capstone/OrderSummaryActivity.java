@@ -7,16 +7,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,32 +28,29 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import io.github.technocrats.capstone.adapters.OrderSummaryAdapter;
 import io.github.technocrats.capstone.models.OrderSummary;
 
 public class OrderSummaryActivity extends AppCompatActivity implements View.OnClickListener {
-    List<String> itemsOrdered;
-    public static List<String> orderItemsFinal;
-    OrderSummaryAdapter orderSummaryAdapter;
-    ArrayList<OrderSummary> orderItemsArray;
-    OrderSummary item;
-
     TextView totalTextView, dateDisplay, storeNumberDisplay;
-    Button btnSubmitOrder, btnEditOrder;
-    Toolbar toolbar;
 
-    RecyclerView recyclerView;
+    ListView ProductQuantityListView;
     GlobalMethods globalMethods;
     Calendar calendar;
 
-    String storeID, product_name, product_id, sProductPrice, new_order_id;
-    float product_quantity, product_price, total, line_total;
-    int currentYear, currentMonth, currentDay;
+    Button btnSubmitOrder;
+
+    Toolbar toolbar;
 
     private SharedPreferences sharedPlace;
+
+    String storeID, new_order_id, total;
+    int currentYear, currentMonth, currentDay;
     NumberFormat formatter;
+    OrderSummaryAdapter orderSummaryAdapter;
+    ArrayList<OrderSummary> orderItemsArray;
+    OrderSummary item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -73,14 +69,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setTitle("Order Summary");
 
-        orderItemsArray = new ArrayList<>();
-        orderItemsFinal = new ArrayList<>();
-        orderSummaryAdapter = new OrderSummaryAdapter(this, orderItemsArray);
-
         btnSubmitOrder = (Button) findViewById(R.id.btnSubmitOrder);
-        btnEditOrder = (Button) findViewById(R.id.btnEditOrder);
         btnSubmitOrder.setOnClickListener(this);
-        btnEditOrder.setOnClickListener(this);
 
         dateDisplay = (TextView) findViewById(R.id.txtOrderSummaryDateDisplay);
         storeNumberDisplay = (TextView) findViewById(R.id.txtOrderSummaryStoreNumber);
@@ -89,67 +79,42 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         formatter = new DecimalFormat("#,###.##");
 
         storeID = sharedPlace.getString("storeID", "");
-
         storeNumberDisplay.setText("Store Number: " + storeID);
 
+        ProductQuantityListView = (ListView) findViewById(R.id.ProductQuantityListView);
+
+        String order = getIntent().getStringExtra("order");
+
+        ArrayList<String> list = new ArrayList<>();
+
+        String[] temp = order.split("\n");
+
+        for(int i = 0; i < temp.length; i ++)
+        {
+            list.add(temp[i]);
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+
+        ProductQuantityListView.setAdapter(adapter);
+
+        total = getIntent().getStringExtra("total");
+
+        totalTextView = (TextView) findViewById(R.id.orderSummaryTotal);
+        totalTextView.setText(total);
+
+        // data used for inserting new order and ordered_items, as well as generating a new order_id
         calendar = Calendar.getInstance();
         currentDay = calendar.get(Calendar.DAY_OF_MONTH);
         currentMonth = calendar.get(Calendar.MONTH);
         currentMonth = currentMonth+1;
         currentYear = calendar.get(Calendar.YEAR);
 
-        totalTextView = (TextView) findViewById(R.id.orderSummaryTotal);
-
-        itemsOrdered = CreateOrderActivity.getOrderedItems();
-        getCategories(itemsOrdered);
-
-        recyclerView = (RecyclerView) findViewById(R.id.orderedProductListView);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        recyclerView.setAdapter(orderSummaryAdapter);
-
-        String totalDisplay = formatter.format(total);
-        totalDisplay = "Order Total:  $" + totalDisplay;
-        totalTextView.setText(totalDisplay);
-
         String timeHours = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
         String timeMinutes = String.valueOf(calendar.get(Calendar.MINUTE));
         String timeSecond = String.valueOf(calendar.get(Calendar.SECOND));
 
         new_order_id = currentYear + "" + currentMonth + "" + currentDay + "" + timeHours + "" + timeMinutes + "" + timeSecond;
-    }
-
-    public void getCategories(List<String> orders){
-        String[] tempSplit;
-        String newOrderLine;
-
-        for(int y = 0; y < orders.size(); y++){
-            tempSplit = orders.get(y).split("@");
-
-            product_id = tempSplit[0];
-            product_name = tempSplit[1];
-            product_quantity = Float.parseFloat(tempSplit[2]);
-            product_price = Float.parseFloat(tempSplit[3]);
-            line_total = Float.parseFloat(tempSplit[4]);
-
-            newOrderLine = product_id + "@" + product_name + "@" + product_quantity + "@" + product_price + "@" + line_total;
-            orderItemsFinal.add(newOrderLine);
-
-            sProductPrice = "$" + product_price;
-            total += (product_quantity * product_price);
-
-            // create order
-            item = new OrderSummary(product_quantity, product_name, sProductPrice);
-
-            // add to list
-            orderItemsArray.add(item);
-
-            // display result to recyclerview
-            orderSummaryAdapter.notifyDataSetChanged();
-        }
-
     }
 
     @Override
@@ -164,30 +129,25 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
     public  boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMenuCheckInventory:
-                startActivity(new Intent(
-                        getApplicationContext(), CheckInventoryActivity.class));
+                startActivity(new Intent(getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
-                startActivity(new Intent(
-                        getApplicationContext(), CalendarRecommendation.class));
+                startActivity(new Intent(getApplicationContext(), CalendarRecommendation.class));
                 return true;
             case R.id.btnMenuSetInventory:
-                startActivity(new Intent(
-                        getApplicationContext(), SetInventoryActivity.class));
+                startActivity(new Intent(getApplicationContext(), SetInventoryActivity.class));
                 return true;
             case R.id.btnMenuNewOrder:
-                startActivity(new Intent(
-                        getApplicationContext(), CreateOrderActivity.class));
+                startActivity(new Intent(getApplicationContext(), CreateOrderActivity.class));
                 return true;
             case R.id.btnMenuTrackOrder:
-                startActivity(new Intent(
-                        getApplicationContext(), TrackOrderActivity.class));
+                startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
 
                 return true;
             case R.id.btnMenuProfile:
-
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 return true;
             case R.id.btnLogout:
                 globalMethods.logoutUser();
@@ -199,37 +159,34 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View view) {
-         if (view.getId() == R.id.btnSubmitOrder){
-             insertOrder();
+        if (view.getId() == R.id.btnSubmitOrder){
+            // TODO: insert new order into orders
+            insertOrder();
 
-             String[] tempSplit;
-             float p_quantity, p_price;
-             String p_id;
-             for(String x : orderItemsFinal){
-                 tempSplit = x.split("@");
-                 p_price = Float.parseFloat(tempSplit[3]);
-                 p_id = tempSplit[0];
-                 p_quantity = Float.parseFloat(tempSplit[2]);
+            String[] tempSplit;
+            float p_quantity, p_price;
+            String p_id;
 
-                 insertOrderItems(p_quantity, p_price, p_id);
-             }
+            /*for(String x : orderItemsFinal){
+                tempSplit = x.split("@");
+                p_price = Float.parseFloat(tempSplit[3]);
+                p_id = tempSplit[0];
+                p_quantity = Float.parseFloat(tempSplit[2]);
 
-             Toast.makeText(getApplicationContext(), "Order number: " + new_order_id
-                     + " added successfully", Toast.LENGTH_LONG).show();
+                // TODO: insert each item into ordered_products
+                insertOrderItems(p_quantity, p_price, p_id);
+            }*/
 
-             orderItemsFinal.clear();
+            Toast.makeText(getApplicationContext(), "Order number: " + new_order_id
+                    + " added successfully", Toast.LENGTH_LONG).show();
 
-             Intent setIntent = new Intent(getApplicationContext(), MainActivity.class);
-             setIntent.putExtra("FROM_ACTIVITY", "ORDER_SUBMITTED");
-             startActivity(setIntent);
-             finish();
+            // orderItemsFinal.clear();
 
-        } else if(view.getId() == R.id.btnEditOrder){
-             Intent setIntent = new Intent(getApplicationContext(), CreateOrderActivity.class);
-             setIntent.putExtra("FROM_ACTIVITY", "ORDER_SUMMARY");
-             startActivity(setIntent);
-             finish();
-         }
+            Intent setIntent = new Intent(getApplicationContext(), MainActivity.class);
+            setIntent.putExtra("FROM_ACTIVITY", "ORDER_SUBMITTED");
+            startActivity(setIntent);
+            finish();
+        }
     }
 
     //insert a new order into the server
@@ -272,7 +229,4 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         queue.add(stringRequest);
     }
 
-    public static List<String> getOrderSummaryItems(){
-        return orderItemsFinal;
-    }
 }

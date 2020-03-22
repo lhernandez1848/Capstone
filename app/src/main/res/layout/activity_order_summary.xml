@@ -28,92 +28,33 @@
             android:layout_gravity="end"/>
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="The ordered products and their quantities are:"
-        android:textSize="30sp"
-        android:scrollbars="vertical"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"/>
-
-    <LinearLayout
+    <ListView
+        android:id="@+id/ProductQuantityListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="QTY"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="PRODUCT"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="PRICE"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orderedProductListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="30dp"/>
+        android:layout_height="400dp"
+        android:layout_marginTop="80dp"
+        android:fadeScrollbars="false"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
         android:id="@+id/orderSummaryTotal"
         android:textSize="30sp"
-        android:layout_marginEnd="40dp"/>
+        android:layout_marginTop="80dp"
+        android:gravity="center"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/btnEditOrder"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/solid_border_blue_back"
-            android:text="Edit"
-            android:layout_marginEnd="40dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:paddingStart="60dp"
-            android:paddingEnd="60dp"
-            android:textSize="30sp"/>
-       <Button
-            android:id="@+id/btnSubmitOrder"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-           android:layout_marginStart="40dp"
-            android:background="@drawable/solid_border_blue_back"
-            android:text="Submit"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:paddingStart="60dp"
-            android:paddingEnd="60dp"
-            android:textSize="30sp"/>
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnSubmitOrder"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:padding="12dp"
+        android:gravity="center"
+        android:background="@drawable/button_shape"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:text="Submit"/>
+
 </LinearLayout>

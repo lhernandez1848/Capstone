@@ -38,7 +38,8 @@
             android:layout_below="@+id/txtStoreNumber"
             android:layout_marginTop="50dp"
             android:background="@drawable/solid_border_transparent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             <ExpandableListView
                 android:id="@+id/expandableListView"
                 android:layout_width="match_parent"
@@ -46,6 +47,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="16dp" />
         </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/productLayout"
@@ -82,6 +84,7 @@
         <LinearLayout
             android:id="@+id/totalLayout"
             android:layout_below="@+id/productLayout"
+            android:layout_marginTop="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -99,33 +102,26 @@
 
         <!-- Bottom Buttons -->
         <LinearLayout
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="40dp"
             android:id="@+id/bottomButtons"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/totalLayout"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnCancelOrder"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="40dp"
-                android:background="@drawable/solid_border_blue_back"
-                android:text="Cancel"
-                android:textSize="25sp"/>
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <Button
                 android:id="@+id/btnGoToOrderSummary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="40dp"
-                android:background="@drawable/solid_border_blue_back"
-                android:text="Next"
-                android:textSize="25sp"/>
+                android:layout_width="450dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:layout_gravity="center"
+                android:padding="12dp"
+                android:background="@drawable/button_shape"
+                android:text="Create Order"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"/>
 
         </LinearLayout>
 
