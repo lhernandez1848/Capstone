@@ -6,10 +6,10 @@ public class OrderSummary {
     private String productName;
     private String unitCost;
 
-    public OrderSummary(float quantity, String productName, String unitCost) {
+    public OrderSummary(String productName, float quantity, String unitCost) {
         this.productName = productName;
-        this.unitCost = unitCost;
         this.quantity = quantity;
+        this.unitCost = unitCost;
     }
 
     public String getProductName() {

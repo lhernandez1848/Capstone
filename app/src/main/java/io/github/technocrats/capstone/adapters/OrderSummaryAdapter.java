@@ -26,15 +26,15 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
 
     public class OrderSummaryItemHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvItemQuantity;
         private TextView tvItemName;
+        private TextView tvItemQuantity;
         private TextView tvItemPrice;
 
         public OrderSummaryItemHolder(@NonNull View itemView) {
             super(itemView);
 
-            tvItemQuantity = (TextView) itemView.findViewById(R.id.lblListProductQuantity);
             tvItemName = (TextView) itemView.findViewById(R.id.lblListProductName);
+            tvItemQuantity = (TextView) itemView.findViewById(R.id.lblListProductQuantity);
             tvItemPrice = (TextView) itemView.findViewById(R.id.lblListProductPrice);
         }
 
@@ -42,8 +42,8 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             String quantity = Float.toString(item.getQuantity());
             String cost = item.getUnitCost();
 
-            tvItemQuantity.setText(quantity);
             tvItemName.setText(item.getProductName());
+            tvItemQuantity.setText(quantity);
             tvItemPrice.setText(cost);
         }
     }

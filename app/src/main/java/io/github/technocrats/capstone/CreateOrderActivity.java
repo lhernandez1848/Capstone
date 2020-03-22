@@ -72,17 +72,50 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
     private SharedPreferences sharedPlace;
 
     public static String[] products = new String[690];
-    public static int[] quantities = new int[690];
-    int index;
+    public static float[] quantities = new float[690];
+    public static float[] prices = new float[690];
+    public static String[] product_ids = new String[690];
+    public static int index;
     public static String product;
     public static float price;
     public static int position;
     public static float total;
 
+    String[] allProducts = new String[690];
+    String[] allProductIds = new String[690];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_order);
+
+        // get allProducts, allProductIds
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products" + "&b=Capstone";
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonarrayProducts = new JSONArray(response);
+
+                    for (int i = 0; i < jsonarrayProducts.length(); i++) {
+                        JSONObject jsonobject = jsonarrayProducts.getJSONObject(i);
+
+                        allProducts[i] = jsonobject.getString("product");
+                        allProductIds[i] = jsonobject.getString("product_id");
+                    }
+                }
+                catch (JSONException e){e.printStackTrace();}
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {}
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+        // got allProducts, allProductIds
 
         this.sharedPlace = getSharedPreferences("SharedPlace", MODE_PRIVATE);
         globalMethods = new GlobalMethods(this);
@@ -387,6 +420,15 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
         {
             products[index] = product;
             quantities[index] = 0;
+            prices[index] = price;
+
+            for (int i = 0; i < 690; i++) {
+                if(product.equals(allProducts[i])) {
+                    product_ids[index] = allProductIds[i];
+                    break;
+                }
+            }
+
             position = index;
             index ++;
         }
@@ -451,7 +493,7 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
     }
 
     @Override
-    public void updateProductTextView(int setQuantity) {
+    public void updateProductTextView(float setQuantity) {
         String productSelected = product + " : " + setQuantity + "  *  $" + price;
         productTextView.setText(productSelected);
     }
@@ -464,14 +506,14 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
 
             for(int i = 0; i < index; i ++) {
                 if(quantities[i] > 0) {
-                    order += products[i] + "    " + quantities[i] + "\n";
+                    order += products[i] + "    " + quantities[i] + "    " + prices[i] +"\n";
                 }
             }
 
             if(!order.equals("")) {
                 Intent i = new Intent(CreateOrderActivity.this, OrderSummaryActivity.class);
                 i.putExtra("order", order);
-                i.putExtra("total", "Total: $" + String.format("%.2f", total).replaceAll( "^-(?=0(\\.0*)?$)", ""));
+                i.putExtra("total", total);
                 startActivity(i);
             }
         } else if (view.getId() == R.id.btnAddProductToOrder){

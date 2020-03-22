@@ -81,15 +81,15 @@ public class SetOrderQuantityDialog extends AppCompatDialogFragment implements V
             dismiss();
         }
         else if(view.getId() == R.id.btnAddQuantity) {
-            CreateOrderActivity.quantities[CreateOrderActivity.position] += Integer.parseInt(QuantitySpinner.getSelectedItem().toString());
+            CreateOrderActivity.quantities[CreateOrderActivity.position] += Float.parseFloat(QuantitySpinner.getSelectedItem().toString());
             tvShowProductSelected.setText("$" + CreateOrderActivity.price + " × " + CreateOrderActivity.quantities[CreateOrderActivity.position] + " = $" + formatter.format(CreateOrderActivity.price * CreateOrderActivity.quantities[CreateOrderActivity.position]));
             CreateOrderActivity.total += CreateOrderActivity.price * Integer.parseInt(QuantitySpinner.getSelectedItem().toString());
             editTextOrderQuantity.setText(String.valueOf(CreateOrderActivity.quantities[CreateOrderActivity.position]));
             listener.updateTotalTextView();
         }
         else if(view.getId() == R.id.btnSubtractQuantity) {
-            if(CreateOrderActivity.quantities[CreateOrderActivity.position] >= Integer.parseInt(QuantitySpinner.getSelectedItem().toString())) {
-                CreateOrderActivity.quantities[CreateOrderActivity.position] -= Integer.parseInt(QuantitySpinner.getSelectedItem().toString());
+            if(CreateOrderActivity.quantities[CreateOrderActivity.position] >= Float.parseFloat(QuantitySpinner.getSelectedItem().toString())) {
+                CreateOrderActivity.quantities[CreateOrderActivity.position] -= Float.parseFloat(QuantitySpinner.getSelectedItem().toString());
                 tvShowProductSelected.setText("$" + CreateOrderActivity.price + " × " + CreateOrderActivity.quantities[CreateOrderActivity.position] + " = $" + formatter.format(CreateOrderActivity.price * CreateOrderActivity.quantities[CreateOrderActivity.position]));
                 CreateOrderActivity.total -= CreateOrderActivity.price * Integer.parseInt(QuantitySpinner.getSelectedItem().toString());
                 editTextOrderQuantity.setText(String.valueOf(CreateOrderActivity.quantities[CreateOrderActivity.position]));
@@ -101,7 +101,7 @@ public class SetOrderQuantityDialog extends AppCompatDialogFragment implements V
     @Override
     public void onFocusChange(View view, boolean b) {
         if(!b) {
-            int tempQuantity = Integer.parseInt(editTextOrderQuantity.getText().toString());
+            float tempQuantity = Float.parseFloat(editTextOrderQuantity.getText().toString());
             CreateOrderActivity.quantities[CreateOrderActivity.position] += tempQuantity;
             tvShowProductSelected.setText("$" + CreateOrderActivity.price + " × " + CreateOrderActivity.quantities[CreateOrderActivity.position] + " = $" + formatter.format(CreateOrderActivity.price * CreateOrderActivity.quantities[CreateOrderActivity.position]));
             CreateOrderActivity.total += CreateOrderActivity.price * tempQuantity;
@@ -112,6 +112,6 @@ public class SetOrderQuantityDialog extends AppCompatDialogFragment implements V
     public interface SetOrderQuantityDialogListener
     {
         void updateTotalTextView();
-        void updateProductTextView(int setQuantity);
+        void updateProductTextView(float setQuantity);
     }
 }
