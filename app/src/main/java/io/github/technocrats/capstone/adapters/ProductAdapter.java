@@ -19,10 +19,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
 
     private Context context;
     private ArrayList<Product> products;
+    private TextView tvProductSelected;
 
-    public ProductAdapter(Context context, ArrayList<Product> products) {
+    public ProductAdapter(Context context, ArrayList<Product> products, TextView tvProductSelected) {
         this.context = context;
         this.products = products;
+        this.tvProductSelected = tvProductSelected;
     }
 
     public class ProductHolder extends RecyclerView.ViewHolder {
@@ -43,11 +45,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
 
                     String p_id = tvProductId.getText().toString();
                     String p_name = tvProductName.getText().toString();
+                    String p_cost = tvUnitCost.getText().toString();
 
                     System.out.println("ID: " + p_id);
                     System.out.println("NAME: " + p_name);
 
-                    //tvProductSelected.setText(p_id + "  -  " + p_name);
+                    tvProductSelected.setText(p_id + "  -  " + p_name + "    $" + p_cost);
                 }
             });
         }

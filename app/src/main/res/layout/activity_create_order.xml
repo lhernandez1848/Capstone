@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="36sp" />
+            android:textSize="25sp" />
 
         <TextView
             android:id="@+id/txtStoreNumber"
@@ -28,22 +28,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="36sp" />
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/txtSearchProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtStoreNumber"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:text="Find a Product"
+            android:textColor="@color/colorTeal"
+            android:textSize="23sp"
+            android:focusable="true" />
 
         <!-- Form Layout -->
         <LinearLayout
             android:id="@+id/loadCategoryForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtStoreNumber"
-            android:layout_marginTop="50dp"
+            android:layout_below="@+id/txtSearchProduct"
+            android:layout_marginTop="20dp"
             android:background="@drawable/solid_border_transparent"
             android:orientation="vertical"
             android:gravity="center">
             <ExpandableListView
                 android:id="@+id/expandableListView"
                 android:layout_width="match_parent"
-                android:layout_height="550dp"
+                android:layout_height="500dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="16dp" />
         </LinearLayout>

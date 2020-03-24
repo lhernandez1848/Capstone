@@ -15,7 +15,6 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal">
-
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/voiceSwitchSearchProduct"
             android:theme="@style/SwitchCompatTheme"
@@ -44,7 +43,6 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
-
         <TextView
             android:id="@+id/tvProductName"
             android:layout_width="match_parent"
@@ -56,7 +54,6 @@
             android:textAlignment="center"
             android:textSize="23sp"
             android:textStyle="bold" />
-
         <EditText
             android:id="@+id/etProductName"
             android:layout_width="match_parent"
@@ -66,26 +63,24 @@
             android:background="@drawable/solid_border_transparent"
             android:textAlignment="center"
             android:maxLength="12"/>
-
         <TextView
             android:id="@+id/tvProductNameError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dip"
             android:textAlignment="center"
-            android:textSize="17sp"
+            android:textSize="20sp"
             android:textStyle="italic"
             android:textColor="@android:color/holo_red_dark"/>
-
         <TextView
             android:id="@+id/tvProductSelected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dip"
-            android:textAlignment="center"
-            android:textSize="17sp"
-            android:textStyle="italic"
-            android:textColor="@android:color/holo_red_dark"/>
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <LinearLayout
@@ -102,7 +97,8 @@
             android:layout_weight="1"
             android:padding="10dp"
             android:text="Search Product"
-            android:background="@drawable/solid_border_blue_back"
+            android:background="@drawable/button_shape"
+            android:textColor="@android:color/white"
             android:textSize="15sp" />
 
         <Button
@@ -111,28 +107,29 @@
             android:layout_height="40dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/solid_border_blue_back"
+            android:background="@drawable/button_shape"
             android:enabled="false"
             android:padding="10dp"
             android:text="Track Order"
+            android:textColor="@android:color/white"
             android:textSize="15sp" />
-
         <Button
             android:id="@+id/btnAddProductFromSearch"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/solid_border_blue_back"
-            android:enabled="false"
+            android:background="@drawable/button_shape"
+            android:textColor="@android:color/white"
             android:padding="10dp"
+            android:enabled="false"
             android:text="Add Product"
             android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:layout_below="@+id/grpProductSearchButtons"
         android:layout_margin="30dp"
         android:orientation="vertical">

@@ -320,7 +320,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // get products and set up list views for sorting by values
     public void getProductValues(int day, int month, int year){
-        String url ="https://huexinventory.ngrok.io/?a=select%20day,month,year,quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year+"&b=Capstone";
+        String url ="https://huexinventory.ngrok.io/?a=select%20day,month,year,quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year+"%20and%20quantity%20is%20not%20null&b=Capstone";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

@@ -29,9 +29,7 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -40,7 +38,8 @@ import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
 public class CreateOrderActivity extends AppCompatActivity implements SetOrderQuantityDialog.SetOrderQuantityDialogListener,
         ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener {
 
-    TextView storeNumber, totalTextView, dateDisplay, productTextView;
+    TextView storeNumberTextView, totalTextView, dateDisplayTextView, searchProductTextView;
+    public static TextView productTextView;
     String storeID;
     Button btnSubmit, btnAddProductToOrder, btnRemoveProductFromOrder;
     Toolbar toolbar;
@@ -81,8 +80,8 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
     public static int position;
     public static float total;
 
-    String[] allProducts = new String[690];
-    String[] allProductIds = new String[690];
+    public static String[] allProducts = new String[690];
+    public static String[] allProductIds = new String[690];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,12 +130,12 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
 
         setTitle("Create Order");
 
-        dateDisplay = findViewById(R.id.txtDateDisplay);
+        dateDisplayTextView = findViewById(R.id.txtDateDisplay);
         toolbar = findViewById(R.id.createOrderToolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        DisplayDate();
+        globalMethods.DisplayDate(dateDisplayTextView);
 
         for(int i = 0; i < 690; i ++)
         {
@@ -170,16 +169,18 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
         listDataSubcategories.add(sUniforms);
         listDataSubcategories.add(sInventory);
 
-        storeNumber = (TextView) findViewById(R.id.txtStoreNumber);
+        storeNumberTextView = (TextView) findViewById(R.id.txtStoreNumber);
         storeID = sharedPlace.getString("storeID", "");
         String displayStore = "Create New Order for Store Number: " + storeID;
-        storeNumber.setText(displayStore);
+        storeNumberTextView.setText(displayStore);
 
         getProducts();
 
         productTextView = (TextView) findViewById(R.id.productTextView);
         productTextView.setText("");
         totalTextView = (TextView) findViewById(R.id.totalTextView);
+        searchProductTextView = (TextView) findViewById(R.id.txtSearchProduct);
+        searchProductTextView.setOnClickListener(this);
 
         updateTotalTextView();
 
@@ -399,6 +400,10 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
 
     @Override
     public void onFinalItemClick(int plItem, String slItem, String tlItem) {
+        addProduct(tlItem);
+    }
+
+    public static void addProduct(String tlItem){
         String[] temp = tlItem.split("\\s\\s\\s\\s\\$");
 
         product = temp[0];
@@ -406,18 +411,15 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
 
         boolean productInProducts = false;
 
-        for(int i = 0; i < index; i ++)
-        {
-            if (product.equals(products[i]))
-            {
+        for(int i = 0; i < index; i ++){
+            if (product.equals(products[i])){
                 productInProducts = true;
                 position = i;
                 break;
             }
         }
 
-        if(!productInProducts)
-        {
+        if(!productInProducts){
             products[index] = product;
             quantities[index] = 0;
             prices[index] = price;
@@ -432,15 +434,8 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
             position = index;
             index ++;
         }
-
         String productSelected = product + " : " + quantities[position] + "  *  $" + price;
         productTextView.setText(productSelected);
-    }
-
-    private void DisplayDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy");
-        String date = sdf.format(new Date());
-        dateDisplay.setText(date);
     }
 
     @Override
@@ -534,6 +529,8 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
                 Toast.makeText(getApplicationContext(),
                         "Please select a product to remove it from the order", Toast.LENGTH_LONG).show();
             }
+        } else if (view.getId() == R.id.txtSearchProduct) {
+            startActivity(new Intent(getApplicationContext(), SearchProductActivity.class));
         }
     }
 }

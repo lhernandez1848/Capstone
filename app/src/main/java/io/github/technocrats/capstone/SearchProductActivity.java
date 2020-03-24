@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,7 +43,7 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
     GlobalMethods globalMethods;
 
     Toolbar toolbar;
-    TextView voiceActivated;
+    TextView voiceActivated, tvProductSelected, productTextView;
     SwitchCompat switchCompat;
     private EditText etProductName;
     private TextView tvProductNameError;
@@ -53,6 +54,7 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
     private ProductAdapter adapter;
     private ArrayList<Product> productList;
     private TextView tvResultProductSearch;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +83,14 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
         etProductName = (EditText) findViewById(R.id.etProductName);
         recyclerViewProductSearch = (RecyclerView) findViewById(R.id.recyclerViewProductSearch);
         tvResultProductSearch = (TextView) findViewById(R.id.tvResultProductSearch);
+        tvProductSelected = (TextView) findViewById(R.id.tvProductSelected);
+        productTextView = (TextView) findViewById(R.id.productTextView);
         productNameError = "";
 
         // initialize recyclerview
         recyclerViewProductSearch.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<>();
-        adapter = new ProductAdapter(this, productList);
+        adapter = new ProductAdapter(this, productList, tvProductSelected);
         recyclerViewProductSearch.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerViewProductSearch.setAdapter(adapter);
 
@@ -97,6 +101,8 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
 
         // Set error message to null
         tvProductNameError.setText(productNameError);
+
+        intent = new Intent(this, TrackOrderActivity.class);
     }
 
 
@@ -145,33 +151,97 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        if(isChecked){
+            Toast.makeText(getApplicationContext(),
+                    "Voice Control is on", Toast.LENGTH_LONG).show();
+            voiceActivated.setVisibility(View.VISIBLE);
 
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Voice Control is off", Toast.LENGTH_LONG).show();
+            voiceActivated.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onClick(View view) {
+        String productSelected = tvProductSelected.getText().toString();
         if (view.getId() == R.id.btnSearchProduct) {
-
             // save user input to variable
             productName = etProductName.getText().toString();
 
             // validate user input
-            if (validateProductName(productName))
-            {
+            if (validateProductName(productName)){
                 // search db for product
                 searchProduct(productName);
-            }
-
-            else
-            {
+                btnTrackProductOrder.setEnabled(true);
+                btnAddProductFromSearch.setEnabled(true);
+            } else{
                 // display error message
                 tvProductNameError.setText("Invalid product name.");
             }
-
             // clear EditText
             etProductName.setText("");
+        } else if (view.getId() == R.id.btnAddProductFromSearch){
+            if (productSelected.length()<1){
+                Toast.makeText(getApplicationContext(), "Please select a product",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                String[] temp1 = productSelected.split(" {2}- {2}");
+                CreateOrderActivity.addProduct(temp1[1]);
+                finish();
+            }
+        } else if (view.getId() == R.id.btnTrackProductOrder){
+            if (productSelected.length()<1){
+                Toast.makeText(getApplicationContext(), "Please select a product",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                String[] temp1 = productSelected.split(" {2}- {2}");
+                findProductOrder(temp1[0]);
+            }
         }
+    }
+
+    //find order_id where selected product was last ordered
+    private void findProductOrder(String productId) {
+        String url ="https://huexinventory.ngrok.io/?a=select%20Top(1)%20*%20from%20ordered_products%20where%20product_id=%27"+ productId +"%27%20order%20by%20year%20DESC,month%20DESC,day%20DESC&b=Capstone";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        final StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try{
+                            JSONArray objArray = new JSONArray(response);
+                            int objArrayLength = objArray.length();
+
+                            if (objArrayLength > 0){
+                                JSONObject obj = objArray.getJSONObject(0);
+
+                                String order_id = obj.getString("order_id");
+                                intent.putExtra("order_id", order_id);
+                                intent.putExtra("FROM_ACTIVITY", "SEARCH_PRODUCT");
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "No orders found for this product",
+                                        Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e){
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                tvProductNameError.setText("Sorry! An error occured.");
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     private boolean validateProductName(String productName) {

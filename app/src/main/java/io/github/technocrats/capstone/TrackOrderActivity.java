@@ -97,6 +97,12 @@ public class TrackOrderActivity extends AppCompatActivity
 
         // Set error message to null
         tvOrderNumberError.setText(orderNumberError);
+
+        Intent mIntent = getIntent();
+        String previousActivity = mIntent.getStringExtra("FROM_ACTIVITY");
+        if (previousActivity != null && previousActivity.equals("SEARCH_PRODUCT")){
+            etOrderNumber.setText(mIntent.getStringExtra("order_id"));
+        }
     }
 
     @Override
@@ -245,8 +251,7 @@ public class TrackOrderActivity extends AppCompatActivity
     public  boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMenuCheckInventory:
-                startActivity(new Intent(
-                        getApplicationContext(), CheckInventoryActivity.class));
+                startActivity(new Intent(getApplicationContext(), CheckInventoryActivity.class));
                 return true;
             case R.id.btnMenuRecommendations:
                 startActivity(new Intent(getApplicationContext(), CalendarRecommendation.class));
