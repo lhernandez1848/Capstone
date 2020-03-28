@@ -47,7 +47,7 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
     SwitchCompat switchCompat;
     private EditText etProductName;
     private TextView tvProductNameError;
-    private Button btnSearchProduct, btnTrackProductOrder, btnAddProductFromSearch;
+    private Button btnSearchProduct, btnAddProductFromSearch;
     private String productNameError;
     private String productName;
     private RecyclerView recyclerViewProductSearch;
@@ -55,6 +55,7 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
     private ArrayList<Product> productList;
     private TextView tvResultProductSearch;
     Intent intent;
+    public static Product selectedProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,6 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
 
         // Initializations
         btnSearchProduct = (Button) findViewById(R.id.btnSearchProduct);
-        btnTrackProductOrder = (Button) findViewById(R.id.btnTrackProductOrder);
         btnAddProductFromSearch = (Button) findViewById(R.id.btnAddProductFromSearch);
         tvProductNameError = (TextView) findViewById(R.id.tvProductNameError);
         etProductName = (EditText) findViewById(R.id.etProductName);
@@ -96,13 +96,14 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
 
         // Set onClickListener
         btnSearchProduct.setOnClickListener(this);
-        btnTrackProductOrder.setOnClickListener(this);
         btnAddProductFromSearch.setOnClickListener(this);
 
         // Set error message to null
         tvProductNameError.setText(productNameError);
 
         intent = new Intent(this, TrackOrderActivity.class);
+
+        selectedProduct = null;
     }
 
 
@@ -175,7 +176,6 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
             if (validateProductName(productName)){
                 // search db for product
                 searchProduct(productName);
-                btnTrackProductOrder.setEnabled(true);
                 btnAddProductFromSearch.setEnabled(true);
             } else{
                 // display error message
@@ -188,60 +188,23 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
                 Toast.makeText(getApplicationContext(), "Please select a product",
                         Toast.LENGTH_LONG).show();
             } else {
-                String[] temp1 = productSelected.split(" {2}- {2}");
-                CreateOrderActivity.addProduct(temp1[1]);
+                CreateOrderActivity.setProduct(selectedProduct);
                 finish();
-            }
-        } else if (view.getId() == R.id.btnTrackProductOrder){
-            if (productSelected.length()<1){
-                Toast.makeText(getApplicationContext(), "Please select a product",
-                        Toast.LENGTH_LONG).show();
-            } else {
-                String[] temp1 = productSelected.split(" {2}- {2}");
-                findProductOrder(temp1[0]);
             }
         }
     }
 
-    //find order_id where selected product was last ordered
-    private void findProductOrder(String productId) {
-        String url ="https://huexinventory.ngrok.io/?a=select%20Top(1)%20*%20from%20ordered_products%20where%20product_id=%27"+ productId +"%27%20order%20by%20year%20DESC,month%20DESC,day%20DESC&b=Capstone";
-        RequestQueue queue = Volley.newRequestQueue(this);
-        final StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try{
-                            JSONArray objArray = new JSONArray(response);
-                            int objArrayLength = objArray.length();
+    public static void setProductSelected(Product productSelected){
+        selectedProduct = productSelected;
 
-                            if (objArrayLength > 0){
-                                JSONObject obj = objArray.getJSONObject(0);
-
-                                String order_id = obj.getString("order_id");
-                                intent.putExtra("order_id", order_id);
-                                intent.putExtra("FROM_ACTIVITY", "SEARCH_PRODUCT");
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "No orders found for this product",
-                                        Toast.LENGTH_LONG).show();
-                            }
-
-                        } catch (JSONException e){
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                tvProductNameError.setText("Sorry! An error occured.");
+        ArrayList<Product> orderedItems = new ArrayList<>();
+        orderedItems = CreateOrderActivity.getOrderedItems();
+        for (Product p : orderedItems){
+            if(selectedProduct.getProductId().equals(p.getProductId())){
+                selectedProduct.setQuantity(p.getQuantity());
             }
-        });
+        }
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
     }
 
     private boolean validateProductName(String productName) {
@@ -272,10 +235,12 @@ public class SearchProductActivity extends AppCompatActivity implements DialogIn
                                     String product_id = obj.getString("product_id");
                                     String product_name = obj.getString("product");
                                     String s_unit_cost = obj.getString("unit_cost");
+                                    int subcategory = obj.getInt("subcategory_id");
+                                    int category = obj.getInt("category_id");
                                     float f_unit_cost = Float.parseFloat(s_unit_cost);
 
                                     // create order
-                                    Product product = new Product(product_id, product_name, f_unit_cost);
+                                    Product product = new Product(product_id, product_name, f_unit_cost, 0, subcategory, category);
 
                                     // add to list
                                     productList.add(product);

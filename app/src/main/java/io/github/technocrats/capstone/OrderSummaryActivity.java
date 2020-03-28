@@ -1,5 +1,6 @@
 package io.github.technocrats.capstone;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,14 +9,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,30 +32,26 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import io.github.technocrats.capstone.adapters.OrderSummaryAdapter;
-import io.github.technocrats.capstone.models.OrderSummary;
+import io.github.technocrats.capstone.models.Product;
 
 public class OrderSummaryActivity extends AppCompatActivity implements View.OnClickListener {
-    TextView totalTextView, dateDisplay, storeNumberDisplay;
 
-    ListView ProductQuantityListView;
-    RecyclerView recyclerView;
+    ArrayList<Product> orderedItems;
+    TextView tvStoreNumber, tvTotal, tvOrderSummary;
+    Button btnSubmitOrder;
+    private RecyclerView recyclerView;
+    private OrderSummaryAdapter adapter;
+    NumberFormat formatter;
     GlobalMethods globalMethods;
+    Toolbar toolbar;
     Calendar calendar;
 
-    Button btnSubmitOrder;
-
-    Toolbar toolbar;
-
-    private SharedPreferences sharedPlace;
-
-    String storeID, new_order_id, product_name, sProductPrice;
+    String storeID, new_order_id;
     int currentYear, currentMonth, currentDay;
-    float total, product_quantity;
-    NumberFormat formatter;
+    float total;
 
-    OrderSummaryAdapter orderSummaryAdapter;
-    ArrayList<OrderSummary> orderItemsArray;
-    OrderSummary item;
+    // declare Shared Preferences
+    private SharedPreferences sharedPlace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,39 +69,23 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setTitle("Order Summary");
 
+        tvStoreNumber = (TextView) findViewById(R.id.txtOrderSummaryStoreNumber);
+        tvOrderSummary = (TextView) findViewById(R.id.txtOrderSummaryCount);
+        tvTotal = (TextView) findViewById(R.id.orderSummaryTotalTextView);
+        recyclerView = (RecyclerView) findViewById(R.id.orderedProductListView);
         btnSubmitOrder = (Button) findViewById(R.id.btnSubmitOrder);
         btnSubmitOrder.setOnClickListener(this);
 
-        dateDisplay = (TextView) findViewById(R.id.txtOrderSummaryDateDisplay);
-        storeNumberDisplay = (TextView) findViewById(R.id.txtOrderSummaryStoreNumber);
+        Intent intent = getIntent();
+        orderedItems = intent.getParcelableArrayListExtra("orderedItems");
 
-        recyclerView = (RecyclerView) findViewById(R.id.orderedProductListView);
-        orderItemsArray = new ArrayList<>();
-        orderSummaryAdapter = new OrderSummaryAdapter(this, orderItemsArray);
-
-        globalMethods.DisplayDate(dateDisplay);
         formatter = new DecimalFormat("#,###.##");
 
+        // test - delete later
+        String test = Integer.toString(orderedItems.size());
         storeID = sharedPlace.getString("storeID", "");
-        storeNumberDisplay.setText("Store Number: " + storeID);
-
-        String order = getIntent().getStringExtra("order");
-
-        ArrayList<String> list = new ArrayList<>();
-
-        String[] temp = order.split("\n");
-
-        for(int i = 0; i < temp.length; i ++)
-        {
-            list.add(temp[i]);
-        }
-
-        setupRecyclerView(list);
-
-        total = getIntent().getFloatExtra("total", 0);
-
-        totalTextView = (TextView) findViewById(R.id.orderSummaryTotal);
-        totalTextView.setText("$" + formatter.format(total));
+        tvStoreNumber.setText("Store ID: " + storeID);
+        tvOrderSummary.setText("Ordered Items size: " + test);
 
         // data used for inserting new order and ordered_items, as well as generating a new order_id
         calendar = Calendar.getInstance();
@@ -119,32 +99,135 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         String timeSecond = String.valueOf(calendar.get(Calendar.SECOND));
 
         new_order_id = currentYear + "" + currentMonth + "" + currentDay + "" + timeHours + "" + timeMinutes + "" + timeSecond;
+
+        displayOrderedItems();
+        displayOrderTotal();
     }
 
-    // displays the items in the order
-    private void setupRecyclerView(ArrayList<String> list) {
-        String[] tempSplit;
+    public void displayOrderedItems() {
+        adapter = new OrderSummaryAdapter(this, orderedItems);
+        adapter.notifyDataSetChanged();
 
-        for(int y = 0; y < list.size(); y++) {
-            tempSplit = list.get(y).split(" {4}");
+        adapter.SetOnItemClickListener(new OrderSummaryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                // Toast.makeText(getApplicationContext(), "onItemClick() method", Toast.LENGTH_SHORT).show();
+            }
 
-            product_name = tempSplit[0];
-            product_quantity = Float.parseFloat(tempSplit[1]);
-            sProductPrice = "$" + Float.parseFloat(tempSplit[2]);
+            @Override
+            public void onDelete(View view, int position) {
+                //Toast.makeText(getApplicationContext(), "Delete button clicked.", Toast.LENGTH_SHORT).show();
+                showDeleteDialog(position);
+            }
 
-            // create order
-            item = new OrderSummary(product_name, product_quantity, sProductPrice);
-
-            // add to list
-            orderItemsArray.add(item);
-
-            // display result to recyclerview
-            orderSummaryAdapter.notifyDataSetChanged();
-        }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        recyclerView.setAdapter(orderSummaryAdapter);
+        // recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
+    }
+
+    public void displayOrderTotal(){
+        float orderTotal = 0f;
+        int orderedItemsLength = orderedItems.size();
+
+        for (int i=0; i < orderedItemsLength; i++) {
+            float itemTotal = orderedItems.get(i).getQuantity() * orderedItems.get(i).getUnitCost();
+            orderTotal += itemTotal;
+        }
+
+        String temp = "Order Total (" + Integer.toString(orderedItemsLength) + " items): $" + formatter.format(orderTotal);
+        tvTotal.setText(temp);
+    }
+
+    private void showDeleteDialog(int position) {
+        final int toDelete = position;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,
+                R.style.Theme_AppCompat_Light_Dialog);
+
+        builder.setMessage("Do you want to remove this item from this order?")
+                .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        removeProduct(toDelete);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void removeProduct(int position) {
+        // delete product from order list
+        orderedItems.remove(position);
+
+        // test
+        String test = Integer.toString(orderedItems.size());
+        tvStoreNumber.setText("OrderedItems size: " + test);
+
+        // update list
+        adapter.notifyItemRemoved(position);
+
+        // update order total
+        displayOrderTotal();
+
+        // display success message
+        Toast.makeText(getApplicationContext(), "Item has been deleted.",
+                Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putParcelableArrayListExtra("orderedItems", orderedItems);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    //insert a new order table row into the server
+    private void insertOrder() {
+        String url = "https://huexinventory.ngrok.io/?a=insert%20into%20orders(order_id,day,month,year,total_cost,status_id,store_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+total+",2,"+storeID+")&b=Capstone";
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {}
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    //insert new ordered_products table rows into the server
+    public void insertOrderItems(float quantity, float price, String p_id){
+        String url ="https://huexinventory.ngrok.io/?a=insert%20into%20ordered_products(order_id,day,month,year,quantity,unit_cost,product_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+quantity+","+price+",%27"+p_id+"%27)&b=Capstone";
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {}
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     @Override
@@ -189,64 +272,18 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.btnSubmitOrder) {
+        if(view.getId() == R.id.btnSubmitOrder){
             insertOrder();
 
-            for(int i = 0; i < CreateOrderActivity.index; i ++) {
-                if(CreateOrderActivity.quantities[i] > 0) {
-                    insertOrderItems(CreateOrderActivity.quantities[i], CreateOrderActivity.prices[i], CreateOrderActivity.product_ids[i]);
-                }
+            for(Product p : orderedItems){
+                insertOrderItems(p.getQuantity(), p.getUnitCost(), p.getProductId());
             }
 
-            Toast.makeText(getApplicationContext(), "Order number: " + new_order_id
-                    + " added successfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Order Number " + new_order_id
+                    + " has been added", Toast.LENGTH_LONG).show();
 
-            Intent setIntent = new Intent(getApplicationContext(), MainActivity.class);
-            setIntent.putExtra("FROM_ACTIVITY", "ORDER_SUBMITTED");
-            startActivity(setIntent);
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
     }
-
-    //insert a new order table row into the server
-    private void insertOrder() {
-        String url = "https://huexinventory.ngrok.io/?a=insert%20into%20orders(order_id,day,month,year,total_cost,status_id,store_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+total+",2,"+storeID+")&b=Capstone";
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {}
-        });
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-
-    //insert new ordered_products table rows into the server
-    public void insertOrderItems(float quantity, float price, String p_id){
-        String url ="https://huexinventory.ngrok.io/?a=insert%20into%20ordered_products(order_id,day,month,year,quantity,unit_cost,product_id)%20values(%27"+new_order_id+"%27,"+currentDay+","+currentMonth+","+currentYear+","+quantity+","+price+",%27"+p_id+"%27)&b=Capstone";
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {}
-        });
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-
 }

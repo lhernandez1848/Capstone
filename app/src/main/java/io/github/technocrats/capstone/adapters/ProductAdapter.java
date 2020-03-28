@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import io.github.technocrats.capstone.R;
+import io.github.technocrats.capstone.SearchProductActivity;
 import io.github.technocrats.capstone.models.Product;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductHolder> {
@@ -42,23 +43,36 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
                 @Override
                 public void onClick(View v) {
                     Log.d("RecyclerView", "Item clicked");
+                    String selectedProduct = tvProductId.getText().toString();
 
-                    String p_id = tvProductId.getText().toString();
-                    String p_name = tvProductName.getText().toString();
-                    String p_cost = tvUnitCost.getText().toString();
+                    for(int i = 0; i < products.size(); i++){
+                        if(products.get(i).getProductId().equals(selectedProduct)){
+                            Product product = new Product(products.get(i).getProductId(),
+                                    products.get(i).getProductName(),
+                                    products.get(i).getUnitCost(),
+                                    products.get(i).getQuantity(),
+                                    products.get(i).getSubcategory(),
+                                    products.get(i).getCategory());
 
-                    System.out.println("ID: " + p_id);
-                    System.out.println("NAME: " + p_name);
+                            SearchProductActivity.setProductSelected(product);
 
-                    tvProductSelected.setText(p_id + "  -  " + p_name + "    $" + p_cost);
+                            String displaySelectedProductInfo = product.getProductId() + "  -  "
+                                    + product.getProductName()
+                                    + "    $" + product.getUnitCost();
+
+                            tvProductSelected.setText(displaySelectedProductInfo);
+
+                            break;
+                        }
+                    }
                 }
             });
         }
 
-        public void setDetails(Product product) {
-            String productId = product.getProductId();
-            String productName = product.getProductName();
-            String cost = Float.toString(product.getUnitCost());
+        public void setDetails(Product p) {
+            String productId = p.getProductId();
+            String productName = p.getProductName();
+            String cost = Float.toString(p.getUnitCost());
 
             tvProductId.setText(productId);
             tvProductName.setText(productName);

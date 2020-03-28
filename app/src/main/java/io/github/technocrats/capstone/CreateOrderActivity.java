@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,25 +34,33 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
+import io.github.technocrats.capstone.adapters.CreateOrderExpandableListAdapter;
+import io.github.technocrats.capstone.models.Product;
 
-public class CreateOrderActivity extends AppCompatActivity implements SetOrderQuantityDialog.SetOrderQuantityDialogListener,
-        ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener {
+public class CreateOrderActivity extends AppCompatActivity
+        implements View.OnClickListener, CreateOrderExpandableListAdapter.ThreeLevelListViewListener,
+        SetOrderQuantityDialog.SetOrderQuantityDialogListener {
 
-    TextView storeNumberTextView, totalTextView, dateDisplayTextView, searchProductTextView;
+    // declarations - global variables
+    private ExpandableListView expandableListView;
     public static TextView productTextView;
-    String storeID;
-    Button btnSubmit, btnAddProductToOrder, btnRemoveProductFromOrder;
-    Toolbar toolbar;
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
+    TextView tvProductName, tvProductCost, tvTotal, searchProductTextView, dateDisplayTextView, storeNumberTextView;
+    Button btnSubmit;
+    ImageButton btnAddProductToOrder;
+    RequestQueue queue;
+    static Product selectedProduct;
     NumberFormat formatter;
+    CreateOrderExpandableListAdapter listAdapter;
+    Toolbar toolbar;
     GlobalMethods globalMethods;
 
     // declare lists to store all categories, subcategories, and products
-    String[] listDataCategories;
-    List<String[]> listDataSubcategories;
-    List<LinkedHashMap<String, List<String>>> listDataProducts;
+    String[] listCategories;
+    List<String[]> listSubcategories;
+    List<LinkedHashMap<String, List<Product>>> listProducts;
+
+    // declare lists to store ordered products
+    public static ArrayList<Product> orderedItems;
 
     // declare and initialize lists of subcategories per categories
     String[] sFood = new String[]{"Sugar and Shortening", "Fillings", "Drinks",
@@ -66,130 +75,82 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
     String[] sUniforms = new String[]{"Staff Uniform"};
     String[] sInventory = new String[]{"Dairy"};
 
-    JSONArray jsonarrayProducts;
-
+    // declare Shared Preferences
     private SharedPreferences sharedPlace;
-
-    public static String[] products = new String[690];
-    public static float[] quantities = new float[690];
-    public static float[] prices = new float[690];
-    public static String[] product_ids = new String[690];
-    public static int index;
-    public static String product;
-    public static float price;
-    public static int position;
-    public static float total;
-
-    public static String[] allProducts = new String[690];
-    public static String[] allProductIds = new String[690];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_order);
+        setTitle("Create Order");
 
-        // get allProducts, allProductIds
-        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products" + "&b=Capstone";
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonarrayProducts = new JSONArray(response);
-
-                    for (int i = 0; i < jsonarrayProducts.length(); i++) {
-                        JSONObject jsonobject = jsonarrayProducts.getJSONObject(i);
-
-                        allProducts[i] = jsonobject.getString("product");
-                        allProductIds[i] = jsonobject.getString("product_id");
-                    }
-                }
-                catch (JSONException e){e.printStackTrace();}
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {}
-        });
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-        // got allProducts, allProductIds
-
-        this.sharedPlace = getSharedPreferences("SharedPlace", MODE_PRIVATE);
         globalMethods = new GlobalMethods(this);
         globalMethods.checkIfLoggedIn();
 
-        btnAddProductToOrder = (Button) findViewById(R.id.btnAddProductToOrder);
-        btnRemoveProductFromOrder = (Button) findViewById(R.id.btnRemoveProductFromOrder);
-        btnSubmit = (Button) findViewById(R.id.btnGoToOrderSummary);
-        btnSubmit.setEnabled(false);
-        btnAddProductToOrder.setOnClickListener(this);
-        btnRemoveProductFromOrder.setOnClickListener(this);
-        btnSubmit.setOnClickListener(this);
+        // initialize SharedPreferences
+        this.sharedPlace = getSharedPreferences("SharedPlace", MODE_PRIVATE);
 
-        setTitle("Create Order");
-
-        dateDisplayTextView = findViewById(R.id.txtDateDisplay);
-        toolbar = findViewById(R.id.createOrderToolbar);
+        toolbar = (Toolbar) findViewById(R.id.createOrderToolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
+        tvProductCost = (TextView) findViewById(R.id.tvProductCost);
+        tvProductName = (TextView) findViewById(R.id.tvProductName);
+        tvTotal = (TextView) findViewById(R.id.totalTextView);
+        searchProductTextView = (TextView) findViewById(R.id.txtSearchProduct);
+        dateDisplayTextView = findViewById(R.id.txtDateDisplay);
+        storeNumberTextView = (TextView) findViewById(R.id.txtStoreNumber);
+        btnSubmit = (Button) findViewById(R.id.btnGoToOrderSummary);
+        btnAddProductToOrder = (ImageButton) findViewById(R.id.btnAddProductToOrder);
+
+        // display date and store number
         globalMethods.DisplayDate(dateDisplayTextView);
+        String storeId = sharedPlace.getString("storeID", "");
+        storeNumberTextView.setText("Create New Order for Store Number: " + storeId);
 
-        for(int i = 0; i < 690; i ++)
-        {
-            quantities[i] = 0;
-        }
+        // set onClickListener
+        btnSubmit.setOnClickListener(this);
+        btnAddProductToOrder.setOnClickListener(this);
+        searchProductTextView.setOnClickListener(this);
 
-        index = 0;
-        total = 0;
-
-        formatter = new DecimalFormat("#,###.##");
-
-        // get the listview
-        expListView = findViewById(R.id.expandableListView);
+        // initialize queue
+        queue = Volley.newRequestQueue(this);
 
         // initialize category list with hardcoded data
-        listDataCategories = new String[]{"Food", "N/A", "Paper", "Advertising", "Cleaning", "Miscellaneous", "Uniforms", "inventory"};
+        listCategories = new String[]{"Food", "N/A", "Paper", "Advertising", "Cleaning",
+                "Miscellaneous", "Uniforms", "inventory"};
 
         // initialize subcategories list
-        listDataSubcategories = new ArrayList<>();
+        listSubcategories = new ArrayList<>();
 
-        // initialize products list
-        listDataProducts = new ArrayList<>();
+        // initialize list of ordered products
+        orderedItems = new ArrayList<>();
+
+        // initialize selected product
+        selectedProduct = null;
+        formatter = new DecimalFormat("#,###.##");
 
         // add lists of subcategories to List of all subcategories
-        listDataSubcategories.add(sFood);
-        listDataSubcategories.add(sNA);
-        listDataSubcategories.add(sPaper);
-        listDataSubcategories.add(sAdvertising);
-        listDataSubcategories.add(sCleaning);
-        listDataSubcategories.add(sMiscellaneous);
-        listDataSubcategories.add(sUniforms);
-        listDataSubcategories.add(sInventory);
-
-        storeNumberTextView = (TextView) findViewById(R.id.txtStoreNumber);
-        storeID = sharedPlace.getString("storeID", "");
-        String displayStore = "Create New Order for Store Number: " + storeID;
-        storeNumberTextView.setText(displayStore);
-
-        getProducts();
+        listSubcategories.add(sFood);
+        listSubcategories.add(sNA);
+        listSubcategories.add(sPaper);
+        listSubcategories.add(sAdvertising);
+        listSubcategories.add(sCleaning);
+        listSubcategories.add(sMiscellaneous);
+        listSubcategories.add(sUniforms);
+        listSubcategories.add(sInventory);
 
         productTextView = (TextView) findViewById(R.id.productTextView);
         productTextView.setText("");
-        totalTextView = (TextView) findViewById(R.id.totalTextView);
-        searchProductTextView = (TextView) findViewById(R.id.txtSearchProduct);
-        searchProductTextView.setOnClickListener(this);
 
-        updateTotalTextView();
-
-        btnSubmit.setEnabled(true);
+        getProducts();
     }
 
-    public void getProducts(){
-        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products" + "&b=Capstone";
-        RequestQueue queue = Volley.newRequestQueue(this);
+    private void getProducts() {
+
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products&b=Capstone";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -197,147 +158,184 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
                     public void onResponse(String response) {
                         try
                         {
-                            List<String> SugarAndShortening = new ArrayList<String>();
-                            List<String> Fillings = new ArrayList<String>();
-                            List<String> Drinks = new ArrayList<String>();
-                            List<String> CansAndHomeBrew = new ArrayList<String>();
-                            List<String> SoupSandwiches = new ArrayList<String>();
-                            List<String> FoodIngredients = new ArrayList<String>();
-                            List<String> Produce = new ArrayList<String>();
-                            List<String> NA = new ArrayList<String>();
-                            List<String> Bread = new ArrayList<String>();
-                            List<String> Emulsions = new ArrayList<String>();
-                            List<String> danis = new ArrayList<String>();
-                            List<String> MustardSpread = new ArrayList<String>();
-                            List<String> Toppings = new ArrayList<String>();
-                            List<String> Paper = new ArrayList<String>();
-                            List<String> HotDrinkCups = new ArrayList<String>();
-                            List<String> IcedBeverageCupsLids = new ArrayList<String>();
-                            List<String> Advertising = new ArrayList<String>();
-                            List<String> coffeeBowlCleaner = new ArrayList<String>();
-                            List<String> StoreSupplies = new ArrayList<String>();
-                            List<String> StaffUniform = new ArrayList<String>();
-                            List<String> Dairy = new ArrayList<String>();
+                            // initialize products list
+                            listProducts = new ArrayList<>();
 
-                            LinkedHashMap<String, List<String>> thirdLevelFood = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelNA = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelPaper = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelAdvertising = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelCleaning = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelMiscellaneous = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelUniforms = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelInventory = new LinkedHashMap<>();
+                            List<Product> SugarAndShortening = new ArrayList<>();
+                            List<Product> Fillings = new ArrayList<>();
+                            List<Product> Drinks = new ArrayList<>();
+                            List<Product> CansAndHomeBrew = new ArrayList<>();
+                            List<Product> SoupSandwiches = new ArrayList<>();
+                            List<Product> FoodIngredients = new ArrayList<>();
+                            List<Product> Produce = new ArrayList<>();
+                            List<Product> NA = new ArrayList<>();
+                            List<Product> Bread = new ArrayList<>();
+                            List<Product> Emulsions = new ArrayList<>();
+                            List<Product> danis = new ArrayList<>();
+                            List<Product> MustardSpread = new ArrayList<>();
+                            List<Product> Toppings = new ArrayList<>();
+                            List<Product> Paper = new ArrayList<>();
+                            List<Product> HotDrinkCups = new ArrayList<>();
+                            List<Product> IcedBeverageCupsLids = new ArrayList<>();
+                            List<Product> Advertising = new ArrayList<>();
+                            List<Product> coffeeBowlCleaner = new ArrayList<>();
+                            List<Product> StoreSupplies = new ArrayList<>();
+                            List<Product> StaffUniform = new ArrayList<>();
+                            List<Product> Dairy = new ArrayList<>();
 
-                            jsonarrayProducts = new JSONArray(response);
+                            LinkedHashMap<String, List<Product>> thirdLevelFood = new LinkedHashMap<>();
+                            LinkedHashMap<String, List<Product>> thirdLevelNA = new LinkedHashMap<>();
+                            LinkedHashMap<String, List<Product>> thirdLevelPaper = new LinkedHashMap<>();
+                            LinkedHashMap<String, List<Product>> thirdLevelAdvertising = new LinkedHashMap<>();
+                            LinkedHashMap<String, List<Product>> thirdLevelCleaning = new LinkedHashMap<>();
+                            LinkedHashMap<String, List<Product>> thirdLevelMiscellaneous = new LinkedHashMap<>();
+                            LinkedHashMap<String, List<Product>> thirdLevelUniforms = new LinkedHashMap<>();
+                            LinkedHashMap<String, List<Product>> thirdLevelInventory = new LinkedHashMap<>();
 
-                            for (int i = 0; i < jsonarrayProducts.length(); i++) {
-                                JSONObject jsonobject = jsonarrayProducts.getJSONObject(i);
+                            JSONArray objArray = new JSONArray(response);
+                            int objArrayLength = objArray.length();
 
-                                String product = jsonobject.getString("product");
-                                String price = jsonobject.getString("unit_cost");
-                                String productAndPrice = product + "    $" + price;
-                                int subcategory_id = jsonobject.getInt("subcategory_id");
+                            // check if response is not empty
+                            if (objArrayLength > 0)
+                            {
+                                for (int i = 0; i < objArray.length(); i++)
+                                {
+                                    JSONObject obj = objArray.getJSONObject(i);
 
-                                switch(subcategory_id) {
-                                    case 1:
-                                        SugarAndShortening.add(productAndPrice);
-                                        break;
-                                    case 2:
-                                        Fillings.add(productAndPrice);
-                                        break;
-                                    case 3:
-                                        Drinks.add(productAndPrice);
-                                        break;
-                                    case 4:
-                                        CansAndHomeBrew.add(productAndPrice);
-                                        break;
-                                    case 5:
-                                        SoupSandwiches.add(productAndPrice);
-                                        break;
-                                    case 6:
-                                        FoodIngredients.add(productAndPrice);
-                                        break;
-                                    case 7:
-                                        Produce.add(productAndPrice);
-                                        break;
-                                    case 8:
-                                        NA.add(productAndPrice);
-                                        break;
-                                    case 9:
-                                        Bread.add(productAndPrice);
-                                        break;
-                                    case 10:
-                                        Emulsions.add(productAndPrice);
-                                        break;
-                                    case 11:
-                                        danis.add(productAndPrice);
-                                        break;
-                                    case 12:
-                                        MustardSpread.add(productAndPrice);
-                                        break;
-                                    case 13:
-                                        Toppings.add(productAndPrice);
-                                        break;
-                                    case 14:
-                                        Paper.add(productAndPrice);
-                                        break;
-                                    case 15:
-                                        HotDrinkCups.add(productAndPrice);
-                                        break;
-                                    case 16:
-                                        IcedBeverageCupsLids.add(productAndPrice);
-                                        break;
-                                    case 17:
-                                        Advertising.add(productAndPrice);
-                                        break;
-                                    case 18:
-                                        coffeeBowlCleaner.add(productAndPrice);
-                                        break;
-                                    case 19:
-                                        StoreSupplies.add(productAndPrice);
-                                        break;
-                                    case 20:
-                                        StaffUniform.add(productAndPrice);
-                                        break;
-                                    case 21:
-                                        Dairy.add(productAndPrice);
-                                        break;
-                                    default:
+                                    String productId = obj.getString("product_id");
+                                    String productName = obj.getString("product");
+                                    int subcategory_id = obj.getInt("subcategory_id");
+                                    int category_id = obj.getInt("category_id");
+                                    String unitCost = obj.getString("unit_cost");
+                                    float fUnitCost = Float.parseFloat(unitCost);
+                                    float quantity = 0f;;
+
+                                    // check if product is already in orderedItems list
+                                    for (int j = 0; j < orderedItems.size(); j++){
+                                        // get quantity from list
+                                        if (orderedItems.get(j).getProductId().equals(productId)) {
+                                            quantity = orderedItems.get(j).getQuantity();
+                                            // Log.d("QUANTITY", "product quantity: " + quantity);
+                                        }
+                                    }
+
+                                    // create new product
+                                    Product product = new Product(productId, productName, fUnitCost,
+                                            quantity, subcategory_id, category_id);
+
+                                    switch(product.getSubcategory()) {
+                                        case 1:
+                                            SugarAndShortening.add(product);
+                                            break;
+                                        case 2:
+                                            Fillings.add(product);
+                                            break;
+                                        case 3:
+                                            Drinks.add(product);
+                                            break;
+                                        case 4:
+                                            CansAndHomeBrew.add(product);
+                                            break;
+                                        case 5:
+                                            SoupSandwiches.add(product);
+                                            break;
+                                        case 6:
+                                            FoodIngredients.add(product);
+                                            break;
+                                        case 7:
+                                            Produce.add(product);
+                                            break;
+                                        case 8:
+                                            NA.add(product);
+                                            break;
+                                        case 9:
+                                            Bread.add(product);
+                                            break;
+                                        case 10:
+                                            Emulsions.add(product);
+                                            break;
+                                        case 11:
+                                            danis.add(product);
+                                            break;
+                                        case 12:
+                                            MustardSpread.add(product);
+                                            break;
+                                        case 13:
+                                            Toppings.add(product);
+                                            break;
+                                        case 14:
+                                            Paper.add(product);
+                                            break;
+                                        case 15:
+                                            HotDrinkCups.add(product);
+                                            break;
+                                        case 16:
+                                            IcedBeverageCupsLids.add(product);
+                                            break;
+                                        case 17:
+                                            Advertising.add(product);
+                                            break;
+                                        case 18:
+                                            coffeeBowlCleaner.add(product);
+                                            break;
+                                        case 19:
+                                            StoreSupplies.add(product);
+                                            break;
+                                        case 20:
+                                            StaffUniform.add(product);
+                                            break;
+                                        case 21:
+                                            Dairy.add(product);
+                                            break;
+                                        default:
+                                    }
                                 }
+
+
+                                thirdLevelFood.put(sFood[0], SugarAndShortening);
+                                thirdLevelFood.put(sFood[1], Fillings);
+                                thirdLevelFood.put(sFood[2], Drinks);
+                                thirdLevelFood.put(sFood[3], CansAndHomeBrew);
+                                thirdLevelFood.put(sFood[4], SoupSandwiches);
+                                thirdLevelFood.put(sFood[5], FoodIngredients);
+                                thirdLevelFood.put(sFood[6], Produce);
+                                thirdLevelFood.put(sFood[7], Bread);
+                                thirdLevelFood.put(sFood[8], Emulsions);
+                                thirdLevelFood.put(sFood[9], danis);
+                                thirdLevelFood.put(sFood[10], MustardSpread);
+                                thirdLevelFood.put(sFood[11], Toppings);
+
+                                thirdLevelNA.put(sNA[0], NA);
+
+                                thirdLevelPaper.put(sPaper[0], Paper);
+                                thirdLevelPaper.put(sPaper[1], HotDrinkCups);
+                                thirdLevelPaper.put(sPaper[2], IcedBeverageCupsLids);
+
+                                thirdLevelAdvertising.put(sAdvertising[0], Advertising);
+
+                                thirdLevelCleaning.put(sCleaning[0], coffeeBowlCleaner);
+
+                                thirdLevelMiscellaneous.put(sMiscellaneous[0], StoreSupplies);
+
+                                thirdLevelUniforms.put(sUniforms[0], StaffUniform);
+
+                                thirdLevelInventory.put(sInventory[0], Dairy);
+
+                                listProducts.add(thirdLevelFood);
+                                listProducts.add(thirdLevelNA);
+                                listProducts.add(thirdLevelPaper);
+                                listProducts.add(thirdLevelAdvertising);
+                                listProducts.add(thirdLevelCleaning);
+                                listProducts.add(thirdLevelMiscellaneous);
+                                listProducts.add(thirdLevelUniforms);
+                                listProducts.add(thirdLevelInventory);
+
                             }
 
-                            thirdLevelFood.put(sFood[0], SugarAndShortening);
-                            thirdLevelFood.put(sFood[1], Fillings);
-                            thirdLevelFood.put(sFood[2], Drinks);
-                            thirdLevelFood.put(sFood[3], CansAndHomeBrew);
-                            thirdLevelFood.put(sFood[4], SoupSandwiches);
-                            thirdLevelFood.put(sFood[5], FoodIngredients);
-                            thirdLevelFood.put(sFood[6], Produce);
-                            thirdLevelFood.put(sFood[7], Bread);
-                            thirdLevelFood.put(sFood[8], Emulsions);
-                            thirdLevelFood.put(sFood[9], danis);
-                            thirdLevelFood.put(sFood[10], MustardSpread);
-                            thirdLevelFood.put(sFood[11], Toppings);
-                            thirdLevelNA.put(sNA[0], NA);
-                            thirdLevelPaper.put(sPaper[0], Paper);
-                            thirdLevelPaper.put(sPaper[1], HotDrinkCups);
-                            thirdLevelPaper.put(sPaper[2], IcedBeverageCupsLids);
-                            thirdLevelAdvertising.put(sAdvertising[0], Advertising);
-                            thirdLevelCleaning.put(sCleaning[0], coffeeBowlCleaner);
-                            thirdLevelMiscellaneous.put(sMiscellaneous[0], StoreSupplies);
-                            thirdLevelUniforms.put(sUniforms[0], StaffUniform);
-                            thirdLevelInventory.put(sInventory[0], Dairy);
+                            // set-up adapter and expandable list view
+                            setUpAdapter();
 
-                            listDataProducts.add(thirdLevelFood);
-                            listDataProducts.add(thirdLevelNA);
-                            listDataProducts.add(thirdLevelPaper);
-                            listDataProducts.add(thirdLevelAdvertising);
-                            listDataProducts.add(thirdLevelCleaning);
-                            listDataProducts.add(thirdLevelMiscellaneous);
-                            listDataProducts.add(thirdLevelUniforms);
-                            listDataProducts.add(thirdLevelInventory);
 
-                            dolist();
                         } catch (JSONException e){e.printStackTrace();}
                     }
                 }, new Response.ErrorListener() {
@@ -347,95 +345,156 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+
     }
 
-    public void dolist(){
-        listAdapter = new ExpandableListAdapter(this, listDataCategories, listDataSubcategories, listDataProducts, this);
+    private void setUpAdapter() {
 
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
+        // declare and initialize adapter
+        listAdapter = new CreateOrderExpandableListAdapter(this, listCategories,
+                listSubcategories, listProducts, this);
 
-        // Listview Group click listener
-        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        // attach adapter to expandable listview
+        expandableListView.setAdapter(listAdapter);
 
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                System.out.println(groupPosition);
-                return false;
-            }
-        });
-
-        // Listview Group expanded listener
-        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                //Toast.makeText(getApplicationContext(),listDataHeader.get(groupPosition) + " Expanded",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Listview Group collasped listener
-        expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-                //Toast.makeText(getApplicationContext(),listDataHeader.get(groupPosition) + " Collapsed",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+        // show one list at a time
+        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousGroup = -1;
 
             @Override
             public void onGroupExpand(int groupPosition) {
                 if (groupPosition != previousGroup)
-                    expListView.collapseGroup(previousGroup);
+                    expandableListView.collapseGroup(previousGroup);
                 previousGroup = groupPosition;
             }
         });
+
+    }
+
+    public static ArrayList<Product> getOrderedItems(){
+        ArrayList<Product> order_items = orderedItems;
+        return order_items;
     }
 
     @Override
     public void onFinalChildClick(int plpos, int slpos, int tlpos) {
+
+    }
+
+
+    @Override
+    public void onFinalItemClick(String plItem, String slItem, final Product tlItem) {
+        // set item clicked as selected product
+        setProduct(tlItem);
+    }
+
+    public static void setProduct(Product product) {
+        selectedProduct = product;
+
+        productTextView.setText(product.getProductName());
     }
 
     @Override
-    public void onFinalItemClick(int plItem, String slItem, String tlItem) {
-        addProduct(tlItem);
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnGoToOrderSummary:
+                goToOrderSummary();
+                break;
+            case R.id.btnAddProductToOrder:
+                // display dialog box
+                showSetOrderQuantityDialog(selectedProduct);
+                break;
+            case R.id.txtSearchProduct:
+                startActivity(new Intent(getApplicationContext(), SearchProductActivity.class));
+                break;
+            default:
+                break;
+        }
     }
 
-    public static void addProduct(String tlItem){
-        String[] temp = tlItem.split("\\s\\s\\s\\s\\$");
+    public void goToOrderSummary() {
+        if  (orderedItems.size() > 0 ) {
+            Intent intent = new Intent(CreateOrderActivity.this, OrderSummaryActivity.class);
+            intent.putParcelableArrayListExtra("orderedItems", orderedItems);
+            startActivityForResult(intent, 1);
+        } else {
+            Toast.makeText(getApplicationContext(), "Empty order.", Toast.LENGTH_LONG).show();
+        }
+    }
 
-        product = temp[0];
-        price = Float.parseFloat(temp[1]);
+    private void showSetOrderQuantityDialog(Product selectedProduct) {
+        SetOrderQuantityDialog setOrderQuantityDialog = new SetOrderQuantityDialog();
 
-        boolean productInProducts = false;
+        Bundle args = new Bundle();
+        args.putString("productName", selectedProduct.getProductName());
+        args.putString("productID", selectedProduct.getProductId());
+        args.putFloat("unitCost", selectedProduct.getUnitCost());
+        args.putFloat("quantity", selectedProduct.getQuantity());
+        args.putInt("category", selectedProduct.getCategory());
+        args.putInt("subcategory", selectedProduct.getSubcategory());
+        setOrderQuantityDialog.setArguments(args);
 
-        for(int i = 0; i < index; i ++){
-            if (product.equals(products[i])){
-                productInProducts = true;
-                position = i;
-                break;
+        setOrderQuantityDialog.show(getSupportFragmentManager(), "Order Quantity");
+    }
+
+    @Override
+    public void applyProductOrderQuantity(Product product, float updatedQuantity, float qTotal) {
+        // update product's quantity
+        product.setQuantity(updatedQuantity);
+
+        // check if product is already part of orderedItems
+        int index = 0;
+        boolean itemFound = false;
+
+        // check if selected product has been added to order
+        for (int i = 0; i < orderedItems.size(); i++){
+            if (orderedItems.get(i).getProductId().equals(product.getProductId())) {
+                index = i;
+                itemFound = true;
             }
         }
 
-        if(!productInProducts){
-            products[index] = product;
-            quantities[index] = 0;
-            prices[index] = price;
-
-            for (int i = 0; i < 690; i++) {
-                if(product.equals(allProducts[i])) {
-                    product_ids[index] = allProductIds[i];
-                    break;
-                }
-            }
-
-            position = index;
-            index ++;
+        if (itemFound) {
+            // update product quantity on list
+            orderedItems.set(index, product);
         }
-        String productSelected = product + " : " + quantities[position] + "  *  $" + price;
-        productTextView.setText(productSelected);
+        else {
+            orderedItems.add(product);
+        }
+
+        // display success message
+        Toast.makeText(getApplicationContext(), product.getProductName() +
+                " has been added to order.", Toast.LENGTH_LONG).show();
+
+        // re-calculate order total
+        displayOrderTotal();
+
+        // display products
+        getProducts();
+    }
+
+    public void displayOrderTotal(){
+        float orderTotal = 0f;
+        int orderedItemsLength = orderedItems.size();
+
+        for (int i=0; i < orderedItemsLength; i++) {
+            float itemTotal = orderedItems.get(i).getQuantity() * orderedItems.get(i).getUnitCost();
+            orderTotal += itemTotal;
+        }
+
+        String temp = "Order Total (" + Integer.toString(orderedItemsLength) + " items): $" + formatter.format(orderTotal);
+        tvTotal.setText(temp);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                orderedItems = data.getParcelableArrayListExtra("orderedItems");
+                getProducts();
+                displayOrderTotal();
+            }
+        }
     }
 
     @Override
@@ -474,63 +533,6 @@ public class CreateOrderActivity extends AppCompatActivity implements SetOrderQu
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    public void showDialog() {
-        SetOrderQuantityDialog setOrderQuantityDialog = new SetOrderQuantityDialog();
-        setOrderQuantityDialog.show(getSupportFragmentManager(), "Order Quantity");
-    }
-
-    @Override
-    public void updateTotalTextView() {
-        totalTextView.setText("Total: $" + formatter.format(total));
-    }
-
-    @Override
-    public void updateProductTextView(float setQuantity) {
-        String productSelected = product + " : " + setQuantity + "  *  $" + price;
-        productTextView.setText(productSelected);
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btnGoToOrderSummary) {
-            String order = "";
-
-            for(int i = 0; i < index; i ++) {
-                if(quantities[i] > 0) {
-                    order += products[i] + "    " + quantities[i] + "    " + prices[i] +"\n";
-                }
-            }
-
-            if(!order.equals("")) {
-                Intent i = new Intent(CreateOrderActivity.this, OrderSummaryActivity.class);
-                i.putExtra("order", order);
-                i.putExtra("total", total);
-                startActivity(i);
-            }
-        } else if (view.getId() == R.id.btnAddProductToOrder){
-            showDialog();
-        } else if (view.getId() == R.id.btnRemoveProductFromOrder){
-            String productTV = productTextView.getText().toString();
-
-            if(!productTV.isEmpty()){
-                float test = (quantities[position] * price);
-                total = total - test;
-                quantities[position] = 0;
-                productTextView.setText("");
-                totalTextView.setText("Total: $" + formatter.format(total));
-                Toast.makeText(getApplicationContext(),
-                        product + " removed from this order", Toast.LENGTH_LONG).show();
-
-            } else {
-                Toast.makeText(getApplicationContext(),
-                        "Please select a product to remove it from the order", Toast.LENGTH_LONG).show();
-            }
-        } else if (view.getId() == R.id.txtSearchProduct) {
-            startActivity(new Intent(getApplicationContext(), SearchProductActivity.class));
         }
     }
 }

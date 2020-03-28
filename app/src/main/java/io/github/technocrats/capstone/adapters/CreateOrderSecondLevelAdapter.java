@@ -12,13 +12,13 @@ import java.util.List;
 import io.github.technocrats.capstone.R;
 import io.github.technocrats.capstone.models.Product;
 
-public class InventorySecondLevelAdapter extends BaseExpandableListAdapter {
+public class CreateOrderSecondLevelAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     List<List<Product>> data;
     String[] headers;
 
-    public InventorySecondLevelAdapter(Context context, List<List<Product>> data, String[] headers) {
+    public CreateOrderSecondLevelAdapter(Context context, List<List<Product>> data, String[] headers) {
         this.context = context;
         this.data = data;
         this.headers = headers;
@@ -66,8 +66,8 @@ public class InventorySecondLevelAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.inventory_row_second, null);
-        TextView text = (TextView) convertView.findViewById(R.id.rowSubcategoriesText);
+        convertView = inflater.inflate(R.layout.order_list_subcategories, null);
+        TextView text = (TextView) convertView.findViewById(R.id.lblListSubcategories);
         String groupText = getGroup(groupPosition).toString();
         text.setText(groupText);
 
@@ -78,15 +78,27 @@ public class InventorySecondLevelAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.inventory_row_third, null);
+        convertView = inflater.inflate(R.layout.order_list_products, null);
 
-        TextView textView = (TextView) convertView.findViewById(R.id.rowProductsText);
+        TextView productNameTextView = (TextView) convertView.findViewById(R.id.productNameTextView);
+        TextView unitCostTextView = (TextView) convertView.findViewById(R.id.unitCostTextView);
+        TextView quantityTextView = (TextView) convertView.findViewById(R.id.quantityTextView);
 
         List<Product> childArray = data.get(groupPosition);
 
         Product product = childArray.get(childPosition);
-        String text = product.getProductName();
-        textView.setText(text);
+
+        float fUnitCost = product.getUnitCost();
+        float fQuantity = product.getQuantity();
+        // Log.d("SLA", product.getProductName() + " quantity: " + fQuantity);
+        String unitCost = "$" + fUnitCost;
+        String quantity = Float.toString(fQuantity);
+        String productName = product.getProductName();
+
+        productNameTextView.setText(productName);
+        unitCostTextView.setText(unitCost);
+        quantityTextView.setText(quantity);
+        // Log.d("SecondLevelAdapter", text);
 
         return convertView;
     }

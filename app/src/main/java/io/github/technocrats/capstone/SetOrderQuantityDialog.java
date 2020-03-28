@@ -8,57 +8,80 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-public class SetOrderQuantityDialog extends AppCompatDialogFragment implements View.OnClickListener, View.OnFocusChangeListener {
+import io.github.technocrats.capstone.models.Product;
 
-    private Spinner QuantitySpinner;
-    private TextView tvShowProductSelected;
-    private EditText editTextOrderQuantity;
-    private Button btnAddQuantity, btnSubtractQuantity, btnDone;
-    NumberFormat formatter;
+public class SetOrderQuantityDialog extends AppCompatDialogFragment
+        implements View.OnClickListener, View.OnFocusChangeListener{
+
+    private TextView tvProductName, tvProductCost;
+    private EditText etOrderQuantity;
+    private Button btnAddQuantity, btnSubtractQuantity, btnSave;
     private SetOrderQuantityDialogListener listener;
+
+    NumberFormat formatter;
+
+    private String productName, productID;
+    private int subcategory, category;
+    private float productPrice, productQuantity, total;
+    private Product currentProduct;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.dialog_set_order_quantity, null);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_set_order_quantity, null);
 
+        builder.setView(view)
+                .setTitle("Set Product Quantity");
+
+        // initialize widgets
+        tvProductName = view.findViewById(R.id.tvProductName);
+        tvProductCost = view.findViewById(R.id.tvProductCost);
+        etOrderQuantity = view.findViewById(R.id.etOrderQuantity);
         btnAddQuantity = view.findViewById(R.id.btnAddQuantity);
         btnSubtractQuantity = view.findViewById(R.id.btnSubtractQuantity);
-        btnDone = view.findViewById(R.id.btnDone);
-
-        btnAddQuantity.setEnabled(false);
-        btnSubtractQuantity.setEnabled(false);
-        btnDone.setEnabled(false);
+        btnSave = view.findViewById(R.id.btnSaveSetQuantity);
 
         btnAddQuantity.setOnClickListener(this);
         btnSubtractQuantity.setOnClickListener(this);
-        btnDone.setOnClickListener(this);
+        btnSave.setOnClickListener(this);
 
-        QuantitySpinner = view.findViewById(R.id.QuantitiesSpinner);
-        editTextOrderQuantity = view.findViewById(R.id.etProductQuantity);
-        tvShowProductSelected = view.findViewById(R.id.tvShowProductSelected);
+        // get attributes from arguments
+        productName = getArguments().getString("productName");
+        productID = getArguments().getString("productID");
+        productPrice = getArguments().getFloat("unitCost");
+        productQuantity = getArguments().getFloat("quantity");
+        category = getArguments().getInt("category");
+        subcategory = getArguments().getInt("subcategory");
+
+        // initialize values
         formatter = new DecimalFormat("#,###.##");
+        total = (productPrice * productQuantity);
 
-        builder.setView(view).setTitle(CreateOrderActivity.product + "    $" + CreateOrderActivity.price);
+        // create product
+        currentProduct = new Product(productID, productName, productPrice, productQuantity, subcategory, category);
 
-        tvShowProductSelected.setText("$" + CreateOrderActivity.price + " × " + CreateOrderActivity.quantities[CreateOrderActivity.position] + " = $" + formatter.format(CreateOrderActivity.price * CreateOrderActivity.quantities[CreateOrderActivity.position]));
+        String sQuantity = "";
+        if (currentProduct.getQuantity() > 0) {
+            sQuantity = Float.toString(productQuantity);
+        }
 
-        editTextOrderQuantity.setOnFocusChangeListener(this);
-        editTextOrderQuantity.setText(String.valueOf(CreateOrderActivity.quantities[CreateOrderActivity.position]));
+        // set text
+        String sDisplay = "$" + productPrice + " * " + formatter.format(productQuantity) + " = " + "$" + formatter.format(total);
 
-        btnAddQuantity.setEnabled(true);
-        btnSubtractQuantity.setEnabled(true);
-        btnDone.setEnabled(true);
+        // display product name
+        tvProductName.setText(productName);
+        tvProductCost.setText(sDisplay);
+        etOrderQuantity.setText(sQuantity);
 
         return builder.create();
     }
@@ -70,48 +93,90 @@ public class SetOrderQuantityDialog extends AppCompatDialogFragment implements V
         try {
             listener = (SetOrderQuantityDialogListener) _context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(_context.toString() + "Dialog Listener not implemented");
+            throw new ClassCastException(_context.toString() + "SetOrderQuantityDialogListener not implemented");
         }
     }
 
     @Override
-    public void onClick(View view) {
-        if(view.getId() == R.id.btnDone) {
-            listener.updateProductTextView(CreateOrderActivity.quantities[CreateOrderActivity.position]);
-            dismiss();
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnSaveSetQuantity:
+                saveQuantity();
+                break;
+            case R.id.btnAddQuantity:
+                addQuantity();
+                break;
+            case R.id.btnSubtractQuantity:
+                subtractQuantity();
+                break;
+            default:
+                break;
         }
-        else if(view.getId() == R.id.btnAddQuantity) {
-            CreateOrderActivity.quantities[CreateOrderActivity.position] += Float.parseFloat(QuantitySpinner.getSelectedItem().toString());
-            tvShowProductSelected.setText("$" + CreateOrderActivity.price + " × " + CreateOrderActivity.quantities[CreateOrderActivity.position] + " = $" + formatter.format(CreateOrderActivity.price * CreateOrderActivity.quantities[CreateOrderActivity.position]));
-            CreateOrderActivity.total += CreateOrderActivity.price * Integer.parseInt(QuantitySpinner.getSelectedItem().toString());
-            editTextOrderQuantity.setText(String.valueOf(CreateOrderActivity.quantities[CreateOrderActivity.position]));
-            listener.updateTotalTextView();
-        }
-        else if(view.getId() == R.id.btnSubtractQuantity) {
-            if(CreateOrderActivity.quantities[CreateOrderActivity.position] >= Float.parseFloat(QuantitySpinner.getSelectedItem().toString())) {
-                CreateOrderActivity.quantities[CreateOrderActivity.position] -= Float.parseFloat(QuantitySpinner.getSelectedItem().toString());
-                tvShowProductSelected.setText("$" + CreateOrderActivity.price + " × " + CreateOrderActivity.quantities[CreateOrderActivity.position] + " = $" + formatter.format(CreateOrderActivity.price * CreateOrderActivity.quantities[CreateOrderActivity.position]));
-                CreateOrderActivity.total -= CreateOrderActivity.price * Integer.parseInt(QuantitySpinner.getSelectedItem().toString());
-                editTextOrderQuantity.setText(String.valueOf(CreateOrderActivity.quantities[CreateOrderActivity.position]));
-                listener.updateTotalTextView();
+    }
+
+    private void subtractQuantity() {
+        String sEditQuantityTemp = etOrderQuantity.getText().toString();
+        if(sEditQuantityTemp.equals("")) {
+            etOrderQuantity.setText("0");
+            Toast.makeText(getContext(), "Quantity cannot be less than zero", Toast.LENGTH_LONG).show();
+        }else {
+            float iEditQuantityTemp = Float.parseFloat(sEditQuantityTemp);
+            if (iEditQuantityTemp <= 0f){
+                etOrderQuantity.setText("0");
+                Toast.makeText(getContext(), "Quantity cannot be less than zero", Toast.LENGTH_LONG).show();
+            }else {
+                productQuantity = Float.parseFloat(etOrderQuantity.getText().toString());
+                float temp = productQuantity - 1f;
+                etOrderQuantity.setText(String.valueOf(temp));
+                productQuantity = temp;
+                total = productPrice * productQuantity;
+
+                String costDisplay = "$" + productPrice + " * " + formatter.format(productQuantity)
+                        + " = " + "$" + formatter.format(total);
+                tvProductCost.setText(costDisplay);
             }
         }
     }
 
-    @Override
-    public void onFocusChange(View view, boolean b) {
-        if(!b) {
-            float tempQuantity = Float.parseFloat(editTextOrderQuantity.getText().toString());
-            CreateOrderActivity.quantities[CreateOrderActivity.position] += tempQuantity;
-            tvShowProductSelected.setText("$" + CreateOrderActivity.price + " × " + CreateOrderActivity.quantities[CreateOrderActivity.position] + " = $" + formatter.format(CreateOrderActivity.price * CreateOrderActivity.quantities[CreateOrderActivity.position]));
-            CreateOrderActivity.total += CreateOrderActivity.price * tempQuantity;
-            listener.updateTotalTextView();
+    private void addQuantity() {
+        String editQuantityTemp = etOrderQuantity.getText().toString();
+        if(editQuantityTemp.equals("")){
+            etOrderQuantity.setText("0");
+        }
+        productQuantity = Float.parseFloat(etOrderQuantity.getText().toString());
+        float temp = productQuantity+1f;
+        etOrderQuantity.setText(String.valueOf(temp));
+        productQuantity = temp;
+
+        total = productPrice * productQuantity;
+        String costDisplay = "$" + productPrice + " * " + formatter.format(productQuantity)
+                + " = " + "$" + formatter.format(total);
+        tvProductCost.setText(costDisplay);
+
+    }
+
+    private void saveQuantity() {
+        productQuantity = Float.parseFloat(etOrderQuantity.getText().toString());
+
+        if(productQuantity>0f){
+            total = productQuantity * productPrice;
+            listener.applyProductOrderQuantity(currentProduct, productQuantity, total);
+            dismiss();
         }
     }
 
-    public interface SetOrderQuantityDialogListener
-    {
-        void updateTotalTextView();
-        void updateProductTextView(float setQuantity);
+    @Override
+    public void onFocusChange(View v, boolean b) {
+        if(!b) {
+            productQuantity = Float.parseFloat(etOrderQuantity.getText().toString());
+            total = productPrice * productQuantity;
+            String display = "$" + productPrice + " * " + formatter.format(productQuantity) + " = "
+                    + "$" + String.format("%.2f", total);
+            tvProductCost.setText(display);
+        }
+    }
+
+    public interface SetOrderQuantityDialogListener{
+        void applyProductOrderQuantity (Product product, float updatedQuantity, float total);
     }
 }

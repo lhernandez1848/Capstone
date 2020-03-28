@@ -23,23 +23,15 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    EditText txtUsername;
-    EditText txtPassword;
+    EditText txtUsername, txtPassword;
 
     Button btnLogin;
-    Button btnSkipLogin;
 
     JSONArray jsonarray;
 
-    String typedUsername;
-    String typedPassword;
-    String sOutput;
+    String typedUsername, typedPassword, sOutput;
 
-    public static String storedUsername;
-    public static String storedPassword;
-    public static String storedFirstName;
-    public static String storedLastName;
-    public static String storedStoreNumber;
+    public static String storedUsername, storedPassword, storedFirstName, storedLastName, storedStoreNumber;
 
     private SharedPreferences sharedPlace;
 
@@ -53,9 +45,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
-
-        btnSkipLogin = findViewById(R.id.btnSkipLogin);
-        btnSkipLogin.setOnClickListener(this);
 
         this.sharedPlace = getSharedPreferences("SharedPlace", MODE_PRIVATE);
 
@@ -89,17 +78,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 getDataFromServerDB(typedUsername);
             }
 
-        } else if (view.getId() == R.id.btnSkipLogin){
-            SharedPreferences.Editor sharedEditor = this.sharedPlace.edit();
-            sharedEditor.putString("username", "admin");
-            sharedEditor.putString("password", "admin");
-            sharedEditor.putString("firstName", "Admin");
-            sharedEditor.putString("lastName", "Administrator");
-            sharedEditor.putString("storeID", "1");
-            sharedEditor.apply();
-            startActivity(new Intent(
-                    getApplicationContext(), MainActivity.class));
-            finish();
         }
     }
 

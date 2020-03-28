@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
-
     <include
         android:id="@+id/ordersSummaryToolbar"
         layout="@layout/custom_toolbar"/>
@@ -16,7 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:id="@+id/txtOrderSummaryDateDisplay"
+            android:id="@+id/txtOrderSummaryCount"
             android:layout_marginStart="20dp"
             android:textSize="30sp"/>
         <TextView
@@ -28,37 +28,6 @@
             android:layout_gravity="end"/>
     </LinearLayout>
 
-   <!-- <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="PRODUCT"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="QTY"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="PRICE"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:textStyle="bold"/>
-    </LinearLayout>-->
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderedProductListView"
         android:layout_marginTop="100dp"
@@ -69,9 +38,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/orderSummaryTotal"
+        android:id="@+id/orderSummaryTotalTextView"
         android:textSize="30sp"
-        android:layout_marginTop="80dp"
+        android:layout_margin="20dp"
         android:gravity="center"/>
 
     <Button
@@ -82,10 +51,14 @@
         android:layout_marginBottom="24dp"
         android:padding="12dp"
         android:gravity="center"
-        android:background="@drawable/button_shape"
         android:textColor="@android:color/white"
+        android:background="@drawable/button_shape"
         android:layout_gravity="center"
         android:textSize="20sp"
         android:text="Submit"/>
 
 </LinearLayout>
+
+
+
+

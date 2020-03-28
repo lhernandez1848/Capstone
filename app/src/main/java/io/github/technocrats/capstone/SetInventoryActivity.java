@@ -111,7 +111,7 @@ public class SetInventoryActivity extends AppCompatActivity
     }
 
     public void getProducts(){
-        String url ="https://huexinventory.ngrok.io/?a=select%20product_id,product,unit_cost,subcategory_id%20from%20products&b=Capstone";
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products&b=Capstone";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -163,11 +163,12 @@ public class SetInventoryActivity extends AppCompatActivity
                                     String productId = obj.getString("product_id");
                                     String productName = obj.getString("product");
                                     int subcategory_id = obj.getInt("subcategory_id");
+                                    int category_id = obj.getInt("category_id");
                                     String unitCost = obj.getString("unit_cost");
                                     float fUnitCost = Float.parseFloat(unitCost);
 
                                     // create new product
-                                    Product product = new Product(productId, productName, fUnitCost);
+                                    Product product = new Product(productId, productName, fUnitCost, 0, subcategory_id, category_id);
 
                                     switch(subcategory_id) {
                                         case 1:
@@ -320,9 +321,6 @@ public class SetInventoryActivity extends AppCompatActivity
 
     @Override
     public void onFinalItemClick(String plItem, String slItem, final Product tlItem) {
-        // Toast.makeText(this, "Item clicked.", Toast.LENGTH_SHORT).show();
-        //Toast.makeText(this, plItem + ", " + slItem + ", " + tlItem.getProductName(), Toast.LENGTH_LONG).show();
-
         //
         // generate query to get latest quantity, date, and par from inventories
         //
@@ -449,6 +447,8 @@ public class SetInventoryActivity extends AppCompatActivity
         args.putString("date", date);
         args.putFloat("quantity", quantity);
         args.putFloat("par", par);
+        args.putInt("subcategory_id", product.getSubcategory());
+        args.putInt("category_id", product.getCategory());
         inventoryDialog.setArguments(args);
 
         // display set inventory dialog
@@ -457,11 +457,6 @@ public class SetInventoryActivity extends AppCompatActivity
 
     @Override
     public void getInventoryCount(String count, Product product, float par) {
-
-        //
-        // NOTE: Might not work on devices with API lower than API 26.
-        //
-        //LocalDate date = LocalDate.now();
 
         Calendar calendar = Calendar.getInstance();
         int month = calendar.get(Calendar.MONTH);
@@ -479,7 +474,7 @@ public class SetInventoryActivity extends AppCompatActivity
         String query = "INSERT INTO inventories (product_id, par, unit_cost, " +
                 "quantity, day, month, year, purchase) VALUES " +
                 "(N'" + productId + "', " + par + ", " + unitCost + ", "
-                + count + ", " + day + ", " + month + ", " + year + ",0.00)";
+                + count + ", " + day + ", " + month + ", " + year + ",0.00)&b=Capstone";
         String url = server + query;
 
 
@@ -504,8 +499,6 @@ public class SetInventoryActivity extends AppCompatActivity
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        // test - delete later
-        // tvResponse.setText(url);
     }
 
     @Override

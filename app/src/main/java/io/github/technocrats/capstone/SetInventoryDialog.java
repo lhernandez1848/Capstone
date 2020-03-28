@@ -26,6 +26,7 @@ public class SetInventoryDialog extends AppCompatDialogFragment
     String productName, productId, date;
 
     float productUnitCost, quantity, par;
+    int subcategory_id, category_id;
     Product currentProduct;
 
     @Override
@@ -39,19 +40,6 @@ public class SetInventoryDialog extends AppCompatDialogFragment
 
         builder.setView(view)
                 .setTitle("Set Inventory Count");
-                /*.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dismiss();
-                    }
-                })
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String count = etInventoryCount.getText().toString();
-                        listener.getInventoryCount(count, currentProduct, par);
-                    }
-                });  */
 
         // initialize widgets
         tvProductName = view.findViewById(R.id.tvProductName);
@@ -75,9 +63,11 @@ public class SetInventoryDialog extends AppCompatDialogFragment
         date = getArguments().getString("date");
         quantity = getArguments().getFloat("quantity");
         par = getArguments().getFloat("par");
+        subcategory_id = getArguments().getInt("subcategory_id");
+        category_id = getArguments().getInt("category_id");
 
         // create product
-        currentProduct = new Product(productId, productName, productUnitCost);
+        currentProduct = new Product(productId, productName, productUnitCost, quantity, subcategory_id, category_id);
 
         // set text
         String sQuantity = String.format(Locale.CANADA,"%.3f", quantity);

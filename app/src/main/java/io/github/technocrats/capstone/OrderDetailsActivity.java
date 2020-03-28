@@ -32,8 +32,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import io.github.technocrats.capstone.adapters.OrderItemAdapter;
-import io.github.technocrats.capstone.models.OrderItem;
+import io.github.technocrats.capstone.adapters.OrderProductAdapter;
+import io.github.technocrats.capstone.models.OrderProduct;
 
 public class OrderDetailsActivity extends AppCompatActivity
         implements CompoundButton.OnCheckedChangeListener{
@@ -44,8 +44,8 @@ public class OrderDetailsActivity extends AppCompatActivity
     private TextView tvOrderNumber, tvDate, tvTotal, tvStatus;
     private String orderNumber, orderDate, orderTotal, orderStatus;
     private RecyclerView recyclerView;
-    private OrderItemAdapter adapter;
-    private ArrayList<OrderItem> orderItems;
+    private OrderProductAdapter adapter;
+    private ArrayList<OrderProduct> orderItems;
     RequestQueue queue;
 
     GlobalMethods globalMethods;
@@ -87,7 +87,7 @@ public class OrderDetailsActivity extends AppCompatActivity
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         orderItems = new ArrayList<>();
-        adapter = new OrderItemAdapter(this, orderItems);
+        adapter = new OrderProductAdapter(this, orderItems);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
 
@@ -129,12 +129,12 @@ public class OrderDetailsActivity extends AppCompatActivity
 
                                     //String productName = obj.getString("product");
                                     String productName = obj.getString("product");
-                                    int quantity = obj.getInt("quantity");
+                                    float quantity = obj.getInt("quantity");
                                     String cost = obj.getString("unit_cost");
                                     float fUnitCost = Float.parseFloat(cost);
 
                                     // create order
-                                    OrderItem item = new OrderItem(orderNumber, productName, fUnitCost, quantity);
+                                    OrderProduct item = new OrderProduct(orderNumber, productName, fUnitCost, quantity);
 
                                     // add to list
                                     orderItems.add(item);
@@ -142,10 +142,7 @@ public class OrderDetailsActivity extends AppCompatActivity
                                     // display result to recyclerview
                                     adapter.notifyDataSetChanged();
                                 }
-                            }
-
-                            else
-                            {
+                            } else {
                                 Log.d("JSON", "No orders found.");
                                 // tvResult.setText("No orders found.");
                             }
