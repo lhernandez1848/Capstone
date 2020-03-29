@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    tools:context=".CreateOrderActivity">
 
     <RelativeLayout
+        android:id="@+id/mainLayoutCreate"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <include
             android:id="@+id/createOrderToolbar"
@@ -14,12 +17,11 @@
 
         <TextView
             android:id="@+id/txtDateDisplay"
-            android:layout_below="@+id/createOrderToolbar"
             android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="25sp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/txtStoreNumber"
@@ -28,68 +30,119 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="25sp" />
+            android:textSize="36sp" />
 
-        <TextView
-            android:id="@+id/txtSearchProduct"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/grpRadio"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtStoreNumber"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:clickable="true"
-            android:text="Find a Product"
-            android:textColor="@color/colorTeal"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:focusable="true" />
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_below="@+id/txtStoreNumber"
+            android:checkedButton="@+id/rdbSelect">
+            <RadioButton android:id="@+id/rdbSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorTeal"
+                android:text="Select from List"
+                android:textSize="25sp"
+                android:padding="8dp" />
+            <RadioButton android:id="@+id/rdbSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorTeal"
+                android:text="Search Product"
+                android:textSize="25sp"
+                android:padding="8dp" />
+        </RadioGroup>
 
         <!-- Form Layout -->
         <LinearLayout
             android:id="@+id/loadCategoryForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtStoreNumber"
+            android:layout_below="@+id/grpRadio"
             android:layout_marginTop="50dp"
             android:orientation="vertical">
+
             <ExpandableListView
                 android:id="@+id/expandableListView"
                 android:layout_width="match_parent"
                 android:layout_height="550dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="16dp" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/productLayout"
-            android:layout_below="@+id/loadCategoryForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center" >
-            <TextView
-                android:id="@+id/productTextView"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/grpSearch"
+                android:orientation="vertical"
+                android:layout_gravity="center"
                 android:layout_height="wrap_content"
-                android:layout_weight="6"
-                android:layout_marginStart="10dp"
-                android:textAlignment="textStart"
-                android:textSize="25sp"/>
-            <ImageButton
-                android:id="@+id/btnAddProductToOrder"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_add" />
+                android:layout_width="match_parent">
+                <TextView
+                    android:id="@+id/tvProductName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:padding="10dip"
+                    android:text="Enter Product Name:"
+                    android:textAlignment="center"
+                    android:textSize="23sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/etProductName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:textAlignment="center"
+                    android:maxLength="50"/>
+                <TextView
+                    android:id="@+id/tvProductNameError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textStyle="italic"
+                    android:textColor="@android:color/holo_red_dark"/>
+                <Button
+                    android:id="@+id/btnSearchProduct"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingStart="50dp"
+                    android:paddingEnd="50dp"
+                    android:background="@drawable/solid_border_button"
+                    android:text="Search"
+                    android:textColor="@android:color/black"
+                    android:textSize="25sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/tvResultProductSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dip"
+                    android:textAlignment="center"
+                    android:textSize="17sp"
+                    android:textStyle="italic"
+                    android:textColor="@android:color/holo_red_dark"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- Order Total -->
         <LinearLayout
             android:id="@+id/totalLayout"
-            android:layout_below="@+id/productLayout"
+            android:layout_below="@+id/loadCategoryForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -116,17 +169,19 @@
             android:layout_below="@+id/totalLayout"
             android:gravity="center"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/btnGoToOrderSummary"
-                android:text="Proceed to Checkout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:text="Proceed to Checkout"
+                android:background="@drawable/solid_border_button"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:paddingStart="50dp"
                 android:paddingEnd="50dp"
-                android:background="@drawable/solid_border_button"
-                android:textSize="22sp"/>
+                android:textSize="25sp"/>
+
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

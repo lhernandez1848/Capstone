@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -49,15 +50,20 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import io.github.technocrats.capstone.adapters.CheckInventoryValueExpandableListAdapter;
 import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
+import io.github.technocrats.capstone.models.Category;
+import io.github.technocrats.capstone.models.Product;
+import io.github.technocrats.capstone.models.Subcategory;
 
 public class CheckInventoryActivity extends AppCompatActivity implements
         ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener,
-        AdapterView.OnItemSelectedListener, OnChartValueSelectedListener {
+        AdapterView.OnItemSelectedListener, OnChartValueSelectedListener, CheckInventoryValueExpandableListAdapter.ThreeLevelListViewListener {
 
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
+    private CheckInventoryValueExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
 
+    // declaration of widgets
     PieChart pieChart;
     LinearLayout inventoryValuesLayout;
     TextView dateDisplay, totalTextView, selectDate;
@@ -65,27 +71,16 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     RadioGroup radioGroup;
     RadioButton rdValue, rdProportion;
     Spinner categoriesSpinner;
+    ProgressBar progressBar;
 
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
-    GlobalMethods globalMethods;
-
-    String[] listDataCategories, categoriesForSpinner;
-    List<String[]> listDataSubcategories, listDataSubcategoriesProportion;
-    List<LinkedHashMap<String, List<String>>> listDataProducts;
-
-    // declare and initialize lists of subcategories per categories for Values
-    String[] sFood = new String[]{"Sugar and Shortening", "Fillings", "Drinks",
-            "Cans and Home Brew", "Soup and Sandwiches", "Food Ingredients", "Produce",
-            "Bread", "Emulsions and Paste", "danis", "mustard spread", "Toppings"};
-    String[] sNA = new String[]{"N/A"};
-    String[] sPaper = new String[]{"Paper - Other Packaging", "Hot Drink Cups",
-            "Iced Beverage Cups/Lids"};
-    String[] sAdvertising = new String[]{"Advertising"};
-    String[] sCleaning = new String[]{"coffee bowl cleaner"};
-    String[] sMiscellaneous = new String[]{"Store Supplies"};
-    String[] sUniforms = new String[]{"Staff Uniform"};
-    String[] sInventory = new String[]{"Dairy"};
+    // declaration of arrays and lists
+    String[] categoriesForSpinner;
+    List<String[]> listDataSubcategoriesProportion;
+    List<Category> listDataCategories;
+    List<List<Subcategory>> listDataSubcategories;
+    List<LinkedHashMap<Subcategory, List<Product>>> listDataProducts;
 
     // declare and initialize lists of subcategories per categories for Proportions
     String[] yFood = new String[]{"Sugar and Shortening", "Fillings", "Drinks",
@@ -102,13 +97,14 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     JSONArray jsonarrayProducts;
 
-    NumberFormat formatter;
-
+    // declaration of global variables
+    GlobalMethods globalMethods;
     int currentYear, currentMonth, currentDay, selectedYear, selectedMonth, selectedDay, category_id;
     float totalValue;
     float[] yData;
     String[] xData;
     String radioSelected = "";
+    NumberFormat formatter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,22 +123,27 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         actionBar.setDisplayHomeAsUpEnabled(true);
         globalMethods.DisplayDate(dateDisplay);
 
+        // initialization of widgets
         inventoryValuesLayout = (LinearLayout) findViewById(R.id.inventoryValuesLayout);
-
         radioGroup = (RadioGroup) findViewById(R.id.radioButtonsLayout);
         rdValue = (RadioButton) findViewById(R.id.radio_value);
         rdProportion = (RadioButton) findViewById(R.id.radio_proportion);
+        expListView = findViewById(R.id.checkInventoryExpandableListView);
+        totalTextView = (TextView) findViewById(R.id.totalCheckInvTextView);
+        categoriesSpinner = (Spinner) findViewById(R.id.checkInvCategorySpinner);
+        selectDate = (TextView) findViewById(R.id.txtSortDatePicker);
+        pieChart = (PieChart) findViewById(R.id.inventoryPieChart);
+        progressBar = (ProgressBar) findViewById((R.id.simpleProgressBar));
 
+        // set listeners
         radioGroup.clearCheck();
         rdValue.setOnClickListener(this);
         rdProportion.setOnClickListener(this);
+        categoriesSpinner.setOnItemSelectedListener(this);
+        selectDate.setOnClickListener(this);
 
-        // get the listview
-        expListView = findViewById(R.id.checkInventoryExpandableListView);
-
-        // initialize category list with hardcoded data
-        listDataCategories = new String[]{"Food", "N/A", "Paper", "Advertising", "Cleaning",
-                "Miscellaneous", "Uniforms", "inventory"};
+        // initialize category list
+        listDataCategories = new ArrayList<>();
         categoriesForSpinner = new String[]{"Select Category", "Food", "N/A", "Paper", "Advertising", "Cleaning",
                 "Miscellaneous", "Uniforms", "inventory"};
 
@@ -153,16 +154,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         // initialize products list
         listDataProducts = new ArrayList<>();
 
-        // add lists of subcategories to List of all subcategories
-        listDataSubcategories.add(sFood);
-        listDataSubcategories.add(sNA);
-        listDataSubcategories.add(sPaper);
-        listDataSubcategories.add(sAdvertising);
-        listDataSubcategories.add(sCleaning);
-        listDataSubcategories.add(sMiscellaneous);
-        listDataSubcategories.add(sUniforms);
-        listDataSubcategories.add(sInventory);
-
+        // add lists of subcategories to List of all subcategories for proportions
         listDataSubcategoriesProportion.add(yFood);
         listDataSubcategoriesProportion.add(yNA);
         listDataSubcategoriesProportion.add(yPaper);
@@ -174,18 +166,10 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
         formatter = new DecimalFormat("#,###.##");
 
-        categoriesSpinner = (Spinner) findViewById(R.id.checkInvCategorySpinner);
-        categoriesSpinner.setOnItemSelectedListener(this);
-
-        totalTextView = (TextView) findViewById(R.id.totalCheckInvTextView);
-
-        selectDate = (TextView) findViewById(R.id.txtSortDatePicker);
-        selectDate.setOnClickListener(this);
-
         totalValue = 0;
         category_id = 0;
 
-        pieChart = (PieChart) findViewById(R.id.inventoryPieChart);
+        // set pie chart properties
         pieChart.getDescription().setText("Subcategory Quantities");
         pieChart.setRotationEnabled(true);
         pieChart.setHoleRadius(25f);
@@ -196,6 +180,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         pieChart.setEntryLabelTextSize(20);
     }
 
+    // load the spinner
     public void loadSpinner(){
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, categoriesForSpinner);
@@ -320,15 +305,19 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // get products and set up list views for sorting by values
     public void getProductValues(int day, int month, int year){
-        String url ="https://huexinventory.ngrok.io/?a=select%20day,month,year,quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year+"%20and%20quantity%20is%20not%20null&b=Capstone";
+        progressBar.setVisibility(View.VISIBLE);
+        listDataCategories.clear();
+        listDataSubcategories.clear();
+        listDataProducts.clear();
+
+        String url ="https://huexinventory.ngrok.io/?a=SELECT%20products.product_id,products.product,products.category_id,categories.category,products.subcategory_id,subcategories.subcategory,products.unit_cost,inventories.quantity%20FROM%20products%20LEFT%20JOIN%20inventories%20ON%20products.product_id=inventories.product_id%20and%20year="+year+"%20and%20month="+month+"%20and%20day="+day+"%20JOIN%20categories%20ON%20products.category_id=categories.category_id%20JOIN%20subcategories%20ON%20products.subcategory_id=subcategories.subcategory_id&b=Capstone";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        try
-                        {
+                        try {
                             // declare and initialize variables used for storing subcategory values
                             float sugarValue = 0;
                             float fillingsValue = 0;
@@ -362,431 +351,267 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                             float uniforms = 0;
                             float inventory = 0;
 
+                            // declare and initialize lists of subcategories per categories for Values
+                            List<Subcategory> sFood = new ArrayList<>();
+                            List<Subcategory> sNA = new ArrayList<>();
+                            List<Subcategory> sPaper = new ArrayList<>();
+                            List<Subcategory> sAdvertising = new ArrayList<>();
+                            List<Subcategory> sCleaning = new ArrayList<>();
+                            List<Subcategory> sMiscellaneous = new ArrayList<>();
+                            List<Subcategory> sUniforms = new ArrayList<>();
+                            List<Subcategory> sInventory = new ArrayList<>();
+
                             // lists for storing products per subcategory
-                            List<String> SugarAndShortening = new ArrayList<String>();
-                            List<String> Fillings = new ArrayList<String>();
-                            List<String> Drinks = new ArrayList<String>();
-                            List<String> CansAndHomeBrew = new ArrayList<String>();
-                            List<String> SoupSandwiches = new ArrayList<String>();
-                            List<String> FoodIngredients = new ArrayList<String>();
-                            List<String> Produce = new ArrayList<String>();
-                            List<String> NA = new ArrayList<String>();
-                            List<String> Bread = new ArrayList<String>();
-                            List<String> Emulsions = new ArrayList<String>();
-                            List<String> danis = new ArrayList<String>();
-                            List<String> MustardSpread = new ArrayList<String>();
-                            List<String> Toppings = new ArrayList<String>();
-                            List<String> Paper = new ArrayList<String>();
-                            List<String> HotDrinkCups = new ArrayList<String>();
-                            List<String> IcedBeverageCupsLids = new ArrayList<String>();
-                            List<String> Advertising = new ArrayList<String>();
-                            List<String> coffeeBowlCleaner = new ArrayList<String>();
-                            List<String> StoreSupplies = new ArrayList<String>();
-                            List<String> StaffUniform = new ArrayList<String>();
-                            List<String> Dairy = new ArrayList<String>();
+                            List<Product> SugarAndShortening = new ArrayList<Product>();
+                            List<Product> Fillings = new ArrayList<Product>();
+                            List<Product> Drinks = new ArrayList<Product>();
+                            List<Product> CansAndHomeBrew = new ArrayList<Product>();
+                            List<Product> SoupSandwiches = new ArrayList<Product>();
+                            List<Product> FoodIngredients = new ArrayList<Product>();
+                            List<Product> Produce = new ArrayList<Product>();
+                            List<Product> NA = new ArrayList<Product>();
+                            List<Product> Bread = new ArrayList<Product>();
+                            List<Product> Emulsions = new ArrayList<Product>();
+                            List<Product> danis = new ArrayList<Product>();
+                            List<Product> MustardSpread = new ArrayList<Product>();
+                            List<Product> Toppings = new ArrayList<Product>();
+                            List<Product> Paper = new ArrayList<Product>();
+                            List<Product> HotDrinkCups = new ArrayList<Product>();
+                            List<Product> IcedBeverageCupsLids = new ArrayList<Product>();
+                            List<Product> Advertising = new ArrayList<Product>();
+                            List<Product> CoffeeBowlCleaner = new ArrayList<Product>();
+                            List<Product> StoreSupplies = new ArrayList<Product>();
+                            List<Product> StaffUniform = new ArrayList<Product>();
+                            List<Product> Dairy = new ArrayList<Product>();
 
                             // linked hashmap for storing lists of subcategories lists of products
-                            LinkedHashMap<String, List<String>> thirdLevelFood = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelNA = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelPaper = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelAdvertising = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelCleaning = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelMiscellaneous = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelUniforms = new LinkedHashMap<>();
-                            LinkedHashMap<String, List<String>> thirdLevelInventory = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelFood = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelNA = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelPaper = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelAdvertising = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelCleaning = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelMiscellaneous = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelUniforms = new LinkedHashMap<>();
+                            LinkedHashMap<Subcategory, List<Product>> thirdLevelInventory = new LinkedHashMap<>();
 
                             jsonarrayProducts = new JSONArray(response);
-
-                            String products = "";
-                            products += jsonarrayProducts.length() + "\n";
 
                             for (int i = 0; i < jsonarrayProducts.length(); i++)
                             {
                                 JSONObject jsonobject = jsonarrayProducts.getJSONObject(i);
 
-                                String product = jsonobject.getString("product");
+                                String productId = jsonobject.getString("product_id");
+                                String productName = jsonobject.getString("product");
                                 String sPrice = jsonobject.getString("unit_cost");
                                 float fPrice = Float.parseFloat(sPrice);
                                 String sQuantity = jsonobject.getString("quantity");
-                                float fQuantity = Float.parseFloat(sQuantity);
+                                float fQuantity = 0;
+                                if(!sQuantity.equals("null")){
+                                    fQuantity = Float.parseFloat(sQuantity);
+                                }
                                 int subcategory_id = jsonobject.getInt("subcategory_id");
                                 String subcategory_name = jsonobject.getString("subcategory");
                                 String category_name = jsonobject.getString("category");
-                                String productValue = product + "            $" + formatter.format(fPrice*fQuantity);
+                                int category_id = jsonobject.getInt("category_id");
 
                                 totalValue += fPrice*fQuantity;
 
-                                products += product + " ";
+                                Product tProduct = new Product(productId, productName, fPrice,
+                                        fQuantity, subcategory_id, category_id);
+
+                                switch (category_id){
+                                    case 1:
+                                        food = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, food));
+                                        break;
+                                    case 2:
+                                        na = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, na));
+                                        break;
+                                    case 3:
+                                        paper = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, paper));
+                                        break;
+                                    case 4:
+                                        advertising = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, advertising));
+                                        break;
+                                    case 5:
+                                        cleaning = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, cleaning));
+                                        break;
+                                    case 6:
+                                        miscellaneous = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, miscellaneous));
+                                        break;
+                                    case 7:
+                                        uniforms = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, uniforms));
+                                        break;
+                                    case 8:
+                                        inventory = (fPrice*fQuantity);
+                                        listDataCategories.add(new Category(category_id, category_name, inventory));
+                                        break;
+                                        default:
+                                }
 
                                 switch(subcategory_id) {
                                     case 1:
-                                        SugarAndShortening.add(productValue);
-                                        sugarValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Sugar and Shortening")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(sugarValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        SugarAndShortening.add(tProduct);
+                                        sugarValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, sugarValue));
                                         break;
                                     case 2:
-                                        Fillings.add(productValue);
-                                        fillingsValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Fillings")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(fillingsValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        Fillings.add(tProduct);
+                                        fillingsValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, fillingsValue));
                                         break;
                                     case 3:
-                                        Drinks.add(productValue);
-                                        drinksValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Drinks")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(drinksValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        Drinks.add(tProduct);
+                                        drinksValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, drinksValue));
                                         break;
                                     case 4:
-                                        CansAndHomeBrew.add(productValue);
-                                        cansValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Cans and Home Brew")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(cansValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        CansAndHomeBrew.add(tProduct);
+                                        cansValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, cansValue));
                                         break;
                                     case 5:
-                                        SoupSandwiches.add(productValue);
-                                        soupValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Soup and Sandwiches")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(soupValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        SoupSandwiches.add(tProduct);
+                                        soupValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, soupValue));
                                         break;
                                     case 6:
-                                        FoodIngredients.add(productValue);
-                                        foodIngValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Food Ingredients")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(foodIngValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        FoodIngredients.add(tProduct);
+                                        foodIngValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, foodIngValue));
                                         break;
                                     case 7:
-                                        Produce.add(productValue);
-                                        produceValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Produce")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(produceValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        Produce.add(tProduct);
+                                        produceValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, produceValue));
                                         break;
                                     case 8:
-                                        NA.add(productValue);
-                                        naValue += (fPrice*fQuantity);
-                                        na += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sNA.length; y++){
-                                            if (sNA[y].contains("N/A")){
-                                                sNA[y] = subcategory_name + "            $"+formatter.format(naValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("N/A")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(na);
-                                            }
-                                        }
+                                        NA.add(tProduct);
+                                        naValue = (fPrice*fQuantity);
+                                        sNA.add(new Subcategory(subcategory_id, subcategory_name, naValue));
                                         break;
                                     case 9:
-                                        Bread.add(productValue);
-                                        breadValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Bread")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(breadValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        Bread.add(tProduct);
+                                        breadValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, breadValue));
                                         break;
                                     case 10:
-                                        Emulsions.add(productValue);
-                                        emulsionsValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Emulsions and Paste")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(emulsionsValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        Emulsions.add(tProduct);
+                                        emulsionsValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, emulsionsValue));
                                         break;
                                     case 11:
-                                        danis.add(productValue);
-                                        danisValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("danis")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(danisValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        danis.add(tProduct);
+                                        danisValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, danisValue));
                                         break;
                                     case 12:
-                                        MustardSpread.add(productValue);
-                                        mustardValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("mustard spread")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(mustardValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        MustardSpread.add(tProduct);
+                                        mustardValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, mustardValue));
                                         break;
                                     case 13:
-                                        Toppings.add(productValue);
-                                        toppingsValue += (fPrice*fQuantity);
-                                        food += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sFood.length; y++){
-                                            if (sFood[y].contains("Toppings")){
-                                                sFood[y] = subcategory_name + "            $"+formatter.format(toppingsValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Food")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(food);
-                                            }
-                                        }
+                                        Toppings.add(tProduct);
+                                        toppingsValue = (fPrice*fQuantity);
+                                        sFood.add(new Subcategory(subcategory_id, subcategory_name, toppingsValue));
                                         break;
                                     case 14:
-                                        Paper.add(productValue);
-                                        paperValue += (fPrice*fQuantity);
-                                        paper += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sPaper.length; y++){
-                                            if (sPaper[y].contains("Paper - Other Packaging")){
-                                                sPaper[y] = subcategory_name + "            $"+formatter.format(paperValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Paper")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(paper);
-                                            }
-                                        }
+                                        Paper.add(tProduct);
+                                        paperValue = (fPrice*fQuantity);
+                                        sPaper.add(new Subcategory(subcategory_id, subcategory_name, paperValue));
                                         break;
                                     case 15:
-                                        HotDrinkCups.add(productValue);
-                                        hotDrinksValue += (fPrice*fQuantity);
-                                        paper += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sPaper.length; y++){
-                                            if (sPaper[y].contains("Hot Drink Cups")){
-                                                sPaper[y] = subcategory_name + "            $"+formatter.format(hotDrinksValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Paper")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(paper);
-                                            }
-                                        }
+                                        HotDrinkCups.add(tProduct);
+                                        hotDrinksValue = (fPrice*fQuantity);
+                                        sPaper.add(new Subcategory(subcategory_id, subcategory_name, hotDrinksValue));
                                         break;
                                     case 16:
-                                        IcedBeverageCupsLids.add(productValue);
-                                        icedValue += (fPrice*fQuantity);
-                                        paper += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sPaper.length; y++){
-                                            if (sPaper[y].contains("Iced Beverage Cups/Lids")){
-                                                sPaper[y] = subcategory_name + "            $"+formatter.format(icedValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Paper")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(paper);
-                                            }
-                                        }
+                                        IcedBeverageCupsLids.add(tProduct);
+                                        icedValue = (fPrice*fQuantity);
+                                        sPaper.add(new Subcategory(subcategory_id, subcategory_name, icedValue));
                                         break;
                                     case 17:
-                                        Advertising.add(productValue);
-                                        advertisingValue += (fPrice*fQuantity);
-                                        advertising += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sAdvertising.length; y++){
-                                            if (sAdvertising[y].contains("Advertising")){
-                                                sAdvertising[y] = subcategory_name + "            $"+formatter.format(advertisingValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Advertising")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(advertising);
-                                            }
-                                        }
+                                        Advertising.add(tProduct);
+                                        advertisingValue = (fPrice*fQuantity);
+                                        sAdvertising.add(new Subcategory(subcategory_id, subcategory_name, advertisingValue));
                                         break;
                                     case 18:
-                                        coffeeBowlCleaner.add(productValue);
-                                        coffeeCleanerValue += (fPrice*fQuantity);
-                                        cleaning += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sCleaning.length; y++){
-                                            if (sCleaning[y].contains("coffee bowl cleaner")){
-                                                sCleaning[y] = subcategory_name + "            $"+formatter.format(coffeeCleanerValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Cleaning")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(cleaning);
-                                            }
-                                        }
+                                        CoffeeBowlCleaner.add(tProduct);
+                                        coffeeCleanerValue = (fPrice*fQuantity);
+                                        sCleaning.add(new Subcategory(subcategory_id, subcategory_name, coffeeCleanerValue));
                                         break;
                                     case 19:
-                                        StoreSupplies.add(productValue);
-                                        storeSuppliesValue += (fPrice*fQuantity);
-                                        miscellaneous += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sMiscellaneous.length; y++){
-                                            if (sMiscellaneous[y].contains("Store Supplies")){
-                                                sMiscellaneous[y] = subcategory_name + "            $"+formatter.format(storeSuppliesValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Miscellaneous")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(miscellaneous);
-                                            }
-                                        }
+                                        StoreSupplies.add(tProduct);
+                                        storeSuppliesValue = (fPrice*fQuantity);
+                                        sMiscellaneous.add(new Subcategory(subcategory_id, subcategory_name, storeSuppliesValue));
                                         break;
                                     case 20:
-                                        StaffUniform.add(productValue);
-                                        uniformValue += (fPrice*fQuantity);
-                                        uniforms += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sUniforms.length; y++){
-                                            if (sUniforms[y].contains("Staff Uniform")){
-                                                sUniforms[y] = subcategory_name + "            $"+formatter.format(uniformValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("Uniforms")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(uniforms);
-                                            }
-                                        }
+                                        StaffUniform.add(tProduct);
+                                        uniformValue = (fPrice*fQuantity);
+                                        sUniforms.add(new Subcategory(subcategory_id, subcategory_name, uniformValue));
                                         break;
                                     case 21:
-                                        Dairy.add(productValue);
-                                        dairyValue += (fPrice*fQuantity);
-                                        inventory += (fPrice*fQuantity);
-
-                                        for (int y=0; y < sInventory.length; y++){
-                                            if (sInventory[y].contains("Dairy")){
-                                                sInventory[y] = subcategory_name + "            $"+formatter.format(dairyValue);
-                                            }
-                                        }
-                                        for (int x=0; x < listDataCategories.length; x++){
-                                            if (listDataCategories[x].contains("inventory")){
-                                                listDataCategories[x] = category_name + "            $"+formatter.format(inventory);
-                                            }
-                                        }
+                                        Dairy.add(tProduct);
+                                        dairyValue = (fPrice*fQuantity);
+                                        sInventory.add(new Subcategory(subcategory_id, subcategory_name, dairyValue));
                                         break;
                                     default:
                                 }
                             }
 
-                            thirdLevelFood.put(sFood[0], SugarAndShortening);
-                            thirdLevelFood.put(sFood[1], Fillings);
-                            thirdLevelFood.put(sFood[2], Drinks);
-                            thirdLevelFood.put(sFood[3], CansAndHomeBrew);
-                            thirdLevelFood.put(sFood[4], SoupSandwiches);
-                            thirdLevelFood.put(sFood[5], FoodIngredients);
-                            thirdLevelFood.put(sFood[6], Produce);
-                            thirdLevelFood.put(sFood[7], Bread);
-                            thirdLevelFood.put(sFood[8], Emulsions);
-                            thirdLevelFood.put(sFood[9], danis);
-                            thirdLevelFood.put(sFood[10], MustardSpread);
-                            thirdLevelFood.put(sFood[11], Toppings);
 
-                            thirdLevelNA.put(sNA[0], NA);
+                            // remove duplicated names and add values
+                            // categories
+                            checkCategoryDuplicates(listDataCategories);
 
-                            thirdLevelPaper.put(sPaper[0], Paper);
-                            thirdLevelPaper.put(sPaper[1], HotDrinkCups);
-                            thirdLevelPaper.put(sPaper[2], IcedBeverageCupsLids);
+                            // subcategories
+                            checkSubcategoryDuplicates(sFood);
+                            checkSubcategoryDuplicates(sNA);
+                            checkSubcategoryDuplicates(sPaper);
+                            checkSubcategoryDuplicates(sAdvertising);
+                            checkSubcategoryDuplicates(sCleaning);
+                            checkSubcategoryDuplicates(sMiscellaneous);
+                            checkSubcategoryDuplicates(sUniforms);
+                            checkSubcategoryDuplicates(sInventory);
 
-                            thirdLevelAdvertising.put(sAdvertising[0], Advertising);
+                            // add subcategories to the list of subcategories
+                            listDataSubcategories.add(sFood);
+                            listDataSubcategories.add(sNA);
+                            listDataSubcategories.add(sPaper);
+                            listDataSubcategories.add(sAdvertising);
+                            listDataSubcategories.add(sCleaning);
+                            listDataSubcategories.add(sMiscellaneous);
+                            listDataSubcategories.add(sUniforms);
+                            listDataSubcategories.add(sInventory);
 
-                            thirdLevelCleaning.put(sCleaning[0], coffeeBowlCleaner);
-
-                            thirdLevelMiscellaneous.put(sMiscellaneous[0], StoreSupplies);
-
-                            thirdLevelUniforms.put(sUniforms[0], StaffUniform);
-
-                            thirdLevelInventory.put(sInventory[0], Dairy);
+                            // add subcategories and products to its corresponding linkedhashmap
+                            thirdLevelFood.put(sFood.get(0), SugarAndShortening);
+                            thirdLevelFood.put(sFood.get(1), Fillings);
+                            thirdLevelFood.put(sFood.get(2), Drinks);
+                            thirdLevelFood.put(sFood.get(3), CansAndHomeBrew);
+                            thirdLevelFood.put(sFood.get(4), SoupSandwiches);
+                            thirdLevelFood.put(sFood.get(5), FoodIngredients);
+                            thirdLevelFood.put(sFood.get(6), Produce);
+                            thirdLevelFood.put(sFood.get(7), Bread);
+                            thirdLevelFood.put(sFood.get(8), Emulsions);
+                            thirdLevelFood.put(sFood.get(9), danis);
+                            thirdLevelFood.put(sFood.get(10), MustardSpread);
+                            thirdLevelFood.put(sFood.get(11), Toppings);
+                            thirdLevelNA.put(sNA.get(0), NA);
+                            thirdLevelPaper.put(sPaper.get(0), Paper);
+                            thirdLevelPaper.put(sPaper.get(1), HotDrinkCups);
+                            thirdLevelPaper.put(sPaper.get(2), IcedBeverageCupsLids);
+                            thirdLevelAdvertising.put(sAdvertising.get(0), Advertising);
+                            thirdLevelCleaning.put(sCleaning.get(0), CoffeeBowlCleaner);
+                            thirdLevelMiscellaneous.put(sMiscellaneous.get(0), StoreSupplies);
+                            thirdLevelUniforms.put(sUniforms.get(0), StaffUniform);
+                            thirdLevelInventory.put(sInventory.get(0), Dairy);
 
                             listDataProducts.add(thirdLevelFood);
                             listDataProducts.add(thirdLevelNA);
@@ -809,6 +634,51 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    // checks list of categories for duplicates and calculates value accordingly
+    public void checkCategoryDuplicates(List<Category> category) {
+        if (category.size() > 0) {
+            List<Category> deleteCandidates = new ArrayList<>();
+
+            // Pass 1 - collect delete candidates
+            for (int i = 0; i < category.size() - 1; i++) {
+                for (int k = i + 1; k < category.size(); k++) {
+                    if (category.get(i).getCategory_id() == category.get(k).getCategory_id()) {
+                        category.get(i).setValue(category.get(i).getValue() + category.get(k).getValue());
+                        deleteCandidates.add(category.get(k));
+                    }
+                }
+            }
+
+            // Pass 2 - delete
+            for (Category deleteCandidate : deleteCandidates) {
+                category.remove(deleteCandidate);
+            }
+        }
+    }
+
+    // checks list of subcategories for duplicates and calculates value accordingly
+    public void checkSubcategoryDuplicates(List<Subcategory> subcategory) {
+        if (subcategory.size() > 0) {
+            List<Subcategory> deleteCandidates = new ArrayList<>();
+
+            // Pass 1 - collect delete candidates
+            for (int i = 0; i < subcategory.size() - 1; i++) {
+                for (int k = i + 1; k < subcategory.size(); k++) {
+                    if (subcategory.get(i).getSubcategory_id() == subcategory.get(k).getSubcategory_id()) {
+                        subcategory.get(i).setValue(subcategory.get(i).getValue() + subcategory.get(k).getValue());
+                        deleteCandidates.add(subcategory.get(k));
+                    }
+                }
+            }
+
+            // Pass 2 - delete
+            for (Subcategory deleteCandidate : deleteCandidates) {
+                subcategory.remove(deleteCandidate);
+            }
+        }
     }
 
     // get products and set up list views for sorting by proportions
@@ -1068,7 +938,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // display expandable list view
     public void doList(){
-        listAdapter = new ExpandableListAdapter(this, listDataCategories, listDataSubcategories, listDataProducts, this);
+        listAdapter = new CheckInventoryValueExpandableListAdapter(this, listDataCategories,
+                listDataSubcategories, listDataProducts, this);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
@@ -1115,6 +986,11 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     @Override
     public void onFinalChildClick(int plpos, int slpos, int tlpos) {}
+
+    @Override
+    public void onFinalItemClick(String plItem, String slItem, Product tlItem) {
+
+    }
 
     @Override
     public void onFinalItemClick(int plItem, String slItem, String tlItem) {}

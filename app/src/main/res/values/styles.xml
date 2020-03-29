@@ -51,4 +51,5 @@
         <item name="android:selectableItemBackgroundBorderless">@color/colorBlueLagoon</item>
         <item name="colorControlHighlight">@color/colorBlueLagoon</item>
     </style>
+
 </resources>

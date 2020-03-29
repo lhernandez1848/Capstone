@@ -45,8 +45,4 @@ public class GlobalMethods {
         tv.setText(date);
     }
 
-    public String trimEnd(String value) {
-        return value.replaceFirst("\\s+$", "");
-    }
-
 }

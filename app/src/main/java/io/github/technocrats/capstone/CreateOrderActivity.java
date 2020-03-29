@@ -8,14 +8,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,29 +41,41 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.github.technocrats.capstone.adapters.CreateOrderExpandableListAdapter;
+import io.github.technocrats.capstone.adapters.SearchProductAdapter;
 import io.github.technocrats.capstone.models.Product;
 
 public class CreateOrderActivity extends AppCompatActivity
         implements View.OnClickListener, CreateOrderExpandableListAdapter.ThreeLevelListViewListener,
         SetOrderQuantityDialog.SetOrderQuantityDialogListener {
 
-    // declarations - global variables
+    // declarations - widgets
     private ExpandableListView expandableListView;
-    public static TextView productTextView;
-    TextView tvProductName, tvProductCost, tvTotal, searchProductTextView, dateDisplayTextView, storeNumberTextView;
-    Button btnSubmit;
+    private RecyclerView recyclerView;
+    TextView tvProductName, tvProductCost, tvTotal, searchProductTextView, dateDisplayTextView,
+            storeNumberTextView, tvProductNameError, tvResultProductSearch;
+    EditText etProductName;
+    Button btnSubmit, btnSearch;
+    RadioButton rdbSelect, rdbSearch;
+    LinearLayout grpSearch;
+    SearchProductAdapter searchAdapter;
     ImageButton btnAddProductToOrder;
-    RequestQueue queue;
-    static Product selectedProduct;
-    NumberFormat formatter;
-    CreateOrderExpandableListAdapter listAdapter;
     Toolbar toolbar;
+
+    // declarations - global variables
+    String productName, productNameError;
     GlobalMethods globalMethods;
+    CreateOrderExpandableListAdapter listAdapter;
+    NumberFormat formatter;
+    RequestQueue queue;
+    Product selectedProduct;
 
     // declare lists to store all categories, subcategories, and products
     String[] listCategories;
     List<String[]> listSubcategories;
     List<LinkedHashMap<String, List<Product>>> listProducts;
+
+    // declare list for search result
+    private ArrayList<Product> searchProductList;
 
     // declare lists to store ordered products
     public static ArrayList<Product> orderedItems;
@@ -99,11 +117,19 @@ public class CreateOrderActivity extends AppCompatActivity
         tvProductCost = (TextView) findViewById(R.id.tvProductCost);
         tvProductName = (TextView) findViewById(R.id.tvProductName);
         tvTotal = (TextView) findViewById(R.id.totalTextView);
-        searchProductTextView = (TextView) findViewById(R.id.txtSearchProduct);
         dateDisplayTextView = findViewById(R.id.txtDateDisplay);
         storeNumberTextView = (TextView) findViewById(R.id.txtStoreNumber);
         btnSubmit = (Button) findViewById(R.id.btnGoToOrderSummary);
-        btnAddProductToOrder = (ImageButton) findViewById(R.id.btnAddProductToOrder);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        etProductName = (EditText) findViewById(R.id.etProductName);
+        tvProductCost = (TextView) findViewById(R.id.tvProductCost);
+        tvProductName = (TextView) findViewById(R.id.tvProductName);
+        tvProductNameError = (TextView) findViewById(R.id.tvProductNameError);
+        tvResultProductSearch = (TextView) findViewById(R.id.tvResultProductSearch);
+        btnSearch = (Button) findViewById(R.id.btnSearchProduct);
+        rdbSearch = (RadioButton) findViewById(R.id.rdbSearch);
+        rdbSelect = (RadioButton) findViewById(R.id.rdbSelect);
+        grpSearch = (LinearLayout) findViewById(R.id.grpSearch);
 
         // display date and store number
         globalMethods.DisplayDate(dateDisplayTextView);
@@ -112,8 +138,10 @@ public class CreateOrderActivity extends AppCompatActivity
 
         // set onClickListener
         btnSubmit.setOnClickListener(this);
-        btnAddProductToOrder.setOnClickListener(this);
-        searchProductTextView.setOnClickListener(this);
+        //btnAddProductToOrder.setOnClickListener(this);
+        btnSearch.setOnClickListener(this);
+        rdbSearch.setOnClickListener(this);
+        rdbSelect.setOnClickListener(this);
 
         // initialize queue
         queue = Volley.newRequestQueue(this);
@@ -128,8 +156,19 @@ public class CreateOrderActivity extends AppCompatActivity
         // initialize list of ordered products
         orderedItems = new ArrayList<>();
 
+        // initialize search products list
+        searchProductList = new ArrayList<>();
+
         // initialize selected product
         selectedProduct = null;
+
+        // initialize recyclerview
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        searchAdapter = new SearchProductAdapter(this, searchProductList);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(searchAdapter);
+
         formatter = new DecimalFormat("#,###.##");
 
         // add lists of subcategories to List of all subcategories
@@ -142,10 +181,15 @@ public class CreateOrderActivity extends AppCompatActivity
         listSubcategories.add(sUniforms);
         listSubcategories.add(sInventory);
 
-        productTextView = (TextView) findViewById(R.id.productTextView);
-        productTextView.setText("");
+        // initialize productName
+        productName = "";
+        productNameError = "";
 
+        // get list of products
         getProducts();
+
+        // display expandable list view onCreate
+        grpSearch.setVisibility(View.GONE);
     }
 
     private void getProducts() {
@@ -215,7 +259,6 @@ public class CreateOrderActivity extends AppCompatActivity
                                         // get quantity from list
                                         if (orderedItems.get(j).getProductId().equals(productId)) {
                                             quantity = orderedItems.get(j).getQuantity();
-                                            // Log.d("QUANTITY", "product quantity: " + quantity);
                                         }
                                     }
 
@@ -385,13 +428,10 @@ public class CreateOrderActivity extends AppCompatActivity
     @Override
     public void onFinalItemClick(String plItem, String slItem, final Product tlItem) {
         // set item clicked as selected product
-        setProduct(tlItem);
-    }
+        selectedProduct = tlItem;
 
-    public static void setProduct(Product product) {
-        selectedProduct = product;
-
-        productTextView.setText(product.getProductName());
+        // display dialog box
+        showSetOrderQuantityDialog(selectedProduct);
     }
 
     @Override
@@ -400,16 +440,133 @@ public class CreateOrderActivity extends AppCompatActivity
             case R.id.btnGoToOrderSummary:
                 goToOrderSummary();
                 break;
-            case R.id.btnAddProductToOrder:
-                // display dialog box
-                showSetOrderQuantityDialog(selectedProduct);
+            case R.id.btnSearchProduct:
+
+                // save user input to variable
+                productName = etProductName.getText().toString();
+
+                // validate user input
+                if (validateProductName(productName)){
+                    // search db for product
+                    searchProduct(productName);
+                } else{
+                    // display error message
+                    tvProductNameError.setText("Invalid product name.");
+                }
+                // clear EditText
+                etProductName.setText("");
+            case R.id.rdbSearch:
+                // hide expandandable listview
+                expandableListView.setVisibility(View.GONE);
+
+                // show search layout
+                grpSearch.setVisibility(View.VISIBLE);
+
                 break;
-            case R.id.txtSearchProduct:
-                startActivity(new Intent(getApplicationContext(), SearchProductActivity.class));
+            case R.id.rdbSelect:
+                // show expandable listview
+                expandableListView.setVisibility(View.VISIBLE);
+
+                // hide search layout
+                grpSearch.setVisibility(View.GONE);
                 break;
+
             default:
                 break;
         }
+    }
+
+    private void searchProduct(String productName) {
+
+        // clear search product list
+        searchProductList.clear();
+
+        String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products%20where%20product%20like%20%27%25"
+                +productName+"%25%27&b=Capstone";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try
+                        {
+                            JSONArray objArray = new JSONArray(response);
+                            int objArrayLength = objArray.length();
+
+                            if (objArrayLength > 0)
+                            {
+                                for (int i = 0; i < objArray.length(); i++)
+                                {
+                                    JSONObject obj = objArray.getJSONObject(i);
+
+                                    final String productId = obj.getString("product_id");
+                                    final String productName = obj.getString("product");
+                                    int subcategory_id = obj.getInt("subcategory_id");
+                                    int category_id = obj.getInt("category_id");
+                                    String unitCost = obj.getString("unit_cost");
+                                    float fUnitCost = Float.parseFloat(unitCost);
+                                    float quantity = 0f;;
+
+                                    // check if product is already in orderedItems list
+                                    for (int j = 0; j < orderedItems.size(); j++){
+                                        // get quantity from list
+                                        if (orderedItems.get(j).getProductId().equals(productId)) {
+                                            quantity = orderedItems.get(j).getQuantity();
+                                            // Log.d("QUANTITY", "product quantity: " + quantity);
+                                        }
+                                    }
+
+                                    // create new product
+                                    Product product = new Product(productId, productName, fUnitCost,
+                                            quantity, subcategory_id, category_id);
+
+                                    // add to list
+                                    searchProductList.add(product);
+
+                                    // display result to recyclerview
+                                    searchAdapter.notifyDataSetChanged();
+
+                                    searchAdapter.SetOnItemClickListener(new SearchProductAdapter.SearchOnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(View view, int position) {
+                                            selectedProduct = searchProductList.get(position);
+                                            showSetOrderQuantityDialog(selectedProduct);
+                                            /*Toast.makeText(getApplicationContext(),
+                                                    selectedProduct.getProductName() + "clicked",
+                                                    Toast.LENGTH_LONG).show();*/
+                                        }
+                                    });
+                                }
+
+                                String result = objArrayLength + " product(s) found.";
+                                tvResultProductSearch.setText(result);
+                            }
+
+                            else
+                            {
+                                tvResultProductSearch.setText("No products found.");
+                            }
+
+                        } catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                tvProductNameError.setText("Sorry! An error occured.");
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    private boolean validateProductName(String productName) {
+        // check if product is empty
+        return !productName.isEmpty();
     }
 
     public void goToOrderSummary() {
@@ -423,6 +580,7 @@ public class CreateOrderActivity extends AppCompatActivity
     }
 
     private void showSetOrderQuantityDialog(Product selectedProduct) {
+
         SetOrderQuantityDialog setOrderQuantityDialog = new SetOrderQuantityDialog();
 
         Bundle args = new Bundle();
@@ -439,6 +597,7 @@ public class CreateOrderActivity extends AppCompatActivity
 
     @Override
     public void applyProductOrderQuantity(Product product, float updatedQuantity, float qTotal) {
+
         // update product's quantity
         product.setQuantity(updatedQuantity);
 
@@ -471,6 +630,11 @@ public class CreateOrderActivity extends AppCompatActivity
 
         // display products
         getProducts();
+
+        // clear recyclerview
+        searchProductList.clear();
+        searchAdapter.notifyDataSetChanged();
+        tvResultProductSearch.setText("");
     }
 
     public void displayOrderTotal(){

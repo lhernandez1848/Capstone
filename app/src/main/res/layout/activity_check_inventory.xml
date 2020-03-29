@@ -22,7 +22,6 @@
             android:text=""
             android:textSize="36sp" />
 
-
         <TextView
             android:id="@+id/radioCaption"
             android:layout_below="@+id/txtCheckInventoryDateDisplay"
@@ -77,7 +76,22 @@
             android:paddingStart="10dp"
             android:visibility="gone"
             android:layout_weight="1" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/progressLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sortingOptionsLayout"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ProgressBar
+                android:id="@+id/simpleProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:layout_gravity="center"
+                android:indeterminateDrawable="@drawable/progress"/>
         </LinearLayout>
 
         <!-- Form Layout -->
@@ -85,7 +99,7 @@
             android:id="@+id/inventoryValuesLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sortingOptionsLayout"
+            android:layout_below="@+id/progressLayout"
             android:layout_marginTop="50dp"
             android:background="@drawable/solid_border_transparent"
             android:orientation="vertical"
@@ -93,14 +107,14 @@
             <ExpandableListView
                 android:id="@+id/checkInventoryExpandableListView"
                 android:layout_width="match_parent"
-                android:layout_height="550dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="16dp" />
+                android:layout_height="500dp"
+                android:layout_marginBottom="8dp" />
             <TextView
                 android:id="@+id/totalCheckInvTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
+                android:gravity="center"
+                android:textSize="25sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
