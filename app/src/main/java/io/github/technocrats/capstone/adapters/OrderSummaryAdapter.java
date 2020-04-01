@@ -43,7 +43,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
 
         public void setDetails(Product item) {
 
-            String quantity = Float.toString(item.getQuantity());
+            String quantity = "Qty: " + Float.toString(item.getQuantity());
             String cost = Float.toString(item.getUnitCost());
             String costDisplay = "Unit Cost: $" + cost;
 
@@ -95,7 +95,3 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         void onDelete(View view, int position);
     }
 }
-
-
-
-    

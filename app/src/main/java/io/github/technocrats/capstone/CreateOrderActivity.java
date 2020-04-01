@@ -29,6 +29,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,14 +52,13 @@ public class CreateOrderActivity extends AppCompatActivity
     // declarations - widgets
     private ExpandableListView expandableListView;
     private RecyclerView recyclerView;
-    TextView tvProductName, tvProductCost, tvTotal, searchProductTextView, dateDisplayTextView,
+    TextView tvProductName, tvProductCost, tvTotal, dateDisplayTextView,
             storeNumberTextView, tvProductNameError, tvResultProductSearch;
     EditText etProductName;
     Button btnSubmit, btnSearch;
     RadioButton rdbSelect, rdbSearch;
     LinearLayout grpSearch;
     SearchProductAdapter searchAdapter;
-    ImageButton btnAddProductToOrder;
     Toolbar toolbar;
 
     // declarations - global variables
@@ -134,7 +134,7 @@ public class CreateOrderActivity extends AppCompatActivity
         // display date and store number
         globalMethods.DisplayDate(dateDisplayTextView);
         String storeId = sharedPlace.getString("storeID", "");
-        storeNumberTextView.setText("Create New Order for Store Number: " + storeId);
+        storeNumberTextView.setText(storeId);
 
         // set onClickListener
         btnSubmit.setOnClickListener(this);
@@ -441,6 +441,8 @@ public class CreateOrderActivity extends AppCompatActivity
                 goToOrderSummary();
                 break;
             case R.id.btnSearchProduct:
+                // clear error
+                tvProductNameError.setText("");
 
                 // save user input to variable
                 productName = etProductName.getText().toString();
@@ -575,7 +577,9 @@ public class CreateOrderActivity extends AppCompatActivity
             intent.putParcelableArrayListExtra("orderedItems", orderedItems);
             startActivityForResult(intent, 1);
         } else {
-            Toast.makeText(getApplicationContext(), "Empty order.", Toast.LENGTH_LONG).show();
+            // Toast.makeText(getApplicationContext(), "Empty order.", Toast.LENGTH_LONG).show();
+            Snackbar.make(findViewById(R.id.mainLayoutCreate), "Empty order.",
+                    Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -622,8 +626,10 @@ public class CreateOrderActivity extends AppCompatActivity
         }
 
         // display success message
-        Toast.makeText(getApplicationContext(), product.getProductName() +
-                " has been added to order.", Toast.LENGTH_LONG).show();
+        // Toast.makeText(getApplicationContext(), product.getProductName()
+        // + " has been added to order.", Toast.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.mainLayoutCreate), product.getProductName()
+                + " has been added to order.", Snackbar.LENGTH_LONG).show();
 
         // re-calculate order total
         displayOrderTotal();

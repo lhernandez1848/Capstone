@@ -92,7 +92,7 @@ public class CreateOrderSecondLevelAdapter extends BaseExpandableListAdapter {
         float fQuantity = product.getQuantity();
         // Log.d("SLA", product.getProductName() + " quantity: " + fQuantity);
         String unitCost = "$" + fUnitCost;
-        String quantity = Float.toString(fQuantity);
+        String quantity = "Qty: " + Float.toString(fQuantity);
         String productName = product.getProductName();
 
         productNameTextView.setText(productName);

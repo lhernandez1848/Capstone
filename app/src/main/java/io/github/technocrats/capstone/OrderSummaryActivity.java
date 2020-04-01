@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -37,7 +39,7 @@ import io.github.technocrats.capstone.models.Product;
 public class OrderSummaryActivity extends AppCompatActivity implements View.OnClickListener {
 
     ArrayList<Product> orderedItems;
-    TextView tvStoreNumber, tvTotal, tvOrderSummary;
+    TextView tvStoreNumber, tvTotal, tvDateDisplay;
     Button btnSubmitOrder;
     private RecyclerView recyclerView;
     private OrderSummaryAdapter adapter;
@@ -70,8 +72,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         actionBar.setTitle("Order Summary");
 
         tvStoreNumber = (TextView) findViewById(R.id.txtOrderSummaryStoreNumber);
-        tvOrderSummary = (TextView) findViewById(R.id.txtOrderSummaryCount);
         tvTotal = (TextView) findViewById(R.id.orderSummaryTotalTextView);
+        tvDateDisplay = (TextView) findViewById(R.id.txtOrderSummaryDateDisplay);
         recyclerView = (RecyclerView) findViewById(R.id.orderedProductListView);
         btnSubmitOrder = (Button) findViewById(R.id.btnSubmitOrder);
         btnSubmitOrder.setOnClickListener(this);
@@ -81,11 +83,10 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
 
         formatter = new DecimalFormat("#,###.##");
 
-        // test - delete later
-        String test = Integer.toString(orderedItems.size());
-        storeID = sharedPlace.getString("storeID", "");
-        tvStoreNumber.setText("Store ID: " + storeID);
-        tvOrderSummary.setText("Ordered Items size: " + test);
+        // display date and store number
+        globalMethods.DisplayDate(tvDateDisplay);
+        String storeId = sharedPlace.getString("storeID", "");
+        tvStoreNumber.setText(storeId);
 
         // data used for inserting new order and ordered_items, as well as generating a new order_id
         calendar = Calendar.getInstance();
@@ -166,10 +167,6 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         // delete product from order list
         orderedItems.remove(position);
 
-        // test
-        String test = Integer.toString(orderedItems.size());
-        tvStoreNumber.setText("OrderedItems size: " + test);
-
         // update list
         adapter.notifyItemRemoved(position);
 
@@ -177,8 +174,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
         displayOrderTotal();
 
         // display success message
-        Toast.makeText(getApplicationContext(), "Item has been deleted.",
-                Toast.LENGTH_LONG).show();
+        // Toast.makeText(getApplicationContext(), "Item has been deleted.", Toast.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.mainLayoutOrderSummary), "Item has been deleted.",
+                Snackbar.LENGTH_LONG).show();
     }
 
     @Override

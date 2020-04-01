@@ -15,70 +15,145 @@
             android:id="@+id/createOrderToolbar"
             layout="@layout/custom_toolbar"/>
 
-        <TextView
-            android:id="@+id/txtDateDisplay"
-            android:layout_marginTop="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="36sp" />
-
-        <TextView
-            android:id="@+id/txtStoreNumber"
-            android:layout_below="@+id/txtDateDisplay"
-            android:layout_marginTop="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="36sp" />
-
-        <RadioGroup
-            android:id="@+id/grpRadio"
+        <LinearLayout
+            android:id="@+id/grpNewOrderDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:layout_below="@+id/txtStoreNumber"
-            android:checkedButton="@+id/rdbSelect">
-            <RadioButton android:id="@+id/rdbSelect"
-                android:layout_width="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/createOrderToolbar"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTitleCreate"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/colorTeal"
-                android:text="Select from List"
-                android:textSize="25sp"
-                android:padding="8dp" />
-            <RadioButton android:id="@+id/rdbSearch"
-                android:layout_width="wrap_content"
+                android:text="New Order"
+                style="@style/activityHeader" />
+
+            <!-- Date Display-->
+            <LinearLayout
+                android:id="@+id/grpDate"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/colorTeal"
-                android:text="Search Product"
-                android:textSize="25sp"
-                android:padding="8dp" />
-        </RadioGroup>
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tvDateLabel"
+                    android:layout_margin="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="25"
+                    android:text="Date"
+                    android:textStyle="bold"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/txtDateDisplay"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="75"
+                    android:text="Date:"
+                    android:textSize="28sp" />
+            </LinearLayout>
+
+            <!-- Store Display-->
+            <LinearLayout
+                android:id="@+id/grpStore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvStoreLabel"
+                    android:layout_margin="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="25"
+                    android:text="Store Number:"
+                    android:textStyle="bold"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/txtStoreNumber"
+                    android:layout_margin="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="75"
+                    android:text="Store"
+                    android:textSize="28sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/grpRadioStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/grpNewOrderDetails"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/dividerCreate"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="30dp"
+                android:background="#000000"
+                android:padding="15dp"/>
+
+            <RadioGroup
+                android:id="@+id/grpRadio"
+                android:layout_below="@+id/grpNewOrderDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:checkedButton="@+id/rdbSelect">
+                <RadioButton android:id="@+id/rdbSelect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorTeal"
+                    android:text="Select from List"
+                    android:textSize="25sp"
+                    android:padding="8dp" />
+                <RadioButton android:id="@+id/rdbSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorTeal"
+                    android:text="Search Product"
+                    android:textSize="25sp"
+                    android:padding="8dp" />
+            </RadioGroup>
+        </LinearLayout>
 
         <!-- Form Layout -->
         <LinearLayout
             android:id="@+id/loadCategoryForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/grpRadio"
-            android:layout_marginTop="50dp"
+            android:layout_below="@+id/grpRadioStyle"
+            android:layout_marginTop="25dp"
+            android:layout_margin="10dp"
             android:orientation="vertical">
 
             <ExpandableListView
                 android:id="@+id/expandableListView"
                 android:layout_width="match_parent"
-                android:layout_height="550dp"
+                android:layout_height="575dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/grpSearch"
-                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="575dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_gravity="center"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent">
-                <TextView
+                android:orientation="vertical">
+                <!-- <TextView
                     android:id="@+id/tvProductName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,14 +163,20 @@
                     android:text="Enter Product Name:"
                     android:textAlignment="center"
                     android:textSize="23sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold" /> -->
                 <EditText
                     android:id="@+id/etProductName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:textAlignment="center"
+                    android:layout_marginStart="128dp"
+                    android:layout_marginEnd="128dp"
+                    android:padding="15dp"
+                    android:layout_marginTop="30dp"
+                    android:drawableLeft="@drawable/ic_search"
+                    android:drawablePadding="@dimen/calendar_text_small"
+                    android:backgroundTint="#26858c"
+                    android:textSize="25sp"
+                    android:hint="Enter Product Name"
                     android:maxLength="50"/>
                 <TextView
                     android:id="@+id/tvProductNameError"
@@ -124,7 +205,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"/>
                 <TextView
                     android:id="@+id/tvResultProductSearch"
                     android:layout_width="wrap_content"
@@ -162,7 +244,7 @@
         <!-- Bottom Buttons -->
         <LinearLayout
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="25dp"
             android:id="@+id/bottomButtons"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -176,8 +258,8 @@
                 android:layout_height="wrap_content"
                 android:text="Proceed to Checkout"
                 android:background="@drawable/solid_border_button"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:paddingStart="50dp"
                 android:paddingEnd="50dp"
                 android:textSize="25sp"/>

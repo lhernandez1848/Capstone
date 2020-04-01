@@ -21,7 +21,7 @@ public class SetInventoryDialog extends AppCompatDialogFragment
 
     private EditText etInventoryCount;
     private TextView tvProductName, tvQuantity, tvPar;
-    private Button btnAdd, btnSubtract, btnCancelSetInventory, btnSaveSetInventory;
+    private Button btnAdd, btnSubtract, btnSaveSetInventory;
     private SetInventoryDialogListener listener;
     String productName, productId, date;
 
@@ -48,12 +48,10 @@ public class SetInventoryDialog extends AppCompatDialogFragment
         etInventoryCount = view.findViewById(R.id.etInventoryCount);
         btnAdd = view.findViewById(R.id.btnAdd);
         btnSubtract = view.findViewById(R.id.btnSubtract);
-        btnCancelSetInventory = view.findViewById(R.id.btnCancelSetInventory);
         btnSaveSetInventory = view.findViewById(R.id.btnSaveSetInventory);
 
         btnAdd.setOnClickListener(this);
         btnSubtract.setOnClickListener(this);
-        btnCancelSetInventory.setOnClickListener(this);
         btnSaveSetInventory.setOnClickListener(this);
 
         // get attributes from arguments
@@ -107,9 +105,6 @@ public class SetInventoryDialog extends AppCompatDialogFragment
         Float fCount = Float.parseFloat(count);
 
         switch (v.getId()) {
-            case R.id.btnCancelSetInventory:
-                dismiss();
-                break;
             case R.id.btnSaveSetInventory:
                 String sCount = etInventoryCount.getText().toString();
                 listener.getInventoryCount(sCount, currentProduct, par);

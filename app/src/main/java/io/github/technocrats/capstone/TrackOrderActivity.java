@@ -43,15 +43,14 @@ public class TrackOrderActivity extends AppCompatActivity
     Toolbar toolbar;
     TextView voiceActivated;
     SwitchCompat switchCompat;
-    private TextView tvOrderNumberError;
+    private TextView tvOrderNumberError, tvResult;
     private Button btnTrackOrder;
     private EditText etOrderNumber;
-    private String orderNumberError;
-    private String orderNumber;
+    private String orderNumber, orderNumberError;
     private RecyclerView recyclerView;
     private OrderAdapter adapter;
     private ArrayList<Order> orderList;
-    private TextView tvResult;
+    private View grpTrackOrderResults;
 
     GlobalMethods globalMethods;
 
@@ -83,13 +82,14 @@ public class TrackOrderActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         tvResult = (TextView) findViewById(R.id.tvResult);
         orderNumberError = "";
+        grpTrackOrderResults = (View) findViewById(R.id.grpTrackOrderResults);
 
         // initialize recyclerview
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         orderList = new ArrayList<>();
         adapter = new OrderAdapter(this, orderList);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        // recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
 
         // Set onClickListener
@@ -103,6 +103,9 @@ public class TrackOrderActivity extends AppCompatActivity
         if (previousActivity != null && previousActivity.equals("SEARCH_PRODUCT")){
             etOrderNumber.setText(mIntent.getStringExtra("order_id"));
         }
+
+        // hide results onCreate
+        grpTrackOrderResults.setVisibility(View.GONE);
     }
 
     @Override
@@ -116,6 +119,9 @@ public class TrackOrderActivity extends AppCompatActivity
             // validate user input
             if (validateOrderNumber(orderNumber))
             {
+                // show results
+                grpTrackOrderResults.setVisibility(View.VISIBLE);
+
                 // search db for order
                 searchOrder(orderNumber);
             }
@@ -215,8 +221,8 @@ public class TrackOrderActivity extends AppCompatActivity
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                    Log.d("searchOrder JSON", "Error in searchOrder() method.");
-                    tvResult.setText("Sorry! An error occured.");
+                Log.d("searchOrder JSON", "Error in searchOrder() method.");
+                tvResult.setText("Sorry! An error occured.");
             }
         });
 

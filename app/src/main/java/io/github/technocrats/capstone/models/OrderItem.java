@@ -2,14 +2,24 @@ package io.github.technocrats.capstone.models;
 
 public class OrderItem {
 
+    private String orderId;
     private String productName;
-    private int quantity;
+    private float quantity;
     private float unitCost;
 
-    public OrderItem(String productName, int quantity, float unitCost) {
+    public OrderItem(String orderId, String productName, float quantity, float unitCost) {
+        this.orderId = orderId;
         this.productName = productName;
         this.quantity = quantity;
         this.unitCost = unitCost;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     public String getProductName() {
@@ -20,11 +30,11 @@ public class OrderItem {
         this.productName = productName;
     }
 
-    public int getQuantity() {
+    public float getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(float quantity) {
         this.quantity = quantity;
     }
 

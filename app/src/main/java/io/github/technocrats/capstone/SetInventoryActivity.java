@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +38,7 @@ public class SetInventoryActivity extends AppCompatActivity
 
     // declarations - global variables
     private ExpandableListView expandableListView;
+    InventoryExpandableListAdapter listAdapter;
     Toolbar toolbar;
     RequestQueue queue;
     GlobalMethods globalMethods;
@@ -295,7 +297,7 @@ public class SetInventoryActivity extends AppCompatActivity
     private void setUpAdapter() {
 
         // declare and initialize adapter
-        InventoryExpandableListAdapter listAdapter = new InventoryExpandableListAdapter(this, listCategories,
+        listAdapter = new InventoryExpandableListAdapter(this, listCategories,
                 listSubcategories, listProducts, this);
 
         // attach adapter to expandable listview
@@ -483,16 +485,23 @@ public class SetInventoryActivity extends AppCompatActivity
                     @Override
                     public void onResponse(String response) {
 
-                        Toast.makeText(getApplicationContext(),
-                                "Inventory updated.", Toast.LENGTH_LONG).show();
+                        // collapse all groups in expandable list view
+                        for (int i=0; i < listAdapter.getGroupCount(); i++) {
+                            expandableListView.collapseGroup(i);
+                        }
+
+                        // display success message
+                        Snackbar.make(findViewById(R.id.mainLayoutSetInventory),
+                                "Inventory updated", Snackbar.LENGTH_LONG).show();
 
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("getInventoryCount", "Error in INSERT method.");
-                Toast.makeText(getApplicationContext(),
-                        "An error occured. Please try again.", Toast.LENGTH_LONG).show();
+                // display error message
+                Snackbar.make(findViewById(R.id.mainLayoutSetInventory),
+                        "An error occured. Please try again.", Snackbar.LENGTH_LONG).show();
             }
         });
 

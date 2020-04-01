@@ -38,8 +38,8 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
         public void setDetails(OrderItem item) {
 
-            String quantity = Integer.toString(item.getQuantity());
-            String cost = Float.toString(item.getUnitCost());
+            String quantity = "Qty: " + Float.toString(item.getQuantity());
+            String cost = "Unit Cost: $" + Float.toString(item.getUnitCost());
 
             tvName.setText(item.getProductName());
             tvQuantity.setText(quantity);

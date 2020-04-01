@@ -1,64 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mainLayout"
+    android:id="@+id/mainLayoutOrderSummary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <include
         android:id="@+id/ordersSummaryToolbar"
         layout="@layout/custom_toolbar"/>
 
     <LinearLayout
+        android:id="@+id/grpOrderDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/tvOrderSummaryTitle"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:id="@+id/txtOrderSummaryCount"
-            android:layout_marginStart="20dp"
-            android:textSize="30sp"/>
-        <TextView
-            android:id="@+id/txtOrderSummaryStoreNumber"
-            android:layout_width="0dp"
+            android:text="Review your Order"
+            style="@style/activityHeader" />
+
+        <!-- Date Display-->
+        <LinearLayout
+            android:id="@+id/grpDate"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:layout_gravity="end"/>
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvDateLabel"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="30"
+                android:text="Date"
+                android:textStyle="bold"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/txtOrderSummaryDateDisplay"
+                android:layout_marginTop="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="70"
+                android:text="Date:"
+                android:textSize="28sp" />
+        </LinearLayout>
+
+        <!-- Store Display-->
+        <LinearLayout
+            android:id="@+id/grpStore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvStoreLabel"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="30"
+                android:text="Store Number:"
+                android:textStyle="bold"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/txtOrderSummaryStoreNumber"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="70"
+                android:text="Store"
+                android:textSize="28sp" />
+        </LinearLayout>
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orderedProductListView"
-        android:layout_marginTop="100dp"
+    <LinearLayout
+        android:id="@+id/orderedItemsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="30dp"/>
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/orderSummaryTotalTextView"
-        android:textSize="30sp"
-        android:layout_margin="20dp"
-        android:gravity="center"/>
+        <View
+            android:id="@+id/dividerCreate"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="30dp"
+            android:background="#000000"
+            android:padding="15dp"/>
 
-    <Button
-        android:id="@+id/btnSubmitOrder"
-        android:layout_width="350dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:padding="12dp"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:background="@drawable/button_shape"
-        android:layout_gravity="center"
-        android:textSize="20sp"
-        android:text="Submit"/>
+        <TextView
+            android:id="@+id/tvOrderItemsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order Items"
+            android:layout_margin="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textSize="30sp"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/orderedProductListView"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="30dp"/>
+
+        <TextView
+            android:id="@+id/orderSummaryTotalTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/btnSubmitOrder"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:padding="12dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_shape"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:text="Place Order"/>
+
+    </LinearLayout>
 </LinearLayout>
-
-
-
-
