@@ -19,6 +19,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,8 +66,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // declaration of widgets
     PieChart pieChart;
-    LinearLayout inventoryValuesLayout;
-    TextView dateDisplay, totalTextView, selectDate;
+    LinearLayout inventoryValuesLayout, inventoryProportionsLayout, getInventoryValues;
+    TextView dateDisplay, totalTextView, selectDateValues, selectDateProportions;
     Toolbar toolbar;
     RadioGroup radioGroup;
     RadioButton rdValue, rdProportion;
@@ -125,13 +126,16 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
         // initialization of widgets
         inventoryValuesLayout = (LinearLayout) findViewById(R.id.inventoryValuesLayout);
+        getInventoryValues = (LinearLayout) findViewById(R.id.getInventoryValues);
+        inventoryProportionsLayout = (LinearLayout) findViewById(R.id.inventoryProportionsLayout);
         radioGroup = (RadioGroup) findViewById(R.id.radioButtonsLayout);
         rdValue = (RadioButton) findViewById(R.id.radio_value);
         rdProportion = (RadioButton) findViewById(R.id.radio_proportion);
         expListView = findViewById(R.id.checkInventoryExpandableListView);
         totalTextView = (TextView) findViewById(R.id.totalCheckInvTextView);
         categoriesSpinner = (Spinner) findViewById(R.id.checkInvCategorySpinner);
-        selectDate = (TextView) findViewById(R.id.txtSortDatePicker);
+        selectDateValues = (TextView) findViewById(R.id.txtSortDatePickerValues);
+        selectDateProportions = (TextView) findViewById(R.id.txtSortDatePickerProp);
         pieChart = (PieChart) findViewById(R.id.inventoryPieChart);
         progressBar = (ProgressBar) findViewById((R.id.simpleProgressBar));
 
@@ -140,7 +144,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         rdValue.setOnClickListener(this);
         rdProportion.setOnClickListener(this);
         categoriesSpinner.setOnItemSelectedListener(this);
-        selectDate.setOnClickListener(this);
+        selectDateValues.setOnClickListener(this);
+        selectDateProportions.setOnClickListener(this);
 
         // initialize category list
         listDataCategories = new ArrayList<>();
@@ -193,10 +198,12 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         if (adapterView.getId() == R.id.checkInvCategorySpinner){
             category_id = (int) adapterView.getItemIdAtPosition(i);
         }
-        if (category_id != 0) {
+        if (category_id > 0) {
             if (selectedDay==0){
-                selectDate.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(), "Please select a date",
+                        Toast.LENGTH_LONG).show();
             } else {
+                pieChart.setVisibility(View.VISIBLE);
                 getProductProportions(category_id, selectedDay, selectedMonth, selectedYear);
             }
         }
@@ -248,28 +255,24 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.radio_value){
-            selectDate.setVisibility(View.VISIBLE);
-            pieChart.setVisibility(View.GONE);
-            categoriesSpinner.setVisibility(View.GONE);
+            inventoryValuesLayout.setVisibility(View.VISIBLE);
+            inventoryProportionsLayout.setVisibility(View.GONE);
             radioSelected = "value";
-            selectedDay = 0;
-            selectDate.setText(null);
         } else if (view.getId() == R.id.radio_proportion){
             inventoryValuesLayout.setVisibility(View.GONE);
-            selectDate.setVisibility(View.GONE);
+            inventoryProportionsLayout.setVisibility(View.VISIBLE);
             radioSelected = "proportion";
-            selectedDay = 0;
-            selectDate.setText(null);
-            categoriesSpinner.setVisibility(View.VISIBLE);
             loadSpinner();
-        } else if (view.getId() == R.id.txtSortDatePicker){
+        } else if (view.getId() == R.id.txtSortDatePickerValues){
+            setDate();
+        } else if (view.getId() == R.id.txtSortDatePickerProp){
             setDate();
         }
 
     }
 
     public void setDate(){
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
 
         currentDay = calendar.get(Calendar.DAY_OF_MONTH);
         currentMonth = calendar.get(Calendar.MONTH);
@@ -282,16 +285,17 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                 selectedMonth = month + 1;
                 selectedYear = year;
                 String dateSet = selectedDay + "/" + selectedMonth + "/" + selectedYear;
-                selectDate.setText(dateSet);
 
                 if(radioSelected.equals("value")){
-                    categoriesSpinner.setVisibility(View.GONE);
-                    pieChart.setVisibility(View.GONE);
-                    inventoryValuesLayout.setVisibility(View.VISIBLE);
+                    selectDateValues.setText(dateSet);
+                    getInventoryValues.setVisibility(View.VISIBLE);
                     getProductValues(selectedDay, selectedMonth, selectedYear);
                 } else if (radioSelected.equals("proportion")){
-                    pieChart.setVisibility(View.VISIBLE);
-                    getProductProportions(category_id, selectedDay, selectedMonth, selectedYear);
+                    selectDateProportions.setText(dateSet);
+                    if (category_id>0) {
+                        pieChart.setVisibility(View.VISIBLE);
+                        getProductProportions(category_id, selectedDay, selectedMonth, selectedYear);
+                    }
                 }
             }
         };
@@ -683,7 +687,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // get products and set up list views for sorting by proportions
     public void getProductProportions(final int cat_id, int day, int month, int year){
-        String url ="https://huexinventory.ngrok.io/?a=select%20quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year+"and%20products.category_id="+cat_id+"%20and%20quantity%3C%3E0%20order%20by%20quantity%20desc&b=Capstone";
+        String url ="https://huexinventory.ngrok.io/?a=select%20quantity,inventories.unit_cost,inventories.product_id,product,products.subcategory_id,subcategory,products.category_id,category%20from%20inventories%20join%20products%20on%20inventories.product_id=products.product_id%20join%20subcategories%20on%20subcategories.subcategory_id=products.subcategory_id%20join%20categories%20on%20categories.category_id=products.category_id%20where%20day="+day+"%20and%20month="+month+"%20and%20year="+year+"and%20products.category_id="+cat_id+"&b=Capstone";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

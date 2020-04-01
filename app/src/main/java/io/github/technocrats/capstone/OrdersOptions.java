@@ -6,50 +6,38 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener{
-
-    ImageButton inventory;
-    ImageButton orders;
+public class OrdersOptions extends AppCompatActivity
+            implements View.OnClickListener{
 
     Toolbar toolbar;
-    FrameLayout layout_main;
+    ImageButton inventory;
+    ImageButton orders;
 
     GlobalMethods globalMethods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_order_options);
 
         globalMethods = new GlobalMethods(this);
         globalMethods.checkIfLoggedIn();
 
-        inventory = (ImageButton) findViewById(R.id.btnInventory);
-        orders = (ImageButton) findViewById(R.id.btnOrders);
+        inventory = (ImageButton) findViewById(R.id.btnNewOrder);
+        orders = (ImageButton) findViewById(R.id.btnOrderHistory);
+        toolbar = (Toolbar) findViewById(R.id.order_options_toolbar);
 
         inventory.setOnClickListener(this);
         orders.setOnClickListener(this);
-
-        toolbar = (Toolbar) findViewById(R.id.homeToolbar);
         setSupportActionBar(toolbar);
 
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btnInventory){
-            startActivity(new Intent(MainActivity.this, InventoryOptions.class));
-        } else if (view.getId() == R.id.btnOrders){
-            startActivity(new Intent(MainActivity.this, OrdersOptions.class));
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -92,7 +80,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onClick(View view) {
+        if (view.getId() == R.id.btnNewOrder){
+            startActivity(new Intent(getApplicationContext(), CreateOrderActivity.class));
+        } else if (view.getId() == R.id.btnOrderHistory){
+            startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
+        }
     }
+
 }
