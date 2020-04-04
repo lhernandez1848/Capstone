@@ -12,12 +12,11 @@
             android:id="@+id/checkInventoryToolbar"
             layout="@layout/custom_toolbar"/>
 
-
         <ProgressBar
             android:id="@+id/simpleProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_centerInParent="true"
             android:indeterminateDrawable="@drawable/progress"/>
 
@@ -91,7 +90,7 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/dividerCheck"
+            android:id="@+id/dividerCheckInv"
             android:layout_below="@id/grpRadioLayout"
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -104,7 +103,7 @@
             android:id="@+id/inventoryValuesLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/dividerCheck"
+            android:layout_below="@+id/dividerCheckInv"
             android:visibility="gone"
             android:orientation="vertical">
             <TextView
@@ -148,7 +147,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginStart="10dp"
-        android:layout_below="@+id/dividerCheck"
+        android:layout_below="@+id/dividerCheckInv"
         android:visibility="gone"
         android:orientation="vertical">
 

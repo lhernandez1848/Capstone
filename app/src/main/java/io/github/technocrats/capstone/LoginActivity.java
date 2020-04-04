@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     String typedUsername, typedPassword, sOutput;
 
-    public static String storedUsername, storedPassword, storedFirstName, storedLastName, storedStoreNumber;
+    public static String storedUserId, storedUsername, storedPassword, storedFirstName, storedLastName, storedStoreNumber;
 
     private SharedPreferences sharedPlace;
 
@@ -90,6 +90,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (typedPassword.equals(sOutput)) {
             SharedPreferences.Editor sharedEditor = this.sharedPlace.edit();
+            sharedEditor.putString("user_id", storedUserId);
             sharedEditor.putString("username", storedUsername);
             sharedEditor.putString("password", storedPassword);
             sharedEditor.putString("firstName", storedFirstName);
@@ -123,12 +124,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             {
                                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
+                                String userId = jsonobject.getString("user_id");
                                 String username = jsonobject.getString("user_name");
                                 String password = jsonobject.getString("password_hash");
                                 String firstName = jsonobject.getString("first_name");
                                 String lastName = jsonobject.getString("last_name");
                                 int storeId = jsonobject.getInt("store_id");
 
+                                storedUserId = userId;
                                 storedUsername = username;
                                 storedPassword = password.replace(" ", "+");
                                 storedFirstName = firstName;

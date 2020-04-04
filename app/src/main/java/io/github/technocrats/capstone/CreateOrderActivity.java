@@ -10,11 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -193,7 +191,6 @@ public class CreateOrderActivity extends AppCompatActivity
     }
 
     private void getProducts() {
-
         String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20products&b=Capstone";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -414,16 +411,8 @@ public class CreateOrderActivity extends AppCompatActivity
 
     }
 
-    public static ArrayList<Product> getOrderedItems(){
-        ArrayList<Product> order_items = orderedItems;
-        return order_items;
-    }
-
     @Override
-    public void onFinalChildClick(int plpos, int slpos, int tlpos) {
-
-    }
-
+    public void onFinalChildClick(int plpos, int slpos, int tlpos) {    }
 
     @Override
     public void onFinalItemClick(String plItem, String slItem, final Product tlItem) {
@@ -479,7 +468,6 @@ public class CreateOrderActivity extends AppCompatActivity
     }
 
     private void searchProduct(String productName) {
-
         // clear search product list
         searchProductList.clear();
 
@@ -566,7 +554,7 @@ public class CreateOrderActivity extends AppCompatActivity
         queue.add(stringRequest);
     }
 
-    private boolean validateProductName(String productName) {
+    public boolean validateProductName(String productName) {
         // check if product is empty
         return !productName.isEmpty();
     }
@@ -620,8 +608,7 @@ public class CreateOrderActivity extends AppCompatActivity
         if (itemFound) {
             // update product quantity on list
             orderedItems.set(index, product);
-        }
-        else {
+        } else {
             orderedItems.add(product);
         }
 

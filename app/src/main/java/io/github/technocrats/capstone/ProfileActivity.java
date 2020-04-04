@@ -9,13 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,26 +28,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     GlobalMethods globalMethods;
     Toolbar toolbar;
-    TextView tvFirstLast;
-    TextView tvUserStore;
-    TextView tvChangePasswordLink;
-    EditText eOldPassword;
-    EditText eNewPassword;
-    EditText eConfirmPassword;
-    LinearLayout layoutChangePassword;
+    TextView tvFirstLast, tvUserID, tvUserStore, tvChangePasswordLink;
+    EditText eOldPassword, eNewPassword, eConfirmPassword;
+    CardView layoutChangePassword;
     Button btnChangePassword;
     private SharedPreferences sharedPlace;
 
-    String newPassword;
-    String password;
-    String username;
-    String firstName;
-    String lastName;
-    String storeID;
-    String sOutput;
-    String typedOldPassword;
-    String typedNewPassword;
-    String typedConfirmPassword;
+    String newPassword, password, username, userID, firstName, lastName, storeID, sOutput,
+            typedOldPassword, typedNewPassword, typedConfirmPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         // initialize SharedPreferences
         this.sharedPlace = getSharedPreferences("SharedPlace", MODE_PRIVATE);
 
+        userID = sharedPlace.getString("user_id", "");
         username = sharedPlace.getString("username", "");
         password = sharedPlace.getString("password", "");
         firstName = sharedPlace.getString("firstName", "");
@@ -78,12 +67,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         // initialize and set text views
         tvFirstLast = (TextView) findViewById(R.id.tvUserFirstLast);
-        tvFirstLast.setText(firstName + " " + lastName);
-
         tvUserStore = (TextView) findViewById(R.id.tvUserStore);
-        tvUserStore.setText("Store Number: " + storeID);
-
+        tvUserID = (TextView) findViewById(R.id.tvUserID);
         tvChangePasswordLink = (TextView) findViewById(R.id.tvChangePasswordLink);
+
+        tvFirstLast.setText(firstName + " " + lastName);
+        tvUserID.setText(userID);
+        tvUserStore.setText(storeID);
         tvChangePasswordLink.setOnClickListener(this);
 
         // initialize edit texts
@@ -95,7 +85,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         btnChangePassword = (Button) findViewById(R.id.btnChangePassword);
         btnChangePassword.setOnClickListener(this);
 
-        layoutChangePassword = (LinearLayout) findViewById(R.id.layoutChangePassword);
+        layoutChangePassword = (CardView) findViewById(R.id.layoutChangePassword);
 
     }
 
