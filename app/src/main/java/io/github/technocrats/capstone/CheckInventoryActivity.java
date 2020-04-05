@@ -638,7 +638,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     // checks list of categories for duplicates and calculates value accordingly

@@ -18,27 +18,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import java.util.Objects;
+
 public class MainActivityFragment extends Fragment implements View.OnClickListener {
 
     private ViewGroup container;
     private LayoutInflater inflater;
     GlobalMethods globalMethods;
     Toolbar toolbar;
-    LinearLayout inventoryOptions, orderOptions;
-    RelativeLayout mainButtons;
-    ImageButton inventory, orders, btnSetInventory, btnCheckInventory, btnNewOrder, btnOrderHistory;
+    public static LinearLayout inventoryOptions, orderOptions;
+    private RelativeLayout mainButtons;
+    private ImageButton inventory, orders, btnSetInventory, btnCheckInventory, btnNewOrder, btnOrderHistory;
 
     public MainActivityFragment() {
     }
 
-    public View initializeUserInterface() {
+    private View initializeUserInterface() {
         View view;
 
         if(container!=null){
             container.removeAllViewsInLayout();
         }
 
-        int orientation = getActivity().getResources().getConfiguration().orientation;
+        int orientation = Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_PORTRAIT){
             view = inflater.inflate(R.layout.fragment_main_activity, container, false);
@@ -74,7 +76,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Instantiate our container and inflater handles.
         this.container = container;
@@ -86,12 +88,9 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         return initializeUserInterface();
     }
 
-    /**
-     * This is called when the user rotates the device.
-     * @param newConfig Configuration
-     */
+    // This is called when the user rotates the device.
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         // Create the new layout.
         View view = initializeUserInterface();
 
