@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity{
 
+    private CapstoneApp app;
     FrameLayout frameLayout;
 
     public void loadFragment(Fragment fragment){
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity{
 
         frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
 
+        // initialize app to start notification service
+        app = (CapstoneApp) getApplication();
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frameLayout, new MainActivityFragment())

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,7 +36,8 @@ import io.github.technocrats.capstone.adapters.ExpandableListAdapter;
 import io.github.technocrats.capstone.adapters.RecommendedProductsAdapter;
 import io.github.technocrats.capstone.models.RecommendedProduct;
 
-public class CalendarRecommendation extends AppCompatActivity implements ExpandableListAdapter.ThreeLevelListViewListener {
+public class CalendarRecommendation extends AppCompatActivity
+        implements ExpandableListAdapter.ThreeLevelListViewListener {
     TextView dateTextView;
     ListView ListView;
     ArrayList<RecommendedProduct> recommendedProducts;
