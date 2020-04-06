@@ -16,6 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".OrdersPopup" android:theme="@style/AppTheme.CustomTheme"/>
+        <activity android:name=".InventoryPopup" android:theme="@style/AppTheme.CustomTheme"/>
         <activity android:name=".OrderSummaryActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -73,6 +75,12 @@
             </meta-data>
         </activity>
         <activity android:name=".SetInventoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.technocrats.capstone.MainActivity">
+            </meta-data>
+        </activity>
+        <activity android:name=".UsageAnalysisActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.technocrats.capstone.MainActivity">

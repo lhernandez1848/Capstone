@@ -15,7 +15,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -209,7 +208,7 @@ public class OrderDetailsActivity extends AppCompatActivity
                 startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
-
+                startActivity(new Intent(getApplicationContext(), UsageAnalysisActivity.class));
                 return true;
             case R.id.btnMenuProfile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));

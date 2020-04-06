@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/usageAnalysisToolbar"
+            layout="@layout/custom_toolbar"/>
+
+        <TextView
+            android:id="@+id/txtUsageAnalysisDateDisplay"
+            android:layout_below="@+id/usageAnalysisToolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="36sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/txtUsageAnalysisDateDisplay"
+            android:id="@+id/selectChartLayout"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose Chart Type: "
+                android:textSize="30sp"
+                android:textColor="@color/colorBlueGreen" />
+
+            <RadioGroup
+                android:id="@+id/radioButtonsLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp"
+                android:layout_marginLeft="20dp">
+
+                <RadioButton android:id="@+id/radio_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:buttonTint="@color/colorTeal"
+                    android:text="Bar Chart" />
+
+                <RadioButton android:id="@+id/radio_line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:buttonTint="@color/colorTeal"
+                    android:text="Line Chart"
+                    android:layout_marginLeft="25dp"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selectCategorySubcategoryLayout"
+            android:layout_below="@+id/selectChartLayout"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:id="@+id/btnCategorySubcategory"
+                android:textSize="30sp"
+                android:textColor="@color/colorBlueGreen"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
+            <Spinner
+                android:id="@+id/categories_spinner"
+                android:background="@drawable/spinner_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:dropDownWidth="wrap_content"
+                android:visibility="gone"
+                android:layout_marginLeft="20dp"
+                android:paddingRight="50dp" />
+
+            <Spinner
+                android:id="@+id/subcategories_spinner"
+                android:background="@drawable/spinner_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:dropDownWidth="wrap_content"
+                android:visibility="gone"
+                android:layout_marginLeft="20dp"
+                android:paddingRight="70dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Date"
+            android:id="@+id/btnDate"
+            android:textSize="30sp"
+            android:textColor="@color/colorBlueGreen"
+            android:visibility="gone"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/selectCategorySubcategoryLayout"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Usage"
+            android:id="@+id/btnViewUsage"
+            android:textSize="30sp"
+            android:textColor="@color/colorBlueGreen"
+            android:visibility="gone"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:textAllCaps="false"
+            android:layout_below="@+id/selectCategorySubcategoryLayout" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/usageBarChart"
+            android:layout_below="@+id/btnDate"
+            android:layout_marginTop="100dp"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="600dp">
+        </com.github.mikephil.charting.charts.BarChart>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/usageLineChart"
+            android:layout_below="@+id/btnViewUsage"
+            android:layout_marginTop="100dp"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="600dp">
+        </com.github.mikephil.charting.charts.LineChart>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/usageLineChart"
+            android:id="@+id/tvInfo"
+            android:textSize="22sp"
+            android:textColor="@color/colorBlueGreen"
+            android:visibility="gone"
+            android:layout_marginStart="250dp"
+            android:layout_marginTop="30dp" />
+
+    </RelativeLayout>
+
+</ScrollView>

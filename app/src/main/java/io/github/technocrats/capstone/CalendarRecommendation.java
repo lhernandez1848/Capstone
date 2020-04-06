@@ -179,7 +179,7 @@ public class CalendarRecommendation extends AppCompatActivity implements Expanda
                 startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
-
+                startActivity(new Intent(getApplicationContext(), UsageAnalysisActivity.class));
                 return true;
             case R.id.btnMenuProfile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));

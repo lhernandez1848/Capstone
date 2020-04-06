@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
@@ -19,7 +20,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,13 +66,14 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
     // declaration of widgets
     PieChart pieChart;
-    LinearLayout inventoryValuesLayout, inventoryProportionsLayout, getInventoryValues;
-    TextView dateDisplay, totalTextView, selectDateValues, selectDateProportions;
+    LinearLayout inventoryValuesLayout, inventoryProportionsLayout, categorySpinnerLayout;
+    TextView totalTextView, selectDate, tvCheckInvError;
     Toolbar toolbar;
     RadioGroup radioGroup;
     RadioButton rdValue, rdProportion;
     Spinner categoriesSpinner;
     ProgressBar progressBar;
+    Button checkInventoryButton;
 
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
@@ -117,35 +118,34 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         globalMethods.checkIfLoggedIn();
 
         setTitle("Check Inventory");
-        dateDisplay = findViewById(R.id.txtCheckInventoryDateDisplay);
         toolbar = findViewById(R.id.checkInventoryToolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        globalMethods.DisplayDate(dateDisplay);
 
         // initialization of widgets
         inventoryValuesLayout = (LinearLayout) findViewById(R.id.inventoryValuesLayout);
-        getInventoryValues = (LinearLayout) findViewById(R.id.getInventoryValues);
         inventoryProportionsLayout = (LinearLayout) findViewById(R.id.inventoryProportionsLayout);
+        categorySpinnerLayout = (LinearLayout) findViewById(R.id.categorySpinnerLayout);
         radioGroup = (RadioGroup) findViewById(R.id.radioButtonsLayout);
         rdValue = (RadioButton) findViewById(R.id.radio_value);
         rdProportion = (RadioButton) findViewById(R.id.radio_proportion);
         expListView = findViewById(R.id.checkInventoryExpandableListView);
         totalTextView = (TextView) findViewById(R.id.totalCheckInvTextView);
+        tvCheckInvError = (TextView) findViewById(R.id.tvCheckInvError);
+        selectDate = (TextView) findViewById(R.id.txtSortDatePicker);
         categoriesSpinner = (Spinner) findViewById(R.id.checkInvCategorySpinner);
-        selectDateValues = (TextView) findViewById(R.id.txtSortDatePickerValues);
-        selectDateProportions = (TextView) findViewById(R.id.txtSortDatePickerProp);
         pieChart = (PieChart) findViewById(R.id.inventoryPieChart);
         progressBar = (ProgressBar) findViewById((R.id.simpleProgressBar));
+        checkInventoryButton = (Button) findViewById((R.id.checkInventoryButton));
 
         // set listeners
         radioGroup.clearCheck();
         rdValue.setOnClickListener(this);
         rdProportion.setOnClickListener(this);
         categoriesSpinner.setOnItemSelectedListener(this);
-        selectDateValues.setOnClickListener(this);
-        selectDateProportions.setOnClickListener(this);
+        selectDate.setOnClickListener(this);
+        checkInventoryButton.setOnClickListener(this);
 
         // initialize category list
         listDataCategories = new ArrayList<>();
@@ -175,7 +175,6 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         category_id = 0;
 
         // set pie chart properties
-        pieChart.getDescription().setText("Subcategory Quantities");
         pieChart.setRotationEnabled(true);
         pieChart.setHoleRadius(25f);
         pieChart.setTransparentCircleAlpha(0);
@@ -183,6 +182,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         pieChart.setOnChartValueSelectedListener(this);
         pieChart.setDrawEntryLabels(true);
         pieChart.setEntryLabelTextSize(20);
+        pieChart.getDescription().setEnabled(false);
     }
 
     // load the spinner
@@ -198,14 +198,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         if (adapterView.getId() == R.id.checkInvCategorySpinner){
             category_id = (int) adapterView.getItemIdAtPosition(i);
         }
-        if (category_id > 0) {
-            if (selectedDay==0){
-                Toast.makeText(getApplicationContext(), "Please select a date",
-                        Toast.LENGTH_LONG).show();
-            } else {
-                pieChart.setVisibility(View.VISIBLE);
-                getProductProportions(category_id, selectedDay, selectedMonth, selectedYear);
-            }
+        if (category_id > 0 && selectedDay > 0) {
+            checkInventoryButton.setEnabled(true);
         }
     }
 
@@ -221,7 +215,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public  boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMenuCheckInventory:
                 startActivity(new Intent(getApplicationContext(), CheckInventoryActivity.class));
@@ -239,7 +233,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                 startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
-
+                startActivity(new Intent(getApplicationContext(), UsageAnalysisActivity.class));
                 return true;
             case R.id.btnMenuProfile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
@@ -255,18 +249,35 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.radio_value){
-            inventoryValuesLayout.setVisibility(View.VISIBLE);
             inventoryProportionsLayout.setVisibility(View.GONE);
-            radioSelected = "value";
+            categorySpinnerLayout.setVisibility(View.GONE);
+            if(selectedDay > 0){
+                checkInventoryButton.setEnabled(true);
+                radioSelected = "value";
+            } else {
+                checkInventoryButton.setEnabled(false);
+            }
         } else if (view.getId() == R.id.radio_proportion){
+            checkInventoryButton.setEnabled(false);
             inventoryValuesLayout.setVisibility(View.GONE);
-            inventoryProportionsLayout.setVisibility(View.VISIBLE);
+            categorySpinnerLayout.setVisibility(View.VISIBLE);
             radioSelected = "proportion";
             loadSpinner();
-        } else if (view.getId() == R.id.txtSortDatePickerValues){
+        } else if (view.getId() == R.id.txtSortDatePicker){
             setDate();
-        } else if (view.getId() == R.id.txtSortDatePickerProp){
-            setDate();
+        } else if (view.getId() == R.id.checkInventoryButton){
+            if(radioSelected.equals("value")){
+                tvCheckInvError.setVisibility(View.GONE);
+                inventoryValuesLayout.setVisibility(View.VISIBLE);
+                getProductValues(selectedDay, selectedMonth, selectedYear);
+            } else if (radioSelected.equals("proportion")) {
+                tvCheckInvError.setVisibility(View.GONE);
+                inventoryProportionsLayout.setVisibility(View.VISIBLE);
+                getProductProportions(category_id, selectedDay, selectedMonth, selectedYear);
+            } else {
+                tvCheckInvError.setVisibility(View.VISIBLE);
+                tvCheckInvError.setText("Please select a \"Sort By value\"");
+            }
         }
 
     }
@@ -286,16 +297,12 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                 selectedYear = year;
                 String dateSet = selectedDay + "/" + selectedMonth + "/" + selectedYear;
 
+                selectDate.setText(dateSet);
+
                 if(radioSelected.equals("value")){
-                    selectDateValues.setText(dateSet);
-                    getInventoryValues.setVisibility(View.VISIBLE);
-                    getProductValues(selectedDay, selectedMonth, selectedYear);
-                } else if (radioSelected.equals("proportion")){
-                    selectDateProportions.setText(dateSet);
-                    if (category_id>0) {
-                        pieChart.setVisibility(View.VISIBLE);
-                        getProductProportions(category_id, selectedDay, selectedMonth, selectedYear);
-                    }
+                    checkInventoryButton.setEnabled(true);
+                } else if (radioSelected.equals("proportion") && (category_id > 0)) {
+                    checkInventoryButton.setEnabled(true);
                 }
             }
         };
@@ -892,21 +899,72 @@ public class CheckInventoryActivity extends AppCompatActivity implements
         queue.add(stringRequest);
     }
 
+    // Function to remove the float element
+    public float[] removeFloatElement(float[] array, int index) {
+        if (array == null
+                || index < 0
+                || index >= array.length) {
+
+            return array;
+        }
+
+        float[] finalArray = new float[array.length - 1];
+
+        for (int i = 0, k = 0; i < array.length; i++) {
+
+            if (i == index) {
+                continue;
+            }
+
+            finalArray[k++] = array[i];
+        }
+
+        // return the result array
+        return finalArray;
+    }
+
+    // Function to remove the String element
+    private String[] removeStringElement(String[] array, int index) {
+        if (array == null
+                || index < 0
+                || index >= array.length) {
+
+            return array;
+        }
+
+        String[] finalArray = new String[array.length - 1];
+
+        for (int i = 0, k = 0; i < array.length; i++) {
+            if (i == index) {
+                continue;
+            }
+            finalArray[k++] = array[i];
+        }
+
+        // return the result array
+        return finalArray;
+
+    }
+
     // display pie chart
     private void addDataSet() {
         List<PieEntry> entries = new ArrayList<>();
 
         for(int i = 0; i < yData.length; i++){
+            if (yData[i] < 1){
+                yData = removeFloatElement(yData, i);
+                xData = removeStringElement(xData, i);
+            }
             entries.add(new PieEntry(yData[i] , xData[i]));
         }
 
         //create the data set
-        PieDataSet pieDataSet = new PieDataSet(entries, "Category Quantities");
+        PieDataSet pieDataSet = new PieDataSet(entries, "");
         pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         pieDataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         pieDataSet.setSliceSpace(2);
         pieDataSet.setValueTextSize(20);
-        pieDataSet.setValueLinePart1OffsetPercentage(10.f);
+        pieDataSet.setValueLinePart1OffsetPercentage(1.f);
         pieDataSet.setValueLinePart1Length(0.43f);
         pieDataSet.setValueLinePart2Length(.1f);
         pieDataSet.setValueTextColor(Color.BLACK);
@@ -1004,6 +1062,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     public void onValueSelected(Entry e, Highlight h) {
         int i = (int) h.getX();
         String subcategorySelected = xData[i];
+        String dataSize = String.valueOf(xData.length);
 
         Intent intent = new Intent(getBaseContext(), ProductProportionActivity.class);
         intent.putExtra("subcategorySelected", subcategorySelected);

@@ -39,7 +39,7 @@ import java.util.List;
 
 public class ProductProportionActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
-    String selectedSubcategory;
+    String selectedSubcategory, dataSize;
     int selectedDay, selectedMonth, selectedYear;
     JSONArray jsonarrayProducts;
 
@@ -77,7 +77,7 @@ public class ProductProportionActivity extends AppCompatActivity implements OnCh
         tvProductSelected = (TextView) findViewById(R.id.barchartSelection);
         barChart = (BarChart) findViewById(R.id.inventoryBarChart);
         barChart.setOnChartValueSelectedListener(this);
-        barChart.getDescription().setText("Top 12 " + selectedSubcategory + " Product Quantities");
+        barChart.getDescription().setText("Top Product Quantities For " + selectedSubcategory);
         barChart.getDescription().setTextSize(20f);
 
         getProductProportions();
@@ -110,7 +110,7 @@ public class ProductProportionActivity extends AppCompatActivity implements OnCh
                 startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
-
+                startActivity(new Intent(getApplicationContext(), UsageAnalysisActivity.class));
                 return true;
             case R.id.btnMenuProfile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
@@ -143,8 +143,6 @@ public class ProductProportionActivity extends AppCompatActivity implements OnCh
                                 JSONObject jsonobject = jsonarrayProducts.getJSONObject(i);
 
                                 String product = jsonobject.getString("product");
-                                String sPrice = jsonobject.getString("unit_cost");
-                                float fPrice = Float.parseFloat(sPrice);
                                 String sQuantity = jsonobject.getString("quantity");
                                 float fQuantity = Float.parseFloat(sQuantity);
 

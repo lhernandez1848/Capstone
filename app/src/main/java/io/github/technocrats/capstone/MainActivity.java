@@ -1,9 +1,7 @@
 package io.github.technocrats.capstone;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -44,18 +42,11 @@ public class MainActivity extends AppCompatActivity{
             frameLayout.removeAllViews();
         }
 
-        LinearLayout inventoryOptions, orderOptions;
-        inventoryOptions = MainActivityFragment.inventoryOptions;
-        orderOptions = MainActivityFragment.orderOptions;
-
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (fragmentManager.getBackStackEntryCount() > 1 ) {
             fragmentManager.popBackStack();
             return;
-        } else if(inventoryOptions.getVisibility()==View.VISIBLE ||
-                orderOptions.getVisibility() == View.VISIBLE){
-            loadFragment(new MainActivityFragment());
         }
 
         // Exit the app if there are no more fragments.

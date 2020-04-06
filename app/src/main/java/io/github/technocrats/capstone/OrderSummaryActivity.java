@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -255,7 +254,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements View.OnCl
                 startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
-
+                startActivity(new Intent(getApplicationContext(), UsageAnalysisActivity.class));
                 return true;
             case R.id.btnMenuProfile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));

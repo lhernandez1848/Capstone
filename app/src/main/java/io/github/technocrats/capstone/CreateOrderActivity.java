@@ -662,7 +662,7 @@ public class CreateOrderActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public  boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMenuCheckInventory:
                 startActivity(new Intent(getApplicationContext(), CheckInventoryActivity.class));
@@ -680,7 +680,7 @@ public class CreateOrderActivity extends AppCompatActivity
                 startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
-
+                startActivity(new Intent(getApplicationContext(), UsageAnalysisActivity.class));
                 return true;
             case R.id.btnMenuProfile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
