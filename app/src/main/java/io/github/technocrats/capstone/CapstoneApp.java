@@ -25,6 +25,7 @@ public class CapstoneApp extends Application {
     private void setAlarm() {
         Log.d(TAG, "Alarm set-up started.");
 
+        // set time
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 16);
         calendar.set(Calendar.MINUTE, 30);
