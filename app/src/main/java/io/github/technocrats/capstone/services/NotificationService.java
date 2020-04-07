@@ -74,8 +74,8 @@ public class NotificationService extends Service {
         int interval = 1000 * 60 * 60 * 12;   // send notif every 12 hours */
 
         // for demo purposes only
-        int delay = 1000 * 60 * 3;      // send notif every 3 minutes
-        int interval = 1000 * 60 * 3;   // send notif every 3 minutes
+        int delay = 1000 * 60 * 5;      // send notif every 5 minutes
+        int interval = 1000 * 60 * 5;   // send notif every 5 minutes
 
         timer.schedule(task, delay, interval);
     }

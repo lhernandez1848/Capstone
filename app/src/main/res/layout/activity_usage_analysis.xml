@@ -12,6 +12,7 @@
             android:id="@+id/usageAnalysisToolbar"
             layout="@layout/custom_toolbar"/>
 
+        <!-- Current Date -->
         <TextView
             android:id="@+id/txtUsageAnalysisDateDisplay"
             android:layout_below="@+id/usageAnalysisToolbar"
@@ -20,121 +21,206 @@
             android:text=""
             android:textSize="36sp" />
 
+        <!-- Radio Buttons -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@+id/txtUsageAnalysisDateDisplay"
             android:id="@+id/selectChartLayout"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUsageAnalysisDateDisplay"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:layout_marginTop="15dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="35"
                 android:text="Choose Chart Type: "
                 android:textSize="30sp"
                 android:textColor="@color/colorBlueGreen" />
 
             <RadioGroup
                 android:id="@+id/radioButtonsLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp"
-                android:layout_marginLeft="20dp">
+                android:layout_weight="65"
+                android:orientation="horizontal">
 
                 <RadioButton android:id="@+id/radio_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="22sp"
+                    android:textSize="25sp"
+                    android:padding="8dp"
                     android:buttonTint="@color/colorTeal"
                     android:text="Bar Chart" />
 
                 <RadioButton android:id="@+id/radio_line"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="22sp"
+                    android:textSize="25sp"
+                    android:padding="8dp"
                     android:buttonTint="@color/colorTeal"
                     android:text="Line Chart"
-                    android:layout_marginLeft="25dp"/>
+                    android:layout_marginLeft="25dp" />
 
             </RadioGroup>
 
         </LinearLayout>
 
+        <!-- Select Category -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/selectCategoryLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/selectCategorySubcategoryLayout"
             android:layout_below="@+id/selectChartLayout"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
+            android:layout_margin="5dp"
             android:orientation="horizontal">
 
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tvCategory"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:id="@+id/btnCategorySubcategory"
+                android:layout_weight="45"
+                android:layout_margin="5dp"
                 android:textSize="30sp"
                 android:textColor="@color/colorBlueGreen"
+                android:text="Select Category"
                 android:textAllCaps="false"
                 android:visibility="gone" />
 
             <Spinner
                 android:id="@+id/categories_spinner"
-                android:background="@drawable/spinner_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:dropDownWidth="wrap_content"
-                android:visibility="gone"
-                android:layout_marginLeft="20dp"
-                android:paddingRight="50dp" />
-
-            <Spinner
-                android:id="@+id/subcategories_spinner"
-                android:background="@drawable/spinner_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:dropDownWidth="wrap_content"
-                android:visibility="gone"
-                android:layout_marginLeft="20dp"
-                android:paddingRight="70dp" />
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="55"
+                android:layout_marginEnd="200dp"
+                android:paddingEnd="50dp"
+                android:paddingStart="10dp"
+                android:visibility="gone" />
 
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
+        <!-- Select Subcategory -->
+        <LinearLayout
+            android:id="@+id/selectSubcategoryLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Date"
-            android:id="@+id/btnDate"
-            android:textSize="30sp"
-            android:textColor="@color/colorBlueGreen"
-            android:visibility="gone"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/selectCategorySubcategoryLayout"
-            android:textAllCaps="false" />
+            android:layout_below="@+id/selectCategoryLayout"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/tvSubcategory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="45"
+                android:layout_margin="5dp"
+                android:textSize="30sp"
+                android:textColor="@color/colorBlueGreen"
+                android:text="Select Subcategory"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
+            <Spinner
+                android:id="@+id/subcategories_spinner"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="55"
+                android:layout_marginEnd="200dp"
+                android:paddingEnd="50dp"
+                android:paddingStart="10dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Select Date -->
+        <LinearLayout
+            android:id="@+id/selectDateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/selectCategoryLayout"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="45"
+                android:layout_margin="5dp"
+                android:text="Select Date"
+                android:textSize="30sp"
+                android:textColor="@color/colorBlueGreen"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="245dp"
+                android:text="Select Year And Month"
+                android:textSize="30sp"
+                android:textColor="@color/colorBlueGreen"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:id="@+id/btnViewUsageBarContainer"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/selectDateLayout"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btnViewUsageBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/colorTeal"
+                android:text="View Usage"
+                android:textSize="30sp"
+                android:textColor="@android:color/white"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnViewUsageLineContainer"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/selectSubcategoryLayout"
+            android:gravity="center"
+            android:orientation="horizontal">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="View Usage"
-            android:id="@+id/btnViewUsage"
+            android:id="@+id/btnViewUsageLine"
             android:textSize="30sp"
-            android:textColor="@color/colorBlueGreen"
+            android:background="@color/colorTeal"
+            android:textColor="@android:color/white"
             android:visibility="gone"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
             android:textAllCaps="false"
-            android:layout_below="@+id/selectCategorySubcategoryLayout" />
+             />
+        </LinearLayout>
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/usageBarChart"
-            android:layout_below="@+id/btnDate"
-            android:layout_marginTop="100dp"
+            android:layout_below="@+id/btnViewUsageBarContainer"
+            android:layout_marginTop="80dp"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="600dp">
@@ -142,8 +228,8 @@
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/usageLineChart"
-            android:layout_below="@+id/btnViewUsage"
-            android:layout_marginTop="100dp"
+            android:layout_below="@+id/btnViewUsageLineContainer"
+            android:layout_marginTop="80dp"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="600dp">
@@ -158,7 +244,7 @@
             android:textColor="@color/colorBlueGreen"
             android:visibility="gone"
             android:layout_marginStart="250dp"
-            android:layout_marginTop="30dp" />
+            android:layout_marginTop="10dp" />
 
     </RelativeLayout>
 
