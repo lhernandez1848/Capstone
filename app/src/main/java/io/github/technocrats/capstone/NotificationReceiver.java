@@ -1,89 +1,56 @@
-package io.github.technocrats.capstone.services;
+package io.github.technocrats.capstone;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import io.github.technocrats.capstone.CalendarRecommendation;
-import io.github.technocrats.capstone.CapstoneApp;
-import io.github.technocrats.capstone.R;
 
-public class NotificationService extends Service {
+public class NotificationReceiver extends BroadcastReceiver {
 
-    private CapstoneApp app;
-    private Timer timer;
     private Context mContext;
     private final String TAG = "Capstone Notification";
-    private final String NOTIFICATION_CHANNEL_ID = "10001";
+    private static final String NOTIFICATION_CHANNEL_ID = "10001";
 
     @Override
-    public void onCreate() {
-        Log.d(TAG, "Service created");
+    public void onReceive(Context context, Intent intent) {
 
-        app = (CapstoneApp) getApplication();
-        mContext = getApplicationContext();
-        startTimer();
+        // initialize global variable
+        mContext = context;
+
+        // all createNotification method
+        createNotification();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "Service started");
-        return START_STICKY;
-    }
+    private void createNotification() {
+        Log.d(TAG, "Creating notification...");
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG, "Service bound - not used!");
-        return null;
-    }
+        // declare and initialize notification details
+        String title = "View Recommended Inventory";
+        String text = "Select to view recommendations.";
 
-    @Override
-    public void onDestroy() {
-        Log.d(TAG, "Service destroyed");
-        stopTimer();
-    }
-
-    private void startTimer() {
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Timer task started");
-
-                // display notification
-                sendNotification("Select to view recommended items.");
-            }
-        };
-
-        timer = new Timer(true);
-        /* int delay = 1000 * 60 * 60 * 12;    // send notif every 12 hours
-        int interval = 1000 * 60 * 60 * 12;   // send notif every 12 hours */
-
-        // for demo purposes only
-        int delay = 1000 * 60 * 5;      // send notif every 5 minutes
-        int interval = 1000 * 60 * 5;   // send notif every 5 minutes
-
-        timer.schedule(task, delay, interval);
-    }
-
-    private void sendNotification(String text) {
+        // get current date
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        month = month + 1;
 
         Intent intent = new Intent(mContext , CalendarRecommendation.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        // save current date to intent
+        intent.putExtra("day", day);
+        intent.putExtra("month", month);
+        intent.putExtra("year", year);
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext,
                 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -91,7 +58,7 @@ public class NotificationService extends Service {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext,
                 NOTIFICATION_CHANNEL_ID);
         mBuilder.setSmallIcon(R.drawable.ic_notification);
-        mBuilder.setContentTitle("View Recommended Inventory")
+        mBuilder.setContentTitle(title)
                 .setContentText(text)
                 .setAutoCancel(true)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
@@ -119,11 +86,5 @@ public class NotificationService extends Service {
         assert mNotificationManager != null;
         mNotificationManager.notify(0, mBuilder.build());
         Log.d(TAG, "Notification built.");
-    }
-
-    private void stopTimer() {
-        if (timer != null) {
-            timer.cancel();
-        }
     }
 }

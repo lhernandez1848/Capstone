@@ -1,25 +1,46 @@
 package io.github.technocrats.capstone;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.util.Log;
 
-import io.github.technocrats.capstone.services.NotificationService;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CapstoneApp extends Application {
+
+    private final String TAG = "Capstone Notification";
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("CapstoneApp", "App started");
 
-        // call method to start service
-        startNotificationService();
+        // call method to set alarm
+        setAlarm();
     }
 
-    private void startNotificationService() {
-        // start service
-        Intent service = new Intent(this, NotificationService.class);
-        startService(service);
+    private void setAlarm() {
+        Log.d(TAG, "Alarm set-up started.");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 16);
+        calendar.set(Calendar.MINUTE, 30);
+
+        if (calendar.getTime().compareTo(new Date()) < 0)
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+        Intent intent = new Intent(getApplicationContext(), NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
+                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        if (alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pendingIntent);
+            Log.d(TAG,"Alarm set - 4:30PM every day.");
+        }
     }
 }

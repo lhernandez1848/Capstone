@@ -87,8 +87,8 @@
                 android:value="io.github.technocrats.capstone.MainActivity">
             </meta-data>
         </activity>
-        <service
-            android:name=".services.NotificationService"
-            android:exported="false"></service>
+        <receiver
+            android:name=".NotificationReceiver"
+            android:enabled="true" />
     </application>
 </manifest>

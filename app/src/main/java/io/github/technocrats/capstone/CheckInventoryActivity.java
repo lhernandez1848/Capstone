@@ -59,7 +59,8 @@ import io.github.technocrats.capstone.models.Subcategory;
 
 public class CheckInventoryActivity extends AppCompatActivity implements
         ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener,
-        AdapterView.OnItemSelectedListener, OnChartValueSelectedListener, CheckInventoryValueExpandableListAdapter.ThreeLevelListViewListener {
+        AdapterView.OnItemSelectedListener, OnChartValueSelectedListener,
+        CheckInventoryValueExpandableListAdapter.ThreeLevelListViewListener {
 
     private CheckInventoryValueExpandableListAdapter listAdapter;
     private ExpandableListView expListView;
@@ -149,8 +150,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
         // initialize category list
         listDataCategories = new ArrayList<>();
-        categoriesForSpinner = new String[]{"Select Category", "Food", "N/A", "Paper", "Advertising", "Cleaning",
-                "Miscellaneous", "Uniforms", "inventory"};
+        categoriesForSpinner = new String[]{"Select Category", "Food", "N/A", "Paper", "Advertising",
+                "Cleaning", "Miscellaneous", "Uniforms", "inventory"};
 
         // initialize subcategories list
         listDataSubcategories = new ArrayList<>();

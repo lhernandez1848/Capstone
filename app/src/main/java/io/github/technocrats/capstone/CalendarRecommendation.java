@@ -52,8 +52,19 @@ public class CalendarRecommendation extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar_recommendation);
+        setTitle("Recommendation");
+
+        globalMethods = new GlobalMethods(this);
+        globalMethods.checkIfLoggedIn();
+
+        toolbar = findViewById(R.id.recommendationToolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         tvDate = (TextView) findViewById(R.id.tvDate);
+        dateTextView = (TextView) findViewById(R.id.dateTextView);
+        ListView = (ListView) findViewById(R.id.ListView);
 
         tvDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,18 +98,18 @@ public class CalendarRecommendation extends AppCompatActivity
             }
         };
 
-        globalMethods = new GlobalMethods(this);
-        globalMethods.checkIfLoggedIn();
+        Intent intent = getIntent();
+        int day = intent.getIntExtra("day", 0);
+        int month = intent.getIntExtra("month", 0);
+        int year = intent.getIntExtra("year", 0);
 
-        toolbar = findViewById(R.id.recommendationToolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (day != 0 && month !=0 && year !=0) {
+            selectedDay = day;
+            selectedMonth = month;
+            selectedYear = year;
 
-        setTitle("Recommendation");
-
-        dateTextView = (TextView) findViewById(R.id.dateTextView);
-        ListView = (ListView) findViewById(R.id.ListView);
+            getProducts();
+        }
     }
 
     public void getProducts()
