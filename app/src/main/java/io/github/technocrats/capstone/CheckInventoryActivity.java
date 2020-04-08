@@ -59,7 +59,8 @@ import io.github.technocrats.capstone.models.Subcategory;
 
 public class CheckInventoryActivity extends AppCompatActivity implements
         ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener,
-        AdapterView.OnItemSelectedListener, OnChartValueSelectedListener, CheckInventoryValueExpandableListAdapter.ThreeLevelListViewListener {
+        AdapterView.OnItemSelectedListener, OnChartValueSelectedListener,
+        CheckInventoryValueExpandableListAdapter.ThreeLevelListViewListener {
 
     private CheckInventoryValueExpandableListAdapter listAdapter;
     private ExpandableListView expListView;
@@ -149,8 +150,8 @@ public class CheckInventoryActivity extends AppCompatActivity implements
 
         // initialize category list
         listDataCategories = new ArrayList<>();
-        categoriesForSpinner = new String[]{"Select Category", "Food", "N/A", "Paper", "Advertising", "Cleaning",
-                "Miscellaneous", "Uniforms", "inventory"};
+        categoriesForSpinner = new String[]{"Select Category", "Food", "N/A", "Paper", "Advertising",
+                "Cleaning", "Miscellaneous", "Uniforms", "inventory"};
 
         // initialize subcategories list
         listDataSubcategories = new ArrayList<>();
@@ -671,7 +672,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     }
 
     // checks list of subcategories for duplicates and calculates value accordingly
-    public void checkSubcategoryDuplicates(List<Subcategory> subcategory) {
+    public static void checkSubcategoryDuplicates(List<Subcategory> subcategory) {
         if (subcategory.size() > 0) {
             List<Subcategory> deleteCandidates = new ArrayList<>();
 
@@ -900,7 +901,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     }
 
     // Function to remove the float element
-    public float[] removeFloatElement(float[] array, int index) {
+    public static float[] removeFloatElement(float[] array, int index) {
         if (array == null
                 || index < 0
                 || index >= array.length) {

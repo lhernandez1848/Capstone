@@ -2,10 +2,7 @@ package io.github.technocrats.capstone;
 
 import org.junit.Test;
 
-import javax.crypto.SecretKey;
-
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

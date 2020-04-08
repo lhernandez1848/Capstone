@@ -16,7 +16,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class ProductSearchTest {
+public class ProductSearchInstrumentedTest {
 
     @Rule
     public ActivityTestRule<CreateOrderActivity> activityTestRule =
@@ -24,10 +24,8 @@ public class ProductSearchTest {
 
     @Test
     public void displayExpandableList_Test() {
-        onView(withId(R.id.rdbSelect))
-                .perform(click());
-        onView(withId(R.id.expandableListView))
-                .check(matches(isDisplayed()));
+        onView(withId(R.id.rdbSelect)).perform(click());
+        onView(withId(R.id.expandableListView)).check(matches(isDisplayed()));
     }
 
     @Test

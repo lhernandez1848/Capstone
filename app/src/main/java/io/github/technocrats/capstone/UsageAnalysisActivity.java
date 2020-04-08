@@ -56,44 +56,43 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
         ExpandableListAdapter.ThreeLevelListViewListener, View.OnClickListener,
         AdapterView.OnItemSelectedListener, OnChartValueSelectedListener {
 
-        int[] months = new int[1000];
-        int[] years = new int[1000];
-        double[] usages2 = new double[1000];
+    int[] months = new int[1000];
+    int[] years = new int[1000];
 
-        String selectedCategory, selectedSubcategory;
+    String selectedCategory, selectedSubcategory;
 
-        int selectedMonth, selectedYear, positionOfSelectedCategory, categoryIdOfSelectedCategory, numberOfSubcategoriesInSelectedCategory;
+    int selectedMonth, selectedYear, positionOfSelectedCategory, categoryIdOfSelectedCategory, numberOfSubcategoriesInSelectedCategory;
 
-        String[] categories = {"Food", "N/A", "Paper", "Advertising", "Cleaning", "Miscellaneous", "Uniforms", "inventory"};
+    String[] categories = {"Food", "N/A", "Paper", "Advertising", "Cleaning", "Miscellaneous", "Uniforms", "inventory"};
 
-        String[][] subcategories = {{"Sugar and Shortening", "Fillings", "Drinks", "Cans and Home Brew", "Soup and Sandwiches", "Food Ingredients", "Produce", "Bread", "Emulsions and Paste", "danis", "mustard spread", "Toppings"},
-                                    {"N/A"},
-                                    {"Paper - Other Packaging", "Hot Drink Cups", "Iced Beverage Cups/Lids"},
-                                    {"Advertising"},
-                                    {"coffee bowl cleaner"},
-                                    {"Store Supplies"},
-                                    {"Staff Uniform"},
-                                    {"Dairy"}};
+    String[][] subcategories = {{"Sugar and Shortening", "Fillings", "Drinks", "Cans and Home Brew", "Soup and Sandwiches", "Food Ingredients", "Produce", "Bread", "Emulsions and Paste", "danis", "mustard spread", "Toppings"},
+            {"N/A"},
+            {"Paper - Other Packaging", "Hot Drink Cups", "Iced Beverage Cups/Lids"},
+            {"Advertising"},
+            {"coffee bowl cleaner"},
+            {"Store Supplies"},
+            {"Staff Uniform"},
+            {"Dairy"}};
 
-        double[] usages = new double[12];
+    double[] usages = new double[12];
 
-        RadioGroup radioGroup;
-        RadioButton radioBar, radioLine;
+    RadioGroup radioGroup;
+    RadioButton radioBar, radioLine;
 
-        RequestQueue queue;
-        BarChart barChart;
-        LineChart lineChart;
-        TextView dateDisplay;
-        Toolbar toolbar;
-        Spinner categoriesSpinner, subcategoriesSpinner;
-        private DatePickerDialog.OnDateSetListener dateSetListener;
-        GlobalMethods globalMethods;
+    RequestQueue queue;
+    BarChart barChart;
+    LineChart lineChart;
+    TextView dateDisplay;
+    Toolbar toolbar;
+    Spinner categoriesSpinner, subcategoriesSpinner;
+    private DatePickerDialog.OnDateSetListener dateSetListener;
+    GlobalMethods globalMethods;
 
-        private static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivity";
 
-        private TextView tvInfo;
-        private Button btnViewUsage, btnCategorySubcategory, btnDate;
-        private DatePickerDialog.OnDateSetListener pickDateListener;
+    private TextView tvCategory, tvSubcategory, tvInfo, tvDate;
+    private Button btnViewUsageBar, btnViewUsageLine, btnDate;
+    private DatePickerDialog.OnDateSetListener pickDateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,24 +124,13 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
         actionBar.setDisplayHomeAsUpEnabled(true);
         globalMethods.DisplayDate(dateDisplay);
 
-        btnCategorySubcategory = (Button) findViewById(R.id.btnCategorySubcategory);
+        tvCategory = (TextView) findViewById(R.id.tvCategory);
 
-        btnCategorySubcategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                categoriesSpinner.setVisibility(View.VISIBLE);
-
-                if (radioBar.isChecked()) {
-                    btnDate.setVisibility(View.VISIBLE);
-                }
-                else if (radioLine.isChecked()) {
-                    subcategoriesSpinner.setVisibility(View.VISIBLE);
-                    btnViewUsage.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        tvSubcategory = (TextView) findViewById(R.id.tvSubcategory);
 
         tvInfo = (TextView) findViewById(R.id.tvInfo);
+
+        tvDate = (TextView) findViewById(R.id.tvDate);
 
         btnDate = (Button) findViewById(R.id.btnDate);
 
@@ -174,47 +162,59 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
 
                 selectedYear = year;
                 selectedMonth = month;
-
-                selectedCategory = categoriesSpinner.getSelectedItem().toString();
-
-                positionOfSelectedCategory = categoriesSpinner.getSelectedItemPosition();
-
-                numberOfSubcategoriesInSelectedCategory = subcategories[positionOfSelectedCategory].length;
-
-                for(int i = 0; i < numberOfSubcategoriesInSelectedCategory; i ++) {
-                    usages[i] = 0;
-                }
-
-                getBarChart();
             }
         };
 
-        btnViewUsage = (Button) findViewById(R.id.btnViewUsage);
+        btnViewUsageBar = (Button) findViewById(R.id.btnViewUsageBar);
 
-        btnViewUsage.setOnClickListener(new View.OnClickListener() {
+        btnViewUsageBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedYear != -1 && selectedMonth != -1) {
+                    selectedCategory = categoriesSpinner.getSelectedItem().toString();
+                    positionOfSelectedCategory = categoriesSpinner.getSelectedItemPosition();
+                    numberOfSubcategoriesInSelectedCategory = subcategories[positionOfSelectedCategory].length;
+
+                    for (int i = 0; i < numberOfSubcategoriesInSelectedCategory; i++) {
+                        usages[i] = 0;
+                    }
+
+                    getBarChart();
+                }
+            }
+        });
+
+        btnViewUsageLine = (Button) findViewById(R.id.btnViewUsageLine);
+
+        btnViewUsageLine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectedCategory = categoriesSpinner.getSelectedItem().toString();
                 selectedSubcategory = subcategoriesSpinner.getSelectedItem().toString();
-
                 getLineChart();
             }
         });
 
-        radioGroup.clearCheck();
+        // radioGroup.clearCheck();
 
         radioBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                selectedYear = -1;
+                selectedMonth = -1;
+
                 loadCategoriesSpinner();
-                btnCategorySubcategory.setText("Select Category");
-                btnCategorySubcategory.setVisibility(View.VISIBLE);
-                categoriesSpinner.setVisibility(View.GONE);
+
+                tvCategory.setVisibility(View.VISIBLE);
+                tvSubcategory.setVisibility(View.GONE);
+                categoriesSpinner.setVisibility(View.VISIBLE);
                 subcategoriesSpinner.setVisibility(View.GONE);
-                btnDate.setVisibility(View.GONE);
+                tvDate.setVisibility(View.VISIBLE);
+                btnDate.setVisibility(View.VISIBLE);
                 barChart.setVisibility(View.GONE);
                 lineChart.setVisibility(View.GONE);
-                btnViewUsage.setVisibility(View.GONE);
+                btnViewUsageBar.setVisibility(View.VISIBLE);
+                btnViewUsageLine.setVisibility(View.GONE);
                 tvInfo.setVisibility(View.GONE);
             }
         });
@@ -224,14 +224,17 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 loadCategoriesSpinner();
                 loadSubcategoriesSpinner();
-                btnCategorySubcategory.setText("Select Category And Subcategory");
-                btnCategorySubcategory.setVisibility(View.VISIBLE);
-                categoriesSpinner.setVisibility(View.GONE);
-                subcategoriesSpinner.setVisibility(View.GONE);
+
+                tvCategory.setVisibility(View.VISIBLE);
+                tvSubcategory.setVisibility(View.VISIBLE);
+                categoriesSpinner.setVisibility(View.VISIBLE);
+                subcategoriesSpinner.setVisibility(View.VISIBLE);
+                tvDate.setVisibility(View.GONE);
                 btnDate.setVisibility(View.GONE);
                 barChart.setVisibility(View.GONE);
                 lineChart.setVisibility(View.GONE);
-                btnViewUsage.setVisibility(View.GONE);
+                btnViewUsageLine.setVisibility(View.VISIBLE);
+                btnViewUsageBar.setVisibility(View.GONE);
                 tvInfo.setVisibility(View.GONE);
             }
         });
@@ -341,7 +344,6 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
 
                         months[i] = month;
                         years[i] = year;
-                        usages2[i] = usage;
 
                         dataVals.add(new Entry(i, (float) usage));
                         labels.add(year + " / " + month);
@@ -415,13 +417,13 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
                     lineDataSet3.setValueTextColor(Color.BLACK);
                     lineDataSet3.setValueTextSize(17f);
                     lineDataSet3.setLineWidth(3);
-                    lineDataSet3.enableDashedLine(10f, 10f, 0f);
+                    lineDataSet3.enableDashedLine(5f, 10f, 0f);
 
                     lineDataSet4.setColors(Color.BLACK);
                     lineDataSet4.setValueTextColor(Color.BLACK);
                     lineDataSet4.setValueTextSize(17f);
                     lineDataSet4.setLineWidth(3);
-                    lineDataSet4.enableDashedLine(10f, 10f, 0f);
+                    lineDataSet4.enableDashedLine(5f, 10f, 0f);
 
                     lineChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
                     lineChart.invalidate();
@@ -489,7 +491,7 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
     }
 
     @Override
-    public  boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMenuCheckInventory:
                 startActivity(new Intent(getApplicationContext(), CheckInventoryActivity.class));
@@ -507,7 +509,7 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
                 startActivity(new Intent(getApplicationContext(), TrackOrderActivity.class));
                 return true;
             case R.id.btnMenuUsage:
-                startActivity(new Intent(getApplicationContext(), UsageAnalysisActivity.class));
+
                 return true;
             case R.id.btnMenuProfile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
