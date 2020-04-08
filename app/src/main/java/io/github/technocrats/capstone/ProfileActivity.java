@@ -143,6 +143,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     || (eConfirmPassword.getText().length()<1)){
                 Toast.makeText(getApplicationContext(), "All fields are required", Toast.LENGTH_LONG).show();
             } else{
+                eOldPassword.setText("");
+                eNewPassword.setText("");
+                eConfirmPassword.setText("");
                 changePassword();
                 Toast.makeText(getApplicationContext(), "Password Changed Successfully", Toast.LENGTH_LONG).show();
                 layoutChangePassword.setVisibility(View.GONE);

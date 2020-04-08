@@ -20,8 +20,8 @@ public class SymmetricEncryptionTest {
 
     @Test
     public void testAESCryptoRoutine() throws Exception {
-        String password = "password";
-        String encPassword = SymmetricEncryptionUtils.encryptPassword(password);
+        String password = "13579";
+        String encPassword = SymmetricEncryptionUtils.encryptPassword(password);System.out.println(encPassword);
         assertNotNull(password);
         String decryptedPassword = SymmetricEncryptionUtils.decryptPassword(encPassword, password);
         assertEquals(password, decryptedPassword);
