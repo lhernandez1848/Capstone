@@ -27,7 +27,7 @@ public class CapstoneApp extends Application {
 
         // set time
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 16);
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
         calendar.set(Calendar.MINUTE, 30);
 
         if (calendar.getTime().compareTo(new Date()) < 0)
@@ -41,7 +41,7 @@ public class CapstoneApp extends Application {
         if (alarmManager != null) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pendingIntent);
-            Log.d(TAG,"Alarm set - 4:30PM every day.");
+            Log.d(TAG,"Alarm set - 9:30AM every day.");
         }
     }
 }
