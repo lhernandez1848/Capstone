@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,7 +45,7 @@ public class CalendarRecommendation extends AppCompatActivity
     int selectedDay, selectedMonth, selectedYear;
     JSONArray jsonarray;
     GlobalMethods globalMethods;
-    private TextView tvDate;
+    private Button btnDate;
     private DatePickerDialog.OnDateSetListener pickDateListener;
 
     @Override
@@ -62,11 +62,11 @@ public class CalendarRecommendation extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        tvDate = (TextView) findViewById(R.id.tvDate);
+        btnDate = (Button) findViewById(R.id.btnRecommendationDate);
         dateTextView = (TextView) findViewById(R.id.dateTextView);
         ListView = (ListView) findViewById(R.id.ListView);
 
-        tvDate.setOnClickListener(new View.OnClickListener() {
+        btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Calendar cal = Calendar.getInstance();

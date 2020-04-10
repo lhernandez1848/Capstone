@@ -21,6 +21,6 @@ public class CalendarRecommendationInstrumentedTest {
 
     @Test
     public void clickToSelectSuccessful() {
-        onView(withId(R.id.tvDate)).perform(click());
+        onView(withId(R.id.btnRecommendationDate)).perform(click());
     }
 }
