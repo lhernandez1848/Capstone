@@ -34,7 +34,8 @@
             android:textSize="25sp"/>
         <TextView
             android:id="@+id/tvUserID"
-            android:layout_weight="3"
+            android:layout_weight="2"
+            android:layout_marginEnd="20dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="25sp"/>
@@ -57,7 +58,8 @@
             android:textSize="25sp"/>
         <TextView
             android:id="@+id/tvUserStore"
-            android:layout_weight="3"
+            android:layout_weight="2"
+            android:layout_marginEnd="20dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="25sp"/>
