@@ -57,6 +57,7 @@ public class TrackOrderActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_order);
+        setTitle("Track Order");
 
         globalMethods = new GlobalMethods(this);
         globalMethods.checkIfLoggedIn();
@@ -137,7 +138,7 @@ public class TrackOrderActivity extends AppCompatActivity
 
     }
 
-    private boolean validateOrderNumber(String orderNumber) {
+    public static boolean validateOrderNumber(String orderNumber) {
 
         // Check if order number only contains letters
         if (orderNumber.matches("[0-9]+"))
@@ -148,7 +149,7 @@ public class TrackOrderActivity extends AppCompatActivity
         return false;
     }
 
-    private void searchOrder(String orderNumber) {
+    public void searchOrder(String orderNumber) {
 
         String url ="https://huexinventory.ngrok.io/?a=select%20*%20from%20orders%20where%20order_id%20like%20%27"+orderNumber+"%25%27&b=Capstone";
 

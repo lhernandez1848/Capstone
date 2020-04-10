@@ -376,7 +376,7 @@ public class SetInventoryActivity extends AppCompatActivity
         queue.add(stringRequest);
     }
 
-    private String formatDate(int day, int month, int year) {
+    public static String formatDate(int day, int month, int year) {
 
         String sMonth = "";
         String formattedDate = "";
