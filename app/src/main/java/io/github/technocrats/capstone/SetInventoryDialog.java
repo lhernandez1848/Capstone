@@ -12,16 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
+import io.github.technocrats.capstone.models.Product;
 
 import java.util.Locale;
-
-import io.github.technocrats.capstone.models.Product;
 
 public class SetInventoryDialog extends AppCompatDialogFragment
         implements View.OnClickListener {
 
     private EditText etInventoryCount;
-    private TextView tvProductName, tvQuantity, tvPar;
+    private TextView tvProductName, tvQuantity, tvPar, tvError;
     private Button btnAdd, btnSubtract, btnSaveSetInventory;
     private SetInventoryDialogListener listener;
     String productName, productId, date;
@@ -46,6 +45,7 @@ public class SetInventoryDialog extends AppCompatDialogFragment
         tvProductName = view.findViewById(R.id.tvProductName);
         tvPar = view.findViewById(R.id.tvPar);
         tvQuantity = view.findViewById(R.id.tvLatestQuantity);
+        tvError = view.findViewById(R.id.tvInventoryQuantityError);
         etInventoryCount = view.findViewById(R.id.etInventoryCount);
         btnAdd = view.findViewById(R.id.btnAdd);
         btnSubtract = view.findViewById(R.id.btnSubtract);
@@ -77,6 +77,7 @@ public class SetInventoryDialog extends AppCompatDialogFragment
         tvProductName.setText(productName);
         tvQuantity.setText(sDisplay);
         tvPar.setText(sPar);
+        tvError.setText("");
 
         return builder.create();
     }
@@ -95,34 +96,37 @@ public class SetInventoryDialog extends AppCompatDialogFragment
 
     @Override
     public void onClick(View v) {
-
+        // get user input
         String count = etInventoryCount.getText().toString().trim();
 
+        // initialize to 0 if empty
         if (count.isEmpty())
         {
             count = "0.00";
         }
 
-        Float fCount = Float.parseFloat(count);
-
         switch (v.getId()) {
             case R.id.btnSaveSetInventory:
-                try {
-                    String sCount = etInventoryCount.getText().toString();
+                String sCount = etInventoryCount.getText().toString().trim();
+                if (!sCount.isEmpty()) {
                     listener.getInventoryCount(sCount, currentProduct, par);
                     dismiss();
-                    break;
-                } catch (NumberFormatException e){
-                    Toast.makeText(getContext(), "ERROR: Quantity is empty", Toast.LENGTH_LONG).show();
                 }
+                else {
+                    tvError.setText("ERROR: Quantity cannot be empty.");
+                }
+                break;
             case R.id.btnAdd:
-                Float fIncreaseCount = fCount + 1;
+                Float fAddCount = Float.parseFloat(count);
+                Float fIncreaseCount = fAddCount + 1;
                 String increaseCount = String.format(Locale.CANADA,"%.2f", fIncreaseCount);
                 etInventoryCount.setText(increaseCount);
                 break;
             case R.id.btnSubtract:
-                Float fDecreaseCount = fCount - 1;
+                Float fMinusCount = Float.parseFloat(count);
+                Float fDecreaseCount = fMinusCount - 1;
 
+                // quantity cannot be negative
                 if (fDecreaseCount < 0)
                 {
                     fDecreaseCount = 0.00f;
