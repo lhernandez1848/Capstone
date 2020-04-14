@@ -17,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -181,6 +182,8 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
                     }
 
                     getBarChart();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please select a date", Toast.LENGTH_LONG).show();
                 }
             }
         });

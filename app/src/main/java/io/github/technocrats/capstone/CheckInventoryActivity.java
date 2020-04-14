@@ -250,19 +250,19 @@ public class CheckInventoryActivity extends AppCompatActivity implements
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.radio_value){
+            radioSelected = "value";
             inventoryProportionsLayout.setVisibility(View.GONE);
             categorySpinnerLayout.setVisibility(View.GONE);
             if(selectedDay > 0){
                 checkInventoryButton.setEnabled(true);
-                radioSelected = "value";
             } else {
                 checkInventoryButton.setEnabled(false);
             }
         } else if (view.getId() == R.id.radio_proportion){
+            radioSelected = "proportion";
             checkInventoryButton.setEnabled(false);
             inventoryValuesLayout.setVisibility(View.GONE);
             categorySpinnerLayout.setVisibility(View.VISIBLE);
-            radioSelected = "proportion";
             loadSpinner();
         } else if (view.getId() == R.id.txtSortDatePicker){
             setDate();
