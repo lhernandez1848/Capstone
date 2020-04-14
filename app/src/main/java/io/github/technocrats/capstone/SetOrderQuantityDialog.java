@@ -156,12 +156,16 @@ public class SetOrderQuantityDialog extends AppCompatDialogFragment
     }
 
     private void saveQuantity() {
-        productQuantity = Float.parseFloat(etOrderQuantity.getText().toString());
+        try {
+            productQuantity = Float.parseFloat(etOrderQuantity.getText().toString());
 
-        if(productQuantity>0f){
-            total = productQuantity * productPrice;
-            listener.applyProductOrderQuantity(currentProduct, productQuantity, total);
-            dismiss();
+            if(productQuantity>0f){
+                total = productQuantity * productPrice;
+                listener.applyProductOrderQuantity(currentProduct, productQuantity, total);
+                dismiss();
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "ERROR: Quantity is empty", Toast.LENGTH_LONG).show();
         }
     }
 

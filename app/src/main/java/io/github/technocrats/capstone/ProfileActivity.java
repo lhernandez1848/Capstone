@@ -52,13 +52,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         firstName = sharedPlace.getString("firstName", "");
         lastName = sharedPlace.getString("lastName", "");
         storeID = sharedPlace.getString("storeID", "");
+        sOutput = "";
+        typedOldPassword = "";
+        typedNewPassword = "";
+        typedConfirmPassword = "";
 
         // initialize GlobalMethods
         globalMethods = new GlobalMethods(this);
         globalMethods.checkIfLoggedIn();
 
         // initialize and display toolbar
-        toolbar = (Toolbar) findViewById(R.id.profileToolbar);
+        toolbar = findViewById(R.id.profileToolbar);
         setSupportActionBar(toolbar);
 
         // initialize and display home icon
@@ -66,10 +70,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // initialize and set text views
-        tvFirstLast = (TextView) findViewById(R.id.tvUserFirstLast);
-        tvUserStore = (TextView) findViewById(R.id.tvUserStore);
-        tvUserID = (TextView) findViewById(R.id.tvUserID);
-        tvChangePasswordLink = (TextView) findViewById(R.id.tvChangePasswordLink);
+        tvFirstLast = findViewById(R.id.tvUserFirstLast);
+        tvUserStore = findViewById(R.id.tvUserStore);
+        tvUserID = findViewById(R.id.tvUserID);
+        tvChangePasswordLink = findViewById(R.id.tvChangePasswordLink);
 
         tvFirstLast.setText(firstName + " " + lastName);
         tvUserID.setText(userID);
@@ -77,15 +81,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         tvChangePasswordLink.setOnClickListener(this);
 
         // initialize edit texts
-        eOldPassword = (EditText) findViewById(R.id.txtOldPassword);
-        eNewPassword = (EditText) findViewById(R.id.txtNewPassword);
-        eConfirmPassword = (EditText) findViewById(R.id.txtConfirmPassword);
+        eOldPassword = findViewById(R.id.txtOldPassword);
+        eNewPassword = findViewById(R.id.txtNewPassword);
+        eConfirmPassword = findViewById(R.id.txtConfirmPassword);
 
         // initialize buttons
-        btnChangePassword = (Button) findViewById(R.id.btnChangePassword);
+        btnChangePassword = findViewById(R.id.btnChangePassword);
         btnChangePassword.setOnClickListener(this);
 
-        layoutChangePassword = (CardView) findViewById(R.id.layoutChangePassword);
+        layoutChangePassword = findViewById(R.id.layoutChangePassword);
 
     }
 
@@ -143,17 +147,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     || (eConfirmPassword.getText().length()<1)){
                 Toast.makeText(getApplicationContext(), "All fields are required", Toast.LENGTH_LONG).show();
             } else{
-                eOldPassword.setText("");
-                eNewPassword.setText("");
-                eConfirmPassword.setText("");
                 changePassword();
-                Toast.makeText(getApplicationContext(), "Password Changed Successfully", Toast.LENGTH_LONG).show();
-                layoutChangePassword.setVisibility(View.GONE);
             }
         }
     }
 
     private void changePassword(){
+
         typedOldPassword = eOldPassword.getText().toString();
         typedNewPassword = eNewPassword.getText().toString();
         typedConfirmPassword = eConfirmPassword.getText().toString();
@@ -169,6 +169,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 try {
                     newPassword = SymmetricEncryptionUtils.encryptPassword(typedNewPassword);
                     setDataInServerDB(newPassword, username);
+                    Toast.makeText(getApplicationContext(), "Password Changed Successfully", Toast.LENGTH_LONG).show();
+                    sharedPlace.edit().putString("password", newPassword).apply();
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

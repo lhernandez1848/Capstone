@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
 
@@ -106,10 +107,14 @@ public class SetInventoryDialog extends AppCompatDialogFragment
 
         switch (v.getId()) {
             case R.id.btnSaveSetInventory:
-                String sCount = etInventoryCount.getText().toString();
-                listener.getInventoryCount(sCount, currentProduct, par);
-                dismiss();
-                break;
+                try {
+                    String sCount = etInventoryCount.getText().toString();
+                    listener.getInventoryCount(sCount, currentProduct, par);
+                    dismiss();
+                    break;
+                } catch (NumberFormatException e){
+                    Toast.makeText(getContext(), "ERROR: Quantity is empty", Toast.LENGTH_LONG).show();
+                }
             case R.id.btnAdd:
                 Float fIncreaseCount = fCount + 1;
                 String increaseCount = String.format(Locale.CANADA,"%.2f", fIncreaseCount);
