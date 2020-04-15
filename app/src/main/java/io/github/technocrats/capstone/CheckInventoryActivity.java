@@ -277,7 +277,7 @@ public class CheckInventoryActivity extends AppCompatActivity implements
                 getProductProportions(category_id, selectedDay, selectedMonth, selectedYear);
             } else {
                 tvCheckInvError.setVisibility(View.VISIBLE);
-                tvCheckInvError.setText("Please select a \"Sort By value\"");
+                tvCheckInvError.setText("Please select a \"Sort By\" value");
             }
         }
 

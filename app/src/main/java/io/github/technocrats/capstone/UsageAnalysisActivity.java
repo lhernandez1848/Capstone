@@ -151,8 +151,6 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
                         year,month,day);
 
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.getDatePicker().findViewById(getResources().getIdentifier("day","id","android")).setVisibility(View.GONE);
-                dialog.getDatePicker().setCalendarViewShown(false);
                 dialog.show();
             }
         });
@@ -183,7 +181,7 @@ public class UsageAnalysisActivity extends AppCompatActivity implements
 
                     getBarChart();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please select a date", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "ERROR: Please select a date", Toast.LENGTH_LONG).show();
                 }
             }
         });
