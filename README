@@ -1,0 +1,158 @@
+About I.VY
+
+NOTE: For more detailed instructions on how to use this app, please refer to the file called
+IVY_HelpSystem.pdf.
+
+From 2016-2018, an average of 38% of Canadians consumed fast food from one to three
+times per week. Because demand for fast food is so high, managers need ways to ease their
+workload and ensure that their inventory is optimized. For most of these restaurants, the ordering
+process is time consuming and hectic. Presently, each order takes about 3 hours to generate.
+
+Our app aims to address this issue in order to save managers time when replenishing and
+checking their inventories. With this app, we expect to save time by accurately predicting future
+orders from management with regards to items and their quantities.
+
+I.VY is a mobile application that provides main functions including order generation, track
+order, view order history, set and check inventory, usage analysis, par level recommendation, and
+inventory audit and analysis. The front-end is an android mobile application written using Java.
+The back-end is a database runs on a Linux database server and is accessed through a web service
+using MS SQL Server and NodeJS. With this app, the manager can view and manage the inventory
+count and generate orders. It stores the available products by categories and subcategories under
+the expandable list, which makes browsing through the products easier. Moreover, this app uses
+past purchase data to calculate the par level for each item so that the manager will be notified when
+par levels are reached. This app also uses charts and linear regression to display and analyze the
+usage.
+
+Quick Start
+
+• Locate the APK in the downloads folder.
+• Double click on the APK file to install it.
+• After that, the shortcut icon will appear in the phone. You can click on the icon to run
+the app.
+
+Deployment Instructions
+
+How to Create the Database
+
+First, we got the raw data as a txt file. To generate each table, we designed an entityrelationship diagram (ERD). Then, based on the ERD, we wrote a python program to read the raw
+txt file and generated a csv file for each table. We set up a server and used SQL commands to
+create each table and bulk inserted the data from each csv file to its corresponding table.
+For Example:
+
+➢ First, convert txt file to csv file.
+categories.txt
+category_id category
+1 Food
+2 N/A
+3 Paper
+4 Advertising
+5 Cleaning
+6 Miscellaneous
+7 Uniforms
+8 Inventory
+categories.csv
+1 Food
+2 N/A
+3 Paper
+4 Advertising
+5 Cleaning
+6 Miscellaneous
+7 Uniforms
+8 inventory
+
+➢ Second, execute CreateTables.sql file
+USE Capstone;
+GO
+CREATE TABLE categories (category_id INT, category NVARCHAR(50));
+GO
+CREATE TABLE subcategories (subcategory_id INT, subcategory
+NVARCHAR(50));
+GO
+CREATE TABLE stores (store_id INT, store_address NVARCHAR(50), city
+NVARCHAR(50), country NVARCHAR(50), phone NVARCHAR(50), manager_name
+NVARCHAR(50), postal_code NVARCHAR(50));
+GO
+CREATE TABLE products (product_id NVARCHAR(50), product
+NVARCHAR(50), category_id INT, subcategory_id INT);
+GO
+CREATE TABLE status (status_id INT, status NVARCHAR(50));
+GO
+CREATE TABLE packagings (packaging_id INT, packaging NVARCHAR(50));
+GO
+CREATE TABLE orders (order_id NVARCHAR(50), day INT, month INT, year
+INT, total_cost float, status_id INT, store_id INT);
+GO
+CREATE TABLE inventories (start_day INT, start_month INT, start_year
+INT, end_day INT, end_month INT, end_year INT, product VARCHAR(MAX),
+packaging_id NVARCHAR(50), opening_count float, purchases float,
+transfers float, closing_count float, actual_usage float,
+price_per_unit float, cost_of_usage float);
+GO
+CREATE TABLE ordered_products (order_id NVARCHAR(50), day INT, month
+INT, year INT, packaging_id INT, quantity INT, unit_cost float,
+status_id INT, product_id NVARCHAR(50));
+GO
+
+➢ Third, execute ImportData.sql file to import data into the table
+USE Capstone;
+GO
+BULK INSERT packagings
+FROM '/home/Dev/inventory/server/MS_SQL/tables/packagings.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT stores
+FROM '/home/Dev/inventory/server/MS_SQL/tables/stores.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT status
+FROM '/home/Dev/inventory/server/MS_SQL/tables/status.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT products
+FROM '/home /Dev/inventory/server/MS_SQL/tables/products.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT ordered_products
+FROM '/home
+/Dev/inventory/server/MS_SQL/tables/ordered_products.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT inventories
+FROM '/home/Dev/inventory/server/MS_SQL/tables/inventories.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT categories
+FROM '/home/Dev/inventory/server/MS_SQL/tables/categories.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT subcategories
+FROM '/home/Dev/inventory/server/MS_SQL/tables/subcategories.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+BULK INSERT orders
+FROM '/home/Dev/inventory/server/MS_SQL/tables/orders.csv'
+WITH (FIELDTERMINATOR = '\t', ROWTERMINATOR = '\n')
+GO
+
+
+How to Install and Configure the Application
+
+As a developer:
+• Download the android project as a .zip file from Github:
+https://github.com/lhernandez1848/Capstone
+• Extract the file.
+• Run and build it on Android Studio.
+
+As a user:
+• Download the APK file from Github:
+https://github.com/lhernandez1848/Capstone
+• Install it on a phone or tablet.
+
+
+Waiver
+
+The undersigned permit Conestoga College Information Technology faculty to use the finished
+application and other deliverables for classroom demonstrations and the marketing of Conestoga
+College Information Technology programs. Conestoga College Information Technology faculty
+agree to use the source code only for marking purposes, and not to disclose or distribute the
+source code to any third party. 
