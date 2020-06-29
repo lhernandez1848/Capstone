@@ -3,26 +3,6 @@ About I.VY
 NOTE: For more detailed instructions on how to use this app, please refer to the file called
 IVY_HelpSystem.pdf.
 
-From 2016-2018, an average of 38% of Canadians consumed fast food from one to three
-times per week. Because demand for fast food is so high, managers need ways to ease their
-workload and ensure that their inventory is optimized. For most of these restaurants, the ordering
-process is time consuming and hectic. Presently, each order takes about 3 hours to generate.
-
-Our app aims to address this issue in order to save managers time when replenishing and
-checking their inventories. With this app, we expect to save time by accurately predicting future
-orders from management with regards to items and their quantities.
-
-I.VY is a mobile application that provides main functions including order generation, track
-order, view order history, set and check inventory, usage analysis, par level recommendation, and
-inventory audit and analysis. The front-end is an android mobile application written using Java.
-The back-end is a database runs on a Linux database server and is accessed through a web service
-using MS SQL Server and NodeJS. With this app, the manager can view and manage the inventory
-count and generate orders. It stores the available products by categories and subcategories under
-the expandable list, which makes browsing through the products easier. Moreover, this app uses
-past purchase data to calculate the par level for each item so that the manager will be notified when
-par levels are reached. This app also uses charts and linear regression to display and analyze the
-usage.
-
 Quick Start
 
 • Locate the APK in the downloads folder.
